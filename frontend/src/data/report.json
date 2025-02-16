@@ -1,0 +1,62 @@
+[
+  {
+    "userId": "676bde5b75b73247fee7a7a3",
+    "title": "Vi phạm điều khoản sử dụng",
+    "content": "Người dùng đã đăng nội dung không phù hợp.",
+    "linkTo": "/post/12345",
+    "reportCategory": "Product",
+    "reportedId": "65c123456789abcd12345678",
+    "isHandle": false,
+    "isDeleted": false,
+    "createdAt": "2024-12-25T10:28:44.062+00:00",
+    "updatedAt": "2024-12-25T10:28:44.062+00:00"
+  },
+  {
+    "userId": "676bde5b75b73247fee7a7a3",
+    "title": "Spam tin nhắn",
+    "content": "Người dùng gửi tin nhắn spam liên tục.",
+    "linkTo": "/chat/67890",
+    "reportCategory": "Review",
+    "reportedId": "65c223456789abcd12345678",
+    "isHandle": false,
+    "isDeleted": false,
+    "createdAt": "2024-12-25T10:28:44.062+00:00",
+    "updatedAt": "2024-12-25T10:28:44.062+00:00"
+  },
+  {
+    "userId": "676bde5b75b73247fee7a7a3",
+    "title": "Lừa đảo",
+    "content": "Người dùng này đã lừa đảo trong giao dịch.",
+    "linkTo": "/transaction/54321",
+    "reportCategory": "User",
+    "reportedId": "67a1a4d58082e0f641c270cb",
+    "isHandle": false,
+    "isDeleted": false,
+    "createdAt": "2024-12-25T10:28:44.062+00:00",
+    "updatedAt": "2024-12-25T10:28:44.062+00:00"
+  },
+  {
+    "userId": "676be5d6b2c22b05369781ab",
+    "title": "Lừa đảo",
+    "content": "Người dùng này đã lừa đảo trong giao dịch.",
+    "linkTo": "/transaction/54321",
+    "reportCategory": "User",
+    "reportedId": "67a1a4d58082e0f641c270c9",
+    "isHandle": false,
+    "isDeleted": false,
+    "createdAt": "2024-12-25T10:28:44.062+00:00",
+    "updatedAt": "2024-12-25T10:28:44.062+00:00"
+  },
+  {
+    "userId": "676be5d6b2c22b05369781ab",
+    "title": "Lừa đảo",
+    "content": "Người dùng này đã lừa đảo trong giao dịch.",
+    "linkTo": "/transaction/54321",
+    "reportCategory": "User",
+    "reportedId": "67a1a4d58082e0f641c270c8",
+    "isHandle": false,
+    "isDeleted": false,
+    "createdAt": "2024-12-25T10:28:44.062+00:00",
+    "updatedAt": "2024-12-25T10:28:44.062+00:00"
+  }
+]

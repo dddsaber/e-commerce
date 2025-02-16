@@ -1,0 +1,154 @@
+[
+  {
+    "name": "Điện tử",
+    "description": "Các sản phẩm điện tử, máy tính, điện thoại di động.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:41:08.965+00:00",
+    "updatedAt": "2025-02-10T03:41:08.965+00:00"
+  },
+  {
+    "name": "Thời trang",
+    "description": "Quần áo, giày dép, phụ kiện thời trang.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:42:08.965+00:00",
+    "updatedAt": "2025-02-10T03:42:08.965+00:00"
+  },
+  {
+    "name": "Sức khỏe & Làm đẹp",
+    "description": "Mỹ phẩm, sản phẩm chăm sóc sức khỏe và sắc đẹp.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:43:08.965+00:00",
+    "updatedAt": "2025-02-10T03:43:08.965+00:00"
+  },
+  {
+    "name": "Mẹ & Bé",
+    "description": "Đồ dùng cho mẹ và bé, sản phẩm cho trẻ em.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:44:08.965+00:00",
+    "updatedAt": "2025-02-10T03:44:08.965+00:00"
+  },
+  {
+    "name": "Nhà cửa & Đời sống",
+    "description": "Đồ nội thất, vật dụng gia đình, đồ trang trí nhà cửa.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:45:08.965+00:00",
+    "updatedAt": "2025-02-10T03:45:08.965+00:00"
+  },
+  {
+    "name": "Thực phẩm & Đồ uống",
+    "description": "Các sản phẩm thực phẩm và đồ uống.",
+    "isDeleted": false,
+    "parentId": null,
+    "createdAt": "2025-02-10T03:46:08.965+00:00",
+    "updatedAt": "2025-02-10T03:46:08.965+00:00"
+  },
+  {
+    "name": "Giày dép",
+    "description": "Giày, dép thời trang cho nam và nữ.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:47:08.965+00:00",
+    "updatedAt": "2025-02-10T03:47:08.965+00:00"
+  },
+  {
+    "name": "Máy tính & Laptop",
+    "description": "Máy tính để bàn, laptop, phụ kiện máy tính.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:48:08.965+00:00",
+    "updatedAt": "2025-02-10T03:48:08.965+00:00"
+  },
+  {
+    "name": "Điện thoại di động",
+    "description": "Các mẫu điện thoại di động mới nhất, phụ kiện điện thoại.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:49:08.965+00:00",
+    "updatedAt": "2025-02-10T03:49:08.965+00:00"
+  },
+  {
+    "name": "Trang sức & Phụ kiện",
+    "description": "Trang sức, đồng hồ, và các phụ kiện thời trang.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:50:08.965+00:00",
+    "updatedAt": "2025-02-10T03:50:08.965+00:00"
+  },
+  {
+    "name": "Đồ dùng văn phòng",
+    "description": "Các vật dụng văn phòng phẩm, máy tính văn phòng.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:51:08.965+00:00",
+    "updatedAt": "2025-02-10T03:51:08.965+00:00"
+  },
+  {
+    "name": "Nội thất phòng khách",
+    "description": "Bộ ghế sofa, bàn trà, kệ TV cho phòng khách.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:52:08.965+00:00",
+    "updatedAt": "2025-02-10T03:52:08.965+00:00"
+  },
+  {
+    "name": "Đồ chơi & Mẹo vặt",
+    "description": "Đồ chơi, sản phẩm giáo dục cho trẻ em.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:53:08.965+00:00",
+    "updatedAt": "2025-02-10T03:53:08.965+00:00"
+  },
+  {
+    "name": "Mỹ phẩm & Chăm sóc sắc đẹp",
+    "description": "Mỹ phẩm, các sản phẩm chăm sóc sắc đẹp.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:54:08.965+00:00",
+    "updatedAt": "2025-02-10T03:54:08.965+00:00"
+  },
+  {
+    "name": "Chăm sóc sức khỏe",
+    "description": "Các sản phẩm giúp cải thiện sức khỏe.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:55:08.965+00:00",
+    "updatedAt": "2025-02-10T03:55:08.965+00:00"
+  },
+  {
+    "name": "Giường & Nệm",
+    "description": "Các loại giường, nệm cho gia đình.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:56:08.965+00:00",
+    "updatedAt": "2025-02-10T03:56:08.965+00:00"
+  },
+  {
+    "name": "Đồ gia dụng",
+    "description": "Các sản phẩm gia dụng trong nhà bếp và phòng tắm.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:57:08.965+00:00",
+    "updatedAt": "2025-02-10T03:57:08.965+00:00"
+  },
+  {
+    "name": "Túi xách & Phụ kiện",
+    "description": "Túi xách, ví và các phụ kiện thời trang.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:58:08.965+00:00",
+    "updatedAt": "2025-02-10T03:58:08.965+00:00"
+  },
+  {
+    "name": "Đồ dùng cho thú cưng",
+    "description": "Sản phẩm chăm sóc và đồ chơi cho thú cưng.",
+    "isDeleted": false,
+    "parentId": "605c72ef153207001f67e9d",
+    "createdAt": "2025-02-10T03:59:08.965+00:00",
+    "updatedAt": "2025-02-10T03:59:08.965+00:00"
+  }
+]

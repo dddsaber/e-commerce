@@ -1,0 +1,94 @@
+[
+  {
+    "userId": "676bde5b75b73247fee7a7a3",
+    "name": "Store 1",
+    "logo": "logo1.png",
+    "description": "Store 1 Description",
+    "email": "store1@example.com",
+    "phone": "123456789",
+    "statistics": {
+      "totalProducts": 10,
+      "monthlyRevenue": 500,
+      "rating": 4.5,
+      "numberOfRatings": 100,
+      "totalRevenue": 10000,
+      "visited": 200
+    },
+    "address": {
+      "province": "Province 1",
+      "district": "District 1",
+      "ward": "Ward 1",
+      "details": "Store 1 Address"
+    },
+    "isActive": true
+  },
+  {
+    "userId": "676be5d6b2c22b05369781ab",
+    "name": "Store 2",
+    "logo": "logo2.png",
+    "description": "Store 2 Description",
+    "email": "store2@example.com",
+    "phone": "987654321",
+    "statistics": {
+      "totalProducts": 20,
+      "monthlyRevenue": 1000,
+      "rating": 4.0,
+      "numberOfRatings": 150,
+      "totalRevenue": 20000,
+      "visited": 300
+    },
+    "address": {
+      "province": "Province 2",
+      "district": "District 2",
+      "ward": "Ward 2",
+      "details": "Store 2 Address"
+    },
+    "isActive": true
+  },
+  {
+    "userId": "676c21fd87dfec1087598e7f",
+    "name": "Store 3",
+    "logo": "logo3.png",
+    "description": "Store 3 Description",
+    "email": "store3@example.com",
+    "phone": "543216789",
+    "statistics": {
+      "totalProducts": 15,
+      "monthlyRevenue": 750,
+      "rating": 4.2,
+      "numberOfRatings": 120,
+      "totalRevenue": 15000,
+      "visited": 250
+    },
+    "address": {
+      "province": "Province 3",
+      "district": "District 3",
+      "ward": "Ward 3",
+      "details": "Store 3 Address"
+    },
+    "isActive": true
+  },
+  {
+    "userId": "676c277212198b1aa39498c8",
+    "name": "Store 4",
+    "logo": "logo4.png",
+    "description": "Store 4 Description",
+    "email": "store4@example.com",
+    "phone": "678901234",
+    "statistics": {
+      "totalProducts": 30,
+      "monthlyRevenue": 1500,
+      "rating": 4.7,
+      "numberOfRatings": 200,
+      "totalRevenue": 30000,
+      "visited": 400
+    },
+    "address": {
+      "province": "Province 4",
+      "district": "District 4",
+      "ward": "Ward 4",
+      "details": "Store 4 Address"
+    },
+    "isActive": true
+  }
+]

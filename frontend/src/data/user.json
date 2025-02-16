@@ -1,0 +1,106 @@
+[
+  {
+    "username": "oanderson",
+    "name": "Luis Russell",
+    "email": "romanandrew@yahoo.com",
+    "phone": "555-123-4567",
+    "password": "password123",
+    "role": "admin",
+    "avatar": "default.jpg",
+    "gender": true,
+    "provider": "local",
+    "providerId": "123456789",
+    "description": "Lorem ipsum dolor sit amet.",
+    "address": {
+      "province": "California",
+      "district": "Los Angeles",
+      "ward": "Downtown",
+      "details": "1234 Main St"
+    },
+    "identityCard": {
+      "id": "ID12345",
+      "fullName": "Luis Russell",
+      "photoFront": "front.jpg",
+      "photoBack": "back.jpg"
+    },
+    "isActive": false
+  },
+  {
+    "username": "vanessahicks",
+    "name": "Wendy Campbell",
+    "email": "courtneyanderson@gmail.com",
+    "phone": "555-987-6543",
+    "password": "securepassword123",
+    "role": "admin",
+    "avatar": "default.jpg",
+    "gender": false,
+    "provider": "google",
+    "providerId": "987654321",
+    "description": "Lorem ipsum dolor sit amet.",
+    "address": {
+      "province": "New York",
+      "district": "Manhattan",
+      "ward": "Midtown",
+      "details": "5678 Broadway St"
+    },
+    "identityCard": {
+      "id": "ID67890",
+      "fullName": "Wendy Campbell",
+      "photoFront": "front.jpg",
+      "photoBack": "back.jpg"
+    },
+    "isActive": false
+  },
+  {
+    "username": "mjohnson",
+    "name": "Michael Johnson",
+    "email": "mj@example.com",
+    "phone": "555-555-1234",
+    "password": "12345password",
+    "role": "user",
+    "avatar": "default.jpg",
+    "gender": true,
+    "provider": "facebook",
+    "providerId": "654321987",
+    "description": "Lorem ipsum dolor sit amet.",
+    "address": {
+      "province": "Texas",
+      "district": "Austin",
+      "ward": "Central Austin",
+      "details": "9876 Elm St"
+    },
+    "identityCard": {
+      "id": "ID11223",
+      "fullName": "Michael Johnson",
+      "photoFront": "front.jpg",
+      "photoBack": "back.jpg"
+    },
+    "isActive": true
+  },
+  {
+    "username": "elizapark",
+    "name": "Eliza Park",
+    "email": "elizapark@example.com",
+    "phone": "555-555-2345",
+    "password": "passwordSecure",
+    "role": "sales",
+    "avatar": "default.jpg",
+    "gender": false,
+    "provider": "twitter",
+    "providerId": "1122334455",
+    "description": "Lorem ipsum dolor sit amet.",
+    "address": {
+      "province": "Florida",
+      "district": "Miami",
+      "ward": "South Beach",
+      "details": "3456 Ocean Dr"
+    },
+    "identityCard": {
+      "id": "ID44556",
+      "fullName": "Eliza Park",
+      "photoFront": "front.jpg",
+      "photoBack": "back.jpg"
+    },
+    "isActive": true
+  }
+]

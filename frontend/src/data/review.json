@@ -1,0 +1,82 @@
+[
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f601",
+    "userId": "65c8f5e1a1b2c3d4e5f101",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Trà sữa rất ngon, trân châu dẻo!",
+    "rating": "5",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f602",
+    "userId": "65c8f5e1a1b2c3d4e5f102",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Hơi ngọt nhưng vẫn ngon!",
+    "rating": "4",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f603",
+    "userId": "67ab48ec1f652f13a17ff5f1",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Dịch vụ tốt, đồ uống ổn!",
+    "rating": "4.5",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f604",
+    "userId": "65c8f5e1a1b2c3d4e5f104",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Trà sữa bị nhạt, không ngon lắm.",
+    "rating": "3",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f605",
+    "userId": "65c8f5e1a1b2c3d4e5f105",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Giao hàng nhanh, đồ uống ngon!",
+    "rating": "5",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f606",
+    "userId": "65c8f5e1a1b2c3d4e5f106",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Trà sữa ngon, sẽ ủng hộ lần sau!",
+    "rating": "4.5",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f607",
+    "userId": "65c8f5e1a1b2c3d4e5f107",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Giá hơi cao nhưng chất lượng ok.",
+    "rating": "4",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  },
+  {
+    "_id": "65c8f5e1a1b2c3d4e5f608",
+    "userId": "65c8f5e1a1b2c3d4e5f108",
+    "productId": "67ab48ec1f652f13a17ff5f1",
+    "content": "Không hợp khẩu vị của mình lắm.",
+    "rating": "3.5",
+    "isDeleted": false,
+    "createdAt": "2025-02-11T08:22:34.160+00:00",
+    "updatedAt": "2025-02-11T08:22:34.160+00:00"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "categoryId": "67a9b76f522b30420975c424",
+  "storeId": "67a6116bb5e29fef2a65bace",
+  "name": "Trà Sữa Trân Châu Đường Đen",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 10,
+  "image": "tra_sua_tran_chau.jpg",
+  "description": "Trà sữa thơm ngon với trân châu đường đen dẻo dai, vị ngọt thanh mát.",
+  "size": "500ml",
+  "isActive": true
+}
