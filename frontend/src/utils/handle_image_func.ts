@@ -24,6 +24,7 @@ export const beforeUpload = (file: FileType) => {
 export const getSourceImage = (url: string): string => {
   if (!url) return "/images/default.png";
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
+
   if (url.startsWith(TYPE_IMAGE.product)) {
     url = `products/${url}`;
   } else if (url.startsWith(TYPE_IMAGE.user)) {

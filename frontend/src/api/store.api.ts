@@ -1,5 +1,5 @@
 import { instance } from "."; // Giả sử instance đã được cấu hình trước đó
-import { Store, GetStoresRequest } from "../type/store.type"; // Định nghĩa kiểu dữ liệu Store và GetStoresRequest
+import { Store, GetStoresRequest, TaxInformation } from "../type/store.type"; // Định nghĩa kiểu dữ liệu Store và GetStoresRequest
 import { handleApiError } from "../utils/handle_error_func";
 
 const URL = "/store";
@@ -30,6 +30,73 @@ export const getStores = async (
 export const createStore = async (body: Store): Promise<Store> => {
   try {
     const response = await instance.post<Store>(`${URL}/create`, body);
+    if (response.status) {
+      // Kiểm tra nếu response thành công
+      return response.data;
+    } else {
+      handleApiError(new Error("Không thể tạo store"));
+      return {} as Store;
+    }
+  } catch (error: unknown) {
+    handleApiError(error);
+    return {} as Store;
+  }
+};
+
+// 🟢 Tạo mới store
+export const storeInfoRegistration = async (body: Store): Promise<Store> => {
+  try {
+    const response = await instance.post<Store>(
+      `${URL}/registration-store-info`,
+      body
+    );
+    if (response.status) {
+      // Kiểm tra nếu response thành công
+      return response.data;
+    } else {
+      handleApiError(new Error("Không thể tạo store"));
+      return {} as Store;
+    }
+  } catch (error: unknown) {
+    handleApiError(error);
+    return {} as Store;
+  }
+};
+
+// 🟢 Tạo mới store
+export const storeTaxRegistration = async (
+  storeId: string,
+  body: TaxInformation
+): Promise<Store> => {
+  try {
+    const response = await instance.post<Store>(
+      `${URL}/${storeId}/registration-store-tax`,
+      body
+    );
+    if (response.status) {
+      // Kiểm tra nếu response thành công
+      return response.data;
+    } else {
+      handleApiError(new Error("Không thể tạo store"));
+      return {} as Store;
+    }
+  } catch (error: unknown) {
+    handleApiError(error);
+    return {} as Store;
+  }
+};
+
+// 🟢 Tạo mới store
+export const storeIdentityRegistration = async (
+  storeId: string,
+  userId: string,
+  body: Store
+): Promise<Store> => {
+  try {
+    const response = await instance.post<Store>(
+      `${URL}/${storeId}/${userId}/registration-store-identity`,
+      body
+    );
     if (response.status) {
       // Kiểm tra nếu response thành công
       return response.data;
@@ -96,6 +163,7 @@ export const getStoreById = async (id: string): Promise<Store> => {
     const response = await instance.get<Store>(`${URL}/${id}`);
     if (response.status) {
       // Kiểm tra nếu response thành công
+
       return response.data;
     } else {
       handleApiError(new Error("Không thể lấy thông tin store"));
@@ -111,11 +179,11 @@ export const getStoreById = async (id: string): Promise<Store> => {
 export const getStoreByUserId = async (userId: string): Promise<Store> => {
   try {
     const response = await instance.get<Store>(`${URL}/user/${userId}`);
-    if (response.status) {
+    if (response.status && response.data) {
       // Kiểm tra nếu response thành công
+
       return response.data;
     } else {
-      handleApiError(new Error("Không thể lấy thông tin store"));
       return {} as Store;
     }
   } catch (error: unknown) {

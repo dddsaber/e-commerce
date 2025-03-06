@@ -99,7 +99,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
     <>
       <Upload
         name="photo"
-        listType="picture-circle"
+        listType="picture-card"
         showUploadList={false}
         className="image-uploader"
         accept="image/png,image/jpeg,image/jpg"

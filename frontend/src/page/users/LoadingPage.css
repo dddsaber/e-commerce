@@ -1,0 +1,158 @@
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.loader-container:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: transparent;
+  z-index: -1;
+  transition: top 1.2s linear 3.1s;
+}
+.loader-container:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: transparent;
+  z-index: -1;
+  transition: bottom 1.2s linear 3.1s;
+}
+.loader-container.done:before {
+  top: -50%;
+}
+.loader-container.done:after {
+  bottom: -50%;
+}
+
+.progress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  transform-origin: center;
+}
+.progress .progress__item {
+  text-align: center;
+  width: 120px;
+  height: 120px;
+  line-height: 120px;
+  border: 3px solid #2ec079;
+  border-radius: 50%;
+}
+.progress .progress__item:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-top: -3px;
+  margin-left: 0px;
+  width: 60px;
+  height: 60px;
+  border-top: solid 15px #2ec079;
+  border-right: solid 15px #2ec079;
+  border-top-right-radius: 100%;
+  transform-origin: left bottom;
+  -webkit-animation: spin 3s linear infinite;
+}
+.progress.float .progress__item:before {
+  border-top-width: 2px;
+  margin-top: 0px;
+  height: 50px;
+}
+.progress.float.shadow:before {
+  border-top-width: 2px;
+  margin-top: -41px;
+  height: 50px;
+}
+.progress.shadow:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -43px 0 0 12px;
+  width: 60px;
+  height: 60px;
+  border-top: solid 10px #959595;
+  border-right: solid 10px #959595;
+  border-top-right-radius: 100%;
+  z-index: -1;
+  transform-origin: left bottom;
+  -webkit-animation: spin 3s linear infinite;
+}
+.progress.shadow:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  color: #959595;
+  text-align: center;
+  line-height: 120px;
+  border: 2px solid #959595;
+  border-radius: 50%;
+  margin: -40px 0 0 -50px;
+  z-index: -1;
+  transform-origin: center;
+}
+.progress.done .progress__item {
+  opacity: 0;
+  -webkit-animation: done 3.1s;
+  transition: opacity 0.3s linear 3.1s;
+}
+.progress.done .progress__item:before {
+  display: none;
+}
+.progress.done:before {
+  display: none;
+}
+.progress.done:after {
+  opacity: 0;
+  -webkit-animation: done 3.1s;
+  transition: opacity 0.15s linear 3.1s;
+}
+
+@-webkit-keyframes done {
+  10% {
+    transform: scale(1.2);
+  }
+  20% {
+    transform: scale(0.9);
+  }
+  30% {
+    transform: scale(1.07);
+  }
+  40% {
+    transform: scale(0.93);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  60% {
+    transform: scale(0.97);
+  }
+  80% {
+    transform: scale(1.01);
+  }
+  90% {
+    transform: scale(0.99);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}

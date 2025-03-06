@@ -11,6 +11,11 @@ export interface CartItem {
 export interface Cart {
   _id: string;
   userId: string;
-  isDeleted: string;
-  items: CartItem[];
+  isDeleted: boolean;
+  items: {
+    storeId: string;
+    storeName: string;
+    logo: string;
+    products: CartItem[];
+  }[];
 }

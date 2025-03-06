@@ -22,18 +22,27 @@ export interface UserRefDetails {
   email?: string;
 }
 
+export interface TaxInformation {
+  businessType: string;
+  taxCode?: string;
+  receiveEInvoiceEmail: string;
+  businessRegistrationAddress: Address;
+}
+
 export interface Store {
-  _id: string;
+  _id?: string;
   userId: string; // Reference tới userId
   name: string;
-  logo: string;
+  logo?: string;
   backgroundImage?: string;
-  email?: string;
-  phone?: string;
-  statistics: Statistics;
+  email: string;
+  phone: string;
+  statistics?: Statistics;
   address?: Address;
   description?: string;
-  isActive: boolean;
+  taxInformation?: TaxInformation;
+  registrationDate?: Date;
+  isActive?: boolean;
   user?: UserRefDetails; // Optional field, được join từ User Collection trong backend
   createdAt?: Date;
   updatedAt?: Date;

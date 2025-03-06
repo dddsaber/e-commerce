@@ -1,17 +1,14 @@
 import React from "react";
-import { Breadcrumb } from "antd";
+import ProductsList from "../../../components/products/ProductsList";
+import CategoryList from "../../../components/products/CategoryList";
+import ImageCarousel from "../../../components/products/ImageCarousel";
 
 const HomePage: React.FC = () => {
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/",
-            title: "Trang chủ",
-          },
-        ]}
-      />
+      <ImageCarousel />
+      <CategoryList />
+      <ProductsList />
     </div>
   );
 };

@@ -12,7 +12,7 @@
   "cost": 25000,
   "price": 35000,
   "discount": 0.12,
-  "image": "tra_sua_tran_chau.jpg",
+  "image": "product_f3ca5fda-2705-4d4f-aa18-77bfc5156de6_z6317075087009_38d66e7fd2fdf7bb103b73b8c5dc7f0b.jpg",
   "sideImages": [
     "tra_sua_tran_chau_1.jpg",
     "tra_sua_tran_chau_2.jpg"
@@ -26,6 +26,188 @@
     "$date": "2025-02-11T08:22:34.160Z"
   },
   "updatedAt": {
-    "$date": "2025-02-13T06:57:37.447Z"
+    "$date": "2025-02-14T08:06:27.247Z"
   }
+},
+{
+  "_id": {
+    "$oid": "67aec36faa5926cbd5bac2d4"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà Sữa Truyền Thống",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.15,
+  "image": "product_76a17e57-167b-4477-993c-f1252b92db7a_z6317075123958_e4894691e388b18f5a6e318156862bf5.jpg",
+  "sideImages": [],
+  "description": "Trà sữa thơm ngon với trân châu đường đen dẻo dai, vị ngọt thanh mát.",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:15:43.683Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-14T08:06:13.714Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67aec382aa5926cbd5bac2d9"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà Sữa Thái Xanh",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.1,
+  "image": "product_e339730a-8bb6-4054-b5bc-50a082600b4f_z6317075169825_6ed905cdbbae4a8b40db97e7a2d635ec.jpg",
+  "sideImages": [],
+  "description": "Trà sữa thơm ngon với trân châu đường đen dẻo dai, vị ngọt thanh mát.",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:16:02.709Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-14T08:06:04.765Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67aec386aa5926cbd5bac2de"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà Sữa Thái Đỏ",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.1,
+  "image": "product_8a27958d-f463-46a7-99d7-55489b215165_z6317075169820_d297ecebf01dea1c21a4c8b2d16df72d.jpg",
+  "sideImages": [],
+  "description": "Trà sữa thơm ngon với trân châu đường đen dẻo dai, vị ngọt thanh mát.",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:16:06.376Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-17T08:03:46.658Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67aec397aa5926cbd5bac2e3"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà Đào",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.15,
+  "image": "product_fa9f45ca-dbb9-4bb9-8ff2-078adbf938a8_z6317075021055_3745e0dd6cdef723ae4422dcf8bb5fdf.jpg",
+  "sideImages": [],
+  "description": "Trà đào",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:16:23.317Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-14T08:05:43.997Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67aec39faa5926cbd5bac2e8"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà Vải",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.15,
+  "image": "product_47ddb5ec-4e00-4ae1-a8e3-271c5f5c5eea_z6317075043847_27da58f9c91e59238c29c31fa21fee45.jpg",
+  "sideImages": [
+    "product_0fd46b88-08d1-4483-b536-2ea5b981b6e7_z6317075067019_c1ce5c3a0482b0b26ef5b042044503ed.jpg",
+    "product_a9aa1ab7-d4b7-40b5-9064-cb49993a86be_z6317075043847_27da58f9c91e59238c29c31fa21fee45.jpg"
+  ],
+  "description": "Trà vải",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:16:31.002Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-17T07:59:14.375Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67aec3b6aa5926cbd5bac2ed"
+  },
+  "categoryId": {
+    "$oid": "67a9b76f522b30420975c424"
+  },
+  "storeId": {
+    "$oid": "67a6116bb5e29fef2a65bace"
+  },
+  "name": "Trà dưa hấu",
+  "cost": 25000,
+  "price": 35000,
+  "discount": 0.1,
+  "image": "product_40fea38c-9e47-47ca-98a9-b6d613e058d1_z6317075067019_c1ce5c3a0482b0b26ef5b042044503ed.jpg",
+  "sideImages": [
+    "product_72dc35b1-517b-4f9b-bea5-8dbcecaa796a_z6317075021055_3745e0dd6cdef723ae4422dcf8bb5fdf.jpg",
+    "product_f0824055-ddc5-41a6-bce6-ce2fa089678c_z6317075067019_c1ce5c3a0482b0b26ef5b042044503ed.jpg",
+    "product_febc44b2-2300-4cc0-bdb7-8fbd8d68b7ec_z6317075021055_3745e0dd6cdef723ae4422dcf8bb5fdf.jpg",
+    "product_58d85e3c-ce8e-40f3-b5bd-c8f5ea832e76_z6317075169820_d297ecebf01dea1c21a4c8b2d16df72d.jpg"
+  ],
+  "description": "Trà dưa hấu",
+  "size": "500ml",
+  "rating": 0,
+  "numberOfRatings": 0,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-02-14T04:16:54.616Z"
+  },
+  "updatedAt": {
+    "$date": "2025-02-17T04:16:10.033Z"
+  },
+  "__v": 0
 }]

@@ -1,0 +1,26 @@
+.custom-modal .ant-modal-content {
+  background: transparent !important; /* Modal trong suốt */
+  box-shadow: none !important; /* Xóa viền đổ bóng */
+  border: none !important;
+}
+.custom-modal .ant-modal-header,
+.custom-modal .ant-modal-footer {
+  display: none !important; /* Ẩn tất cả nội dung bên trong */
+}
+
+.custom-modal .ant-modal-header {
+  background: transparent;
+  border-bottom: none;
+}
+
+.custom-modal .ant-modal-body {
+  color: white;
+  text-align: center;
+}
+
+.custom-modal {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}

@@ -10,6 +10,7 @@ export interface Review {
   user?: {
     name: string;
     username: string;
+    avatar: string;
   };
   product?: {
     name: string;
@@ -23,4 +24,5 @@ export interface GetReviewsRequest {
   sortBy?: { field: string; order: "asc" | "desc" };
   isDeleteds?: boolean[];
   ratings?: number[];
+  productId?: string;
 }

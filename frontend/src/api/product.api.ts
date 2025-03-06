@@ -1,6 +1,11 @@
 import { message } from "antd";
 import { instance } from ".";
-import { GetProductsRequest, Product, Receipt } from "../type/product.type";
+import {
+  GetProductsRequest,
+  Inventory,
+  Product,
+  Receipt,
+} from "../type/product.type";
 import { handleApiError } from "../utils/handle_error_func";
 const URL = "/product";
 
@@ -124,5 +129,27 @@ export const getProductById = async (id: string): Promise<Product> => {
   } catch (error: unknown) {
     handleApiError(error);
     return {} as Product;
+  }
+};
+
+// lay rate va sold
+export const getRateAndSold = async (
+  id: string
+): Promise<{ totalReviews: number; rating: number; inventory: Inventory }> => {
+  try {
+    const response = await instance.get<{
+      totalReviews: number;
+      rating: number;
+      inventory: Inventory;
+    }>(`${URL}/${id}/rate-and-sold`);
+    if (response.status) {
+      return response.data;
+    } else {
+      message.error("Không thể lấy rate và số lượt đánh giá");
+      return { totalReviews: 0, rating: 0, inventory: {} };
+    }
+  } catch (error: unknown) {
+    handleApiError(error);
+    return { totalReviews: 0, rating: 0, inventory: {} };
   }
 };

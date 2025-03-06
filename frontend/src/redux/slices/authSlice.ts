@@ -24,6 +24,17 @@ interface AuthState {
     | {
         _id: string;
         role: string;
+        avatar?: string;
+        name?: string;
+        phone?: string;
+        email?: string;
+        username?: string;
+        address?: {
+          province: string;
+          district: string;
+          ward: string;
+          details?: string;
+        };
       };
   isAuthenticated: boolean;
   loading: boolean;

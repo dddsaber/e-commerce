@@ -8,8 +8,8 @@ export interface Address {
 }
 
 export interface IdentityCard {
-  id?: string;
-  fullName?: string;
+  identityNumber?: string;
+  fullname?: string;
   photoFront?: string;
   photoBack?: string;
 }
@@ -38,7 +38,7 @@ export interface User {
   description?: string;
   address?: Address;
   identityCard?: IdentityCard;
-  isActive: boolean;
+  isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

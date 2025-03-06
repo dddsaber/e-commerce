@@ -27,3 +27,12 @@ export const TYPE_IMAGE = {
   store: "store",
   review: "review",
 };
+
+export const STATUS_MAP = {
+  pending: { label: "Chờ duyệt", color: "blue", value: "pending" },
+  confirmed: { label: "Xác nhận", color: "yellow", value: "confirmed" },
+  shipped: { label: "Đang giao", color: "orange", value: "shipped" },
+  delivered: { label: "Đã giao hàng", color: "green", value: "delivered" },
+  completed: { label: "Đã nhận", color: "darkgreen", value: "completed" },
+  cancelled: { label: "Đã hủy", color: "red", value: "cancelled" },
+};

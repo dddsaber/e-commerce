@@ -18,7 +18,6 @@ import {
 import {
   EditOutlined,
   LockOutlined,
-  PlusCircleFilled,
   ReloadOutlined,
   SearchOutlined,
   UnlockOutlined,
@@ -144,11 +143,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
   const handleEdit = (record: Product) => {
     setSelectedProduct(record);
-    showDrawer();
-  };
-
-  const handleAdd = () => {
-    setSelectedProduct(undefined);
     showDrawer();
   };
 
@@ -464,14 +458,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
         <Typography.Title level={5}>
           Total products: {pagination.total}
         </Typography.Title>
-
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm sản phẩm
-        </Button>
       </Flex>
       <Table
         bordered

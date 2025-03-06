@@ -231,8 +231,21 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       dataIndex: "description",
       key: "description",
       sorter: true,
-      width: 150,
+      width: 200,
       align: "left" as const,
+      render: (text) => (
+        <div
+          style={{
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            WebkitLineClamp: 3, // Giới hạn số dòng là 4
+            whiteSpace: "normal",
+          }}
+        >
+          {text}
+        </div>
+      ),
     },
     {
       title: "Danh mục cha",

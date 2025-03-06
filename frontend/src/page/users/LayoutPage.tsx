@@ -1,72 +1,26 @@
-import React, { useMemo } from "react";
-import { Layout, Menu, theme, Typography } from "antd";
-import { DashOutlined } from "@ant-design/icons";
-import { Link, Outlet } from "react-router-dom";
-
-const { Header, Content, Footer } = Layout;
-
-type MenuItem = {
-  key: string;
-  icon: JSX.Element;
-  label: string;
-  link: string;
-};
+import React from "react";
+import { Layout, theme } from "antd";
+import { Outlet } from "react-router-dom";
+import ModifyHeader from "../../components/layout/ModifyHeader";
+const { Content, Footer } = Layout;
 
 const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const menuBars: MenuItem[] = useMemo(() => {
-    const menuItems: MenuItem[] = [];
-
-    menuItems.push({
-      key: "dashboards",
-      icon: <DashOutlined />,
-      label: "Bảng điều khirển",
-      link: "/admin",
-    });
-
-    return menuItems;
-  }, []);
-
   return (
     <Layout>
-      <Header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "space-between",
-          justifyItems: "center",
-        }}
-      >
-        <div className="demo-logo" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={["2"]}
-          items={menuBars}
-          style={{ flex: 1, minWidth: 0 }}
-        />
-        <Typography.Text style={{ marginRight: 20 }}>
-          <Link to="/admin">Admin</Link>
-        </Typography.Text>
-        <Typography.Text>
-          <Link to="/login">Login</Link>
-        </Typography.Text>
-      </Header>
+      <ModifyHeader />
       <Content
         style={{
-          margin: 0,
+          margin: "0 150px",
           padding: "24px 16px 0 16px",
           minHeight: 280,
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
           overflow: "auto",
-          backgroundColor: "#eaeaea",
+          backgroundColor: "#f5f5f5",
         }}
       >
         <Outlet />

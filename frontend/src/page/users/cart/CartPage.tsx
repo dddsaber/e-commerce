@@ -4,145 +4,133 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { getCart, removeCartItem, updateCartItem } from "../../../api/cart.api";
 import {
+  Avatar,
   Button,
   Card,
   Checkbox,
-  CheckboxChangeEvent,
   Col,
   Image,
   InputNumber,
-  Layout,
   Row,
   Table,
-  TableColumnsType,
+  Typography,
 } from "antd";
 import { getSourceImage } from "../../../utils/handle_image_func";
-
+import { useNavigate } from "react-router-dom";
 const CartPage: React.FC = () => {
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
-
-  const [cart, setCart] = useState<Cart>();
-  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [checkedItems, setCheckedItems] = useState<Record<string, string[]>>(
+    {}
+  );
 
   useEffect(() => {
     const fetchCart = async () => {
-      const cart = await getCart(user._id);
-      setCart(cart);
+      if (user._id) {
+        const cartData = await getCart(user._id);
+        setCart(cartData);
+      }
     };
     fetchCart();
-  });
+  }, [user]);
 
-  // Hàm xử lý thay đổi số lượng
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    if (quantity >= 0) {
-      updateCartItem(user._id, productId, quantity);
-    }
+  const handleNavigateOrder = () => {
+    const selectedProducts = cart?.items
+      .map((store) => ({
+        storeId: store.storeId,
+        storeName: store.storeName,
+        products: store.products.filter((product) =>
+          checkedItems[store.storeId]?.includes(product.productId)
+        ),
+      }))
+      .filter((store) => store.products.length > 0); // Lọc bỏ store không có sản phẩm nào được chọn
+    console.log(selectedProducts);
+    navigate("/create-orders", { state: selectedProducts });
   };
 
-  // Hàm tính tổng tiền của sản phẩm
-  const calculateTotal = (item: CartItem) => {
-    return item.price * item.quantity * (1 - (item.discount ?? 0));
+  const handleCheck = (storeId: string, productId: string) => {
+    setCheckedItems((prev) => {
+      const newChecked = { ...prev };
+      if (!newChecked[storeId]) newChecked[storeId] = [];
+
+      newChecked[storeId] = newChecked[storeId].includes(productId)
+        ? newChecked[storeId].filter((id) => id !== productId)
+        : [...newChecked[storeId], productId];
+
+      return newChecked;
+    });
   };
 
-  // Hàm xử lý chọn/bỏ chọn sản phẩm
-  const handleCheck = (productId: string) => {
-    setCheckedItems((prev) =>
-      prev.includes(productId)
-        ? prev.filter((item) => item !== productId)
-        : [...prev, productId]
-    );
+  const isAllChecked =
+    cart?.items.every((store) =>
+      store.products.every((p) =>
+        checkedItems[store.storeId]?.includes(p.productId)
+      )
+    ) ?? false;
+
+  // Hàm chọn tất cả sản phẩm
+  const handleCheckAll = (checked: boolean) => {
+    const newCheckedItems: Record<string, string[]> = {};
+    cart?.items.forEach((store) => {
+      newCheckedItems[store.storeId] = checked
+        ? store.products.map((p) => p.productId)
+        : [];
+    });
+    setCheckedItems(newCheckedItems);
   };
 
-  // Hàm xử lý chọn tất cả
-  const handleSelectAll = (e: CheckboxChangeEvent) => {
-    if (e.target.checked) {
-      setCheckedItems(cart!.items.map((item) => item._id));
-    } else {
-      setCheckedItems([]);
-    }
+  const handleSelectAll = (storeId: string, checked: boolean) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [storeId]: checked
+        ? cart?.items
+            .find((s) => s.storeId === storeId)
+            ?.products.map((p) => p.productId) || []
+        : [],
+    }));
   };
 
-  // Hàm xử lý xóa sản phẩm
-  const handleRemove = (productId: string) => {
-    removeCartItem(user._id, productId);
-  };
-
-  // Hàm tính tổng tiền cho các sản phẩm được chọn
-  const calculateSelectedTotal = () => {
-    return checkedItems.reduce((acc, id) => {
-      const item = cart?.items.find((item) => item._id === id);
-      return acc + (item ? calculateTotal(item) : 0);
-    }, 0);
-  };
-
-  // Cấu hình các cột cho bảng giỏ hàng
-  const columns: TableColumnsType<CartItem> = [
+  const columns = (storeId: string) => [
     {
       title: (
         <Checkbox
-          onChange={handleSelectAll}
-          checked={checkedItems.length === cart?.items.length}
+          onChange={(e) => handleSelectAll(storeId, e.target.checked)}
+          checked={
+            cart?.items
+              .find((s) => s.storeId === storeId)
+              ?.products.every((p) =>
+                checkedItems[storeId]?.includes(p.productId)
+              ) ?? false
+          }
         />
       ),
       dataIndex: "checked",
-      render: (checked: unknown, record: CartItem) => (
+      render: (_: unknown, record: CartItem) => (
         <Checkbox
-          checked={checkedItems.includes(record.productId)}
-          onChange={() => handleCheck(record.productId)}
+          checked={checkedItems[storeId]?.includes(record.productId)}
+          onChange={() => handleCheck(storeId, record.productId)}
         />
       ),
     },
     {
       title: "Sản phẩm",
-      key: "product",
       render: (_: unknown, record: CartItem) => (
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Image
             width={80}
             src={getSourceImage(record.image || "")}
             alt={record.productName || ""}
           />
-        </div>
-      ),
-    },
-    {
-      title: "",
-      render: (_: unknown, record: CartItem) => (
-        <div>
           <p>{record.productName}</p>
-          <span>{record.price}</span>
         </div>
       ),
     },
+
     {
       title: "Giá",
       dataIndex: "price",
-      width: 180,
-      render: (price: number, record: CartItem) => {
-        // Kiểm tra xem có discount không
-        const discountPrice = record.discount
-          ? price - price * record.discount
-          : null;
-
-        return (
-          <span>
-            {discountPrice ? (
-              <>
-                <span
-                  style={{ textDecoration: "line-through", marginRight: "8px" }}
-                >
-                  {price.toLocaleString()} đ
-                </span>
-                <span style={{ color: "red" }}>
-                  {discountPrice.toLocaleString()} đ
-                </span>
-              </>
-            ) : (
-              <span>{price.toLocaleString()} đ</span>
-            )}
-          </span>
-        );
-      },
+      render: (price: number) => <span>{price.toLocaleString()} đ</span>,
     },
     {
       title: "Số lượng",
@@ -152,80 +140,135 @@ const CartPage: React.FC = () => {
           min={1}
           value={quantity}
           onChange={(value) =>
-            handleQuantityChange(record.productId, value ?? 0)
+            updateCartItem(user._id, record.productId, value ?? 0)
           }
         />
       ),
     },
+
     {
       title: "Thành tiền",
+
       render: (_: unknown, record: CartItem) => (
-        <span>{calculateTotal(record).toLocaleString()} đ</span>
+        <span style={{ color: "red" }}>
+          {(
+            record.price *
+            record.quantity *
+            (1 - (record.discount ?? 0))
+          ).toLocaleString()}{" "}
+          đ
+        </span>
       ),
     },
     {
       title: "",
       render: (_: unknown, record: CartItem) => (
-        <Button danger onClick={() => handleRemove(record.productId)}>
+        <Button onClick={() => removeCartItem(user._id, record.productId)}>
           Xóa
         </Button>
       ),
     },
   ];
-
+  // Tính tổng tiền của sản phẩm đã chọn
+  const totalPrice =
+    cart?.items.reduce((sum, store) => {
+      return (
+        sum +
+        store.products.reduce((storeSum, product) => {
+          return checkedItems[store.storeId]?.includes(product.productId)
+            ? storeSum + product.price * product.quantity
+            : storeSum;
+        }, 0)
+      );
+    }, 0) ?? 0;
   return (
-    <Layout style={{ padding: "20px", minHeight: "100vh" }}>
+    <>
       <h2>Giỏ hàng của bạn</h2>
-      <Row gutter={[12, 12]}>
-        <Col span={16}>
-          <Table
-            style={{ marginTop: "20px" }}
-            dataSource={cart?.items}
-            columns={columns}
-            rowKey={(record: CartItem) => {
-              return record._id;
-            }}
-            pagination={false}
-          />
-        </Col>
-        <Col span={8}>
-          <Card
-            title={"Thanh toán"}
-            style={{ marginTop: "20px", textAlign: "left" }}
-            headStyle={{
-              color: "#fff",
-              fontWeight: "bold",
-              background: "#29104a",
-            }}
-          >
-            <h3>Tổng tiền: {calculateSelectedTotal().toLocaleString()} đ</h3>
-
-            {checkedItems.length > 0 ? (
-              <ul>
-                {cart?.items
-                  .filter((item) => checkedItems.includes(item._id))
-                  .map((item) => (
-                    <li key={item._id}>
-                      {item.productName} {`(${item.quantity})`}-
-                      {calculateTotal(item).toLocaleString()} đ
-                    </li>
-                  ))}
-              </ul>
-            ) : (
-              <p>Chưa chọn sản phẩm nào</p>
-            )}
-
+      {/* Thanh chọn tất cả và thông tin tổng */}
+      <Card style={{ marginBottom: 20, padding: 10, background: "#fff" }}>
+        <Row align="middle" justify="space-between">
+          <Col span={6}>
+            <Checkbox
+              onChange={(e) => handleCheckAll(e.target.checked)}
+              checked={isAllChecked}
+            >
+              Chọn tất cả
+            </Checkbox>
+          </Col>
+          <Col span={6}>
+            <Typography.Text strong>
+              Số sản phẩm đã chọn: {Object.values(checkedItems).flat().length}
+            </Typography.Text>
+          </Col>
+          <Col span={6}>
+            <Typography.Text strong>
+              Tổng tiền: {totalPrice.toLocaleString()} đ
+            </Typography.Text>
+          </Col>
+          <Col span={6}>
             <Button
               type="primary"
-              size="large"
-              disabled={checkedItems.length === 0}
+              disabled={totalPrice === 0}
+              onClick={handleNavigateOrder}
             >
-              Tiến hành thanh toán
+              Thanh toán
             </Button>
+          </Col>
+        </Row>
+      </Card>
+      {cart?.items.map((store) => (
+        <>
+          <Card
+            title={
+              <Row align="middle">
+                <Col
+                  span={1}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                ></Col>
+                <Col span={1}>
+                  <Avatar
+                    style={{
+                      width: 35,
+                      height: 35,
+                      cursor: "pointer",
+                    }}
+                    src={getSourceImage(store.logo)}
+                    alt={store.storeName || ""}
+                  />
+                </Col>
+                <Col
+                  span={22}
+                  style={{
+                    display: "flex",
+                    justifyContent: "start",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Typography.Title level={5} style={{ margin: 0 }}>
+                    {store.storeName}
+                  </Typography.Title>
+                </Col>
+              </Row>
+            }
+            key={store.storeId}
+            style={{ marginBottom: 20 }}
+          >
+            <Table
+              dataSource={store.products}
+              columns={columns(store.storeId)}
+              rowKey="productId"
+              pagination={false}
+            />
           </Card>
-        </Col>
-      </Row>
-    </Layout>
+        </>
+      ))}
+    </>
   );
 };
 

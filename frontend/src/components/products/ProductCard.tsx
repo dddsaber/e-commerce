@@ -1,19 +1,24 @@
 import React from "react";
 import { Product } from "../../type/product.type";
-import { Button, Card, notification } from "antd";
+import { Button, Card, message } from "antd";
 import { Link } from "react-router-dom";
 import { getSourceImage } from "../../utils/handle_image_func";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { addCartItem } from "../../api/cart.api";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const addCard = async (product: Product, quantity: number) => {
-    notification.success({
-      message: "Thêm sản phẩm vào gi�� hàng",
-      description: `${quantity} ${product} added to cart!`,
-    });
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const addCart = async (product: Product, quantity: number) => {
+    const response = await addCartItem(user._id, product._id, quantity);
+    if (response) {
+      message.success(`${quantity} ${product.name} added to cart!`);
+    }
   };
   return (
     <Card
@@ -61,9 +66,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <Button
         type="primary"
         style={{ marginTop: "10px" }}
-        onClick={(e) => {
-          e.preventDefault();
-          addCard(product, 1);
+        onClick={() => {
+          addCart(product, 1);
         }}
       >
         Thêm vào giỏ

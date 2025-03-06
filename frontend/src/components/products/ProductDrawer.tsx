@@ -14,6 +14,7 @@ import {
   Spin,
   Descriptions,
   Modal,
+  Typography,
 } from "antd";
 import { Inventory, Product } from "../../type/product.type";
 import {
@@ -26,8 +27,10 @@ import { getSelectCategories } from "../../api/category.api";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../shared/UploadImage";
 import { TYPE_IMAGE } from "../../utils/constant";
+import UploadImages from "../shared/UploadImages";
 
 interface ProductDrawerProps {
+  storeId?: string;
   visible: boolean;
   reload: boolean;
   setReload: (value: boolean) => void;
@@ -39,6 +42,7 @@ interface ProductDrawerProps {
 }
 
 const ProductDrawer: React.FC<ProductDrawerProps> = ({
+  storeId,
   visible,
   reload,
   setReload,
@@ -49,6 +53,7 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
   selectedProduct = undefined,
 }) => {
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -74,11 +79,24 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
     const url = selectedProduct?.image;
     if (url) setImageUrl(url);
     else setImageUrl("");
+    const urls = selectedProduct?.sideImages;
+    if (urls) setImageUrls(urls);
+    else setImageUrls([]);
   }, [form, selectedProduct]);
+
+  useEffect(() => {
+    if (selectedProduct) {
+      // Reset lại thông tin kho khi chọn sản phẩm mới
+      receiptform.setFieldsValue({
+        inventoryId: selectedProduct.inventory?._id || "",
+        quantity: 1, // hoặc giá trị mặc định cho quantity
+        provider: "", // Reset provider nếu cần
+      });
+    }
+  }, [selectedProduct, receiptform]);
 
   const handleReceipt = async () => {
     receiptform.validateFields().then(async (values) => {
-      console.log(values);
       const result = await createReceipt(values);
       if (result) {
         notification.success({ message: `+ ${result.quantity} vào kho` });
@@ -109,7 +127,10 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
           values.image = imageUrl;
           setImageUrl("");
         }
-        console.log(values);
+        if (imageUrls) {
+          values.sideImages = imageUrls;
+          setImageUrls([]);
+        }
         if (selectedProduct) {
           const result = await updateProduct({
             ...values,
@@ -121,6 +142,7 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
             });
           }
         } else {
+          values.storeId = storeId;
           const result = await createProduct(values);
           if (result) {
             notification.success({ message: "Thêm sản phẩm thành công!" });
@@ -178,11 +200,25 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
           <Col span={8}>
             {" "}
             {/* Image */}
+            <Typography.Title level={5}>Ảnh chính</Typography.Title>
             <UploadImage
               fileList={fileList}
               setFileList={setFileList}
               imageUrl={imageUrl}
               setImageUrl={setImageUrl}
+              loading={loading}
+              key={"upload_product_file"}
+              typeFile={TYPE_IMAGE.product}
+            />
+          </Col>
+          <Col span={24}>
+            <Typography.Title level={5}>Các ảnh phụ</Typography.Title>
+
+            <UploadImages
+              fileList={fileList}
+              setFileList={setFileList}
+              imageUrls={imageUrls}
+              setImageUrls={setImageUrls}
               loading={loading}
               key={"upload_product_file"}
               typeFile={TYPE_IMAGE.product}

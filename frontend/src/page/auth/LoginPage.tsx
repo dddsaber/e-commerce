@@ -79,7 +79,8 @@ const LoginPage: React.FC = () => {
       const { credential } = response;
       const result = await dispatch(loginGoogleAuth({ token: credential }));
       console.log(result);
-      navigate("/admin");
+      const { user } = result.payload;
+      handleNavigate(user);
     } catch (error) {
       console.error("Login Google failed:", error);
       navigate("/login");
