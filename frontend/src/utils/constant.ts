@@ -36,3 +36,8 @@ export const STATUS_MAP = {
   completed: { label: "Đã nhận", color: "darkgreen", value: "completed" },
   cancelled: { label: "Đã hủy", color: "red", value: "cancelled" },
 };
+
+export const COUPON_SCOPE = {
+  all: "all",
+  specific: "specific",
+};

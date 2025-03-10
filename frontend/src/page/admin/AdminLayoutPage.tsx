@@ -49,8 +49,8 @@ type RootState = {
 };
 
 const siderStyle: React.CSSProperties = {
-  overflow: "auto",
-  height: "100vh",
+  overflowY: "auto",
+  maxHeight: "94vh",
   position: "sticky",
   insetInlineStart: 0,
   top: 0,
@@ -166,6 +166,11 @@ const AdminLayoutPage: React.FC = () => {
                 key: "all-orders",
                 label: "Tất cả đơn hàng",
                 link: "/store-manage/all-orders",
+              },
+              {
+                key: "pending-orders",
+                label: "Đơn hàng chờ xử lý",
+                link: "/store-manage/pending-orders",
               },
               {
                 key: "dispatched-orders",
@@ -318,7 +323,7 @@ const AdminLayoutPage: React.FC = () => {
         collapsible
         collapsed={collapsed}
         theme="dark"
-        width={250}
+        width={240}
         style={siderStyle}
         onCollapse={() => setCollapsed(!collapsed)}
       >
@@ -406,8 +411,8 @@ const AdminLayoutPage: React.FC = () => {
       <Content
         style={{
           margin: 0,
-          padding: "24px 16px 0 16px",
-          minHeight: 280,
+          padding: "10px 16px 0 16px",
+          minHeight: "100vh",
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
           overflow: "auto",

@@ -34,7 +34,6 @@ interface ProductTableProps {
   storeId?: string;
   reload: boolean;
   setReload: (value: boolean) => void;
-  loading: boolean;
   setLoading: (value: boolean) => void;
   setSelectedProduct: (product?: Product) => void;
   showDrawer: () => void;
@@ -44,7 +43,6 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
   storeId,
   reload,
   setReload,
-  loading,
   setLoading,
   setSelectedProduct,
   showDrawer,
@@ -201,7 +199,7 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
       if (filters.role)
         newParams.set("roles", (filters.role as string[]).join(","));
 
-      if (storeId) newParams.set("storeId", storeId);
+      if (filter.storeId) newParams.set("storeId", filter.storeId);
 
       if (filters.isActive)
         newParams.set(
@@ -436,9 +434,6 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
             <SearchOutlined />
           </Button>
         </Flex>
-        <Typography.Title level={5}>
-          Total products: {pagination.total}
-        </Typography.Title>
 
         <Button
           type="primary"
@@ -448,11 +443,13 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
           Thêm sản phẩm
         </Button>
       </Flex>
+      <Typography.Title level={5} style={{ textAlign: "right" }}>
+        Total : {pagination.total}
+      </Typography.Title>
       <Table
         bordered
         columns={columns}
         dataSource={data}
-        loading={loading}
         pagination={pagination}
         rowKey="name"
         onChange={handleTableChange}

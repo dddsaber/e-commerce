@@ -38,7 +38,7 @@ export interface User {
   description?: string;
   address?: Address;
   identityCard?: IdentityCard;
-  isActive?: boolean;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

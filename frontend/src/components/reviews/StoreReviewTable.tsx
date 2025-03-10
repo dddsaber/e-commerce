@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { GetCouponsRequest, Coupon } from "../../type/coupon.type";
+import { GetReviewsRequest, Review } from "../../type/review.type";
 import { useSearchParams } from "react-router-dom";
 import {
   Button,
@@ -15,51 +15,40 @@ import {
   Typography,
 } from "antd";
 import {
-  CheckCircleFilled,
-  DeleteOutlined,
-  EditOutlined,
-  PlusCircleFilled,
-  RedoOutlined,
+  EyeOutlined,
+  LockOutlined,
   ReloadOutlined,
   SearchOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
-import {
-  applyCouponToStore,
-  getCoupons,
-  updateCouponStatus,
-} from "../../api/coupon.api";
+import { getReviews, updateReviewStatus } from "../../api/review.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { formatDate } from "../../utils/handle_format_func";
-import dayjs from "dayjs";
-import { COUPON_SCOPE } from "../../utils/constant";
-import { checkCouponApplied } from "../../utils/handle_status_func";
 
-interface CouponTableProps {
+interface ReviewTableProps {
   reload: boolean;
   setReload: (value: boolean) => void;
   setLoading: (value: boolean) => void;
-  setSelectedCoupon: (coupon?: Coupon) => void;
+  setSelectedReview: (review?: Review) => void;
   showDrawer: () => void;
-  scope?: "all" | "specific";
   storeId?: string;
 }
 
-const CouponTable: React.FC<CouponTableProps> = ({
+const StoreReviewTable: React.FC<ReviewTableProps> = ({
   reload,
   setReload,
   setLoading,
-  setSelectedCoupon,
+  setSelectedReview,
   showDrawer,
-  scope,
   storeId,
 }) => {
-  const [data, setData] = useState<Coupon[]>([]);
-  const [filter, setFilter] = useState<GetCouponsRequest>({
+  const [data, setData] = useState<Review[]>([]);
+  const [filter, setFilter] = useState<GetReviewsRequest>({
     isDeleteds: [true, false],
-    scope: scope,
-    storeId: scope === COUPON_SCOPE.specific ? storeId : undefined,
+    ratings: [1, 2, 3, 4, 5],
+    storeId: storeId,
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState<string>("");
@@ -73,11 +62,11 @@ const CouponTable: React.FC<CouponTableProps> = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { coupons, totalCoupons } = await getCoupons(filter);
-        setData(coupons);
+        const { reviews, totalReviews } = await getReviews(filter);
+        setData(reviews);
         setPagination((prevPagination) => ({
-          ...prevPagination,
-          total: totalCoupons,
+          ...prevPagination, // Sao chép các giá trị cũ của pagination
+          total: totalReviews, // Cập nhật total mới
         }));
       } catch (error) {
         handleError(error);
@@ -89,11 +78,13 @@ const CouponTable: React.FC<CouponTableProps> = ({
   }, [reload, filter]);
 
   useEffect(() => {
-    const newFilter: GetCouponsRequest = {
+    const newFilter: GetReviewsRequest = {
       skip: parseInt(searchParams.get("skip") || "0"),
       limit: parseInt(searchParams.get("limit") || "10"),
       searchKey: searchParams.get("searchKey") || undefined,
-      types: searchParams.get("types")?.split(","),
+      ratings: searchParams.get("ratings")?.split(",").map(Number) ?? [
+        1, 2, 3, 4, 5,
+      ],
       isDeleteds: searchParams
         .get("isDeleteds")
         ?.split(",")
@@ -106,19 +97,17 @@ const CouponTable: React.FC<CouponTableProps> = ({
               "asc",
           }
         : undefined,
-      scope: scope,
-      storeId: scope === COUPON_SCOPE.specific ? storeId : undefined,
+      storeId: storeId,
     };
     setFilter(newFilter);
   }, [searchParams]);
 
-  const handleStatus = async (record: Coupon) => {
+  const handleStatus = async (record: Review) => {
     try {
-      const response = await updateCouponStatus(record._id, !record.isDeleted);
+      const response = await updateReviewStatus(record._id, !record.isDeleted);
       if (response) {
-        if (response.isDeleted) message.success("Coupon has been blocked!");
-        else message.success("Coupon has been unblocked!");
-        setReload(!reload);
+        if (!response.isDeleted) message.success("Review has been unblocked!");
+        else message.success("Review has been blocked!");
       }
     } catch (error) {
       handleError(error);
@@ -129,8 +118,7 @@ const CouponTable: React.FC<CouponTableProps> = ({
 
   const handleResearch = () => {
     setFilter({
-      scope: scope,
-      storeId: scope === COUPON_SCOPE.specific ? storeId : undefined,
+      storeId: storeId,
     });
     setSearchParams(new URLSearchParams());
     setReload(!reload);
@@ -141,26 +129,8 @@ const CouponTable: React.FC<CouponTableProps> = ({
     });
   };
 
-  const handleEdit = (record: Coupon) => {
-    setSelectedCoupon({
-      ...record,
-      appliedDate: dayjs(record.appliedDate),
-      expirationDate: dayjs(record.expirationDate),
-    });
-    showDrawer();
-  };
-
-  const handleAddStoreToCoupon = async (record: Coupon) => {
-    if (!storeId) return;
-    const coupon = await applyCouponToStore(record._id, storeId);
-    if (coupon) {
-      message.success("Coupon has been applied to store!");
-      setReload(!reload);
-    }
-  };
-
-  const handleAdd = () => {
-    setSelectedCoupon(undefined);
+  const handleEdit = (record: Review) => {
+    setSelectedReview(record);
     showDrawer();
   };
 
@@ -172,10 +142,8 @@ const CouponTable: React.FC<CouponTableProps> = ({
       } else {
         newParams.delete("searchKey");
       }
-      if (scope) {
-        newParams.set("scope", scope);
-      }
-      if (storeId && scope === COUPON_SCOPE.specific) {
+
+      if (storeId) {
         newParams.set("storeId", storeId);
       }
       setSearchParams(newParams);
@@ -195,7 +163,7 @@ const CouponTable: React.FC<CouponTableProps> = ({
     (
       pagination: TablePaginationConfig,
       filters: Record<string, FilterValue | null>,
-      sorter: SorterResult<Coupon> | SorterResult<Coupon>[]
+      sorter: SorterResult<Review> | SorterResult<Review>[]
     ) => {
       setPagination(pagination);
       setFilter((prevFilter) => ({
@@ -203,7 +171,9 @@ const CouponTable: React.FC<CouponTableProps> = ({
         isDeleteds: filters.isDeleted
           ? (filters.isDeleted as boolean[]).map((val) => val === true)
           : prevFilter.isDeleteds,
-        types: filters.type ? (filters.type as string[]) : prevFilter.types,
+        ratings: filters.rating
+          ? (filters.rating as (number | string)[]).map(Number) // Chuyển tất cả về số
+          : prevFilter.ratings,
         skip: ((pagination.current || 1) - 1) * (pagination.pageSize || 10),
         limit: pagination.pageSize || 10,
         sortBy: Array.isArray(sorter)
@@ -217,8 +187,16 @@ const CouponTable: React.FC<CouponTableProps> = ({
       }));
 
       const newParams = new URLSearchParams();
-      if (filters.type)
-        newParams.set("types", (filters.type as string[]).join(","));
+      if (filters.reportCategory)
+        newParams.set(
+          "reportCategories",
+          (filters.reportCategory as string[]).join(",")
+        );
+
+      if (filters.rating)
+        newParams.set("ratings", (filters.rating as number[]).join(","));
+
+      if (filter.storeId) newParams.set("storeId", filter.storeId);
 
       if (filters.isDeleted)
         newParams.set(
@@ -228,17 +206,17 @@ const CouponTable: React.FC<CouponTableProps> = ({
             .join(",")
         );
 
-      if (filter.scope) newParams.set("scope", filter.scope);
-
-      if (filter.storeId && scope === COUPON_SCOPE.specific)
-        newParams.set("storeId", filter.storeId);
+      if (filters.isHandle)
+        newParams.set(
+          "isHandles",
+          (filters.isHandle as boolean[]).map((val) => val.toString()).join(",")
+        );
 
       if (pagination.current)
         newParams.set(
           "skip",
           String((pagination.current - 1) * (pagination.pageSize || 10))
         );
-
       if (pagination.pageSize)
         newParams.set("limit", String(pagination.pageSize));
       if (!Array.isArray(sorter) && sorter.columnKey) {
@@ -253,68 +231,88 @@ const CouponTable: React.FC<CouponTableProps> = ({
     [setSearchParams]
   );
 
-  const columns: TableColumnsType<Coupon> = [
+  const columns: TableColumnsType<Review> = [
     {
       title: "STT",
       dataIndex: "index",
       key: "index",
       width: 70,
-      align: "center" as const, // Sử dụng 'as const' để ép kiểu thành 'center'
+      align: "center" as const,
       render: (_: unknown, __: unknown, index: number) => index + 1,
     },
     {
-      title: "Tên phiếu",
-      dataIndex: "name",
-      key: "name",
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
       sorter: true,
-      width: 150,
+      width: 300,
       align: "left" as const,
+      ellipsis: true,
+      render: (text) => (
+        <div
+          style={{
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            WebkitLineClamp: 4, // Giới hạn số dòng là 4
+            whiteSpace: "normal",
+          }}
+        >
+          {text}
+        </div>
+      ),
     },
     {
-      title: "Kiểu",
-      dataIndex: "type",
-      key: "type",
+      title: "Danh mục",
+      dataIndex: "rating",
+      key: "rating",
       sorter: true,
-      width: 170,
-      align: "left" as const,
+      width: 150,
+      align: "center" as const,
       filters: [
-        { text: "Phần trăm (%)", value: "percentage" },
-        { text: "Số cố định", value: "fixed" },
+        { text: "1 sao", value: 1 },
+        { text: "2 sao", value: 2 },
+        { text: "3 sao", value: 3 },
+        { text: "4 sao", value: 4 },
+        { text: "5 sao", value: 5 },
       ],
-      filteredValue: filter.types,
-      render: (type: string) => {
-        const typesMap: { [key: string]: string } = {
-          percentage: "Phần trăm (%)",
-          fixed: "Số cố định",
+      filteredValue: filter.ratings,
+      render: (Rating: number) => {
+        const RatingMap: { [key: number]: string } = {
+          1: "1 sao",
+          2: "2 sao",
+          3: "3 sao",
+          4: "4 sao",
+          5: "5 sao",
         };
-        return typesMap[type] || type;
+        return RatingMap[Rating] || Rating;
       },
     },
     {
-      title: "Giá trị",
-      dataIndex: "value",
-      key: "value",
+      title: "Tên người dùng",
+      dataIndex: ["user", "username"],
+      key: "user.username",
+      sorter: true,
+      width: 200,
+      ellipsis: true,
+      align: "left" as const,
+    },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "productId",
+      key: "productId",
       sorter: true,
       width: 150,
       align: "left" as const,
     },
     {
-      title: "Ngày áp dụng",
-      dataIndex: "appliedDate",
-      key: "appliedDate",
+      title: "Tên sản phẩm",
+      dataIndex: ["product", "name"],
+      key: "product.name",
       sorter: true,
-      width: 150,
+      width: 200,
+      ellipsis: true,
       align: "left" as const,
-      render: (appliedDate: Date) => formatDate(appliedDate),
-    },
-    {
-      title: "Ngày hết hạn",
-      dataIndex: "expirationDate",
-      key: "expirationDate",
-      sorter: true,
-      width: 150,
-      align: "left" as const,
-      render: (expirationDate: Date) => formatDate(expirationDate),
     },
     {
       title: "Trạng thái",
@@ -357,41 +355,22 @@ const CouponTable: React.FC<CouponTableProps> = ({
       fixed: "right" as const,
       align: "center" as const,
       width: 150,
-      render: (_: unknown, record: Coupon) => (
+      render: (_: unknown, record: Review) => (
         <Space size="middle">
-          <Tooltip title={!record.isDeleted ? "Xóa" : "Khôi phục"}>
+          <Tooltip title={record.isDeleted ? "Khôi phục" : "Xóa"}>
             <Button
               type="text"
               onClick={() => handleStatus(record)}
-              icon={!record.isDeleted ? <DeleteOutlined /> : <RedoOutlined />}
+              icon={!record.isDeleted ? <UnlockOutlined /> : <LockOutlined />}
             />
           </Tooltip>
-          {scope === COUPON_SCOPE.specific && storeId ? (
-            <>
-              <Tooltip title="Sửa thông tin">
-                <Button
-                  type="text"
-                  onClick={() => handleEdit(record)}
-                  icon={<EditOutlined />}
-                />
-              </Tooltip>
-            </>
-          ) : (
-            <>
-              <Tooltip title="Áp dụng mã lên cửa hàng">
-                <Button
-                  type="text"
-                  onClick={() => handleAddStoreToCoupon(record)}
-                  icon={<CheckCircleFilled />}
-                  style={{
-                    color: checkCouponApplied(record, storeId!)
-                      ? "green"
-                      : "black",
-                  }}
-                />
-              </Tooltip>
-            </>
-          )}
+          <Tooltip title="Xem thông tin">
+            <Button
+              type="text"
+              onClick={() => handleEdit(record)}
+              icon={<EyeOutlined />}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -406,7 +385,7 @@ const CouponTable: React.FC<CouponTableProps> = ({
       >
         <Flex gap={10}>
           <Input
-            placeholder="Tìm kiếm người dùng"
+            placeholder="Tìm kiếm bình luận"
             prefix={<SearchOutlined />}
             value={searchValue}
             onChange={handleSearchChange}
@@ -421,24 +400,16 @@ const CouponTable: React.FC<CouponTableProps> = ({
             <SearchOutlined />
           </Button>
         </Flex>
-
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm phiếu
-        </Button>
       </Flex>
       <Typography.Title level={5} style={{ textAlign: "right" }}>
-        Tổng số bản ghi : {pagination.total}
+        Total Revews: {pagination.total}
       </Typography.Title>
       <Table
         bordered
         columns={columns}
         dataSource={data}
         pagination={pagination}
-        rowKey="_id"
+        rowKey="username"
         onChange={handleTableChange}
         scroll={{ x: "max-content" }}
       />
@@ -446,4 +417,4 @@ const CouponTable: React.FC<CouponTableProps> = ({
   );
 };
 
-export default CouponTable;
+export default StoreReviewTable;

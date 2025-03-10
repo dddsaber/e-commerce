@@ -37,10 +37,10 @@ const CouponsManagePage: React.FC = () => {
       <CouponTable
         setSelectedCoupon={setSelectedCoupon}
         showDrawer={showDrawer}
-        loading={loading}
         setLoading={setLoading}
         reload={reload}
         setReload={setReload}
+        scope="all"
       />
       <CouponDrawer
         visible={isVisible}

@@ -14,6 +14,7 @@ import { Coupon } from "../../type/coupon.type";
 import { createCoupon, updateCoupon } from "../../api/coupon.api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { COUPON_SCOPE } from "../../utils/constant";
 
 interface CouponDrawerProps {
   visible: boolean;
@@ -23,6 +24,7 @@ interface CouponDrawerProps {
   setSelectedCoupon: (value: Coupon | undefined) => void;
   onClose: () => void;
   selectedCoupon?: Coupon;
+  storeId?: string;
 }
 
 const CouponDrawer: React.FC<CouponDrawerProps> = ({
@@ -33,6 +35,7 @@ const CouponDrawer: React.FC<CouponDrawerProps> = ({
   setSelectedCoupon,
   onClose,
   selectedCoupon = undefined,
+  storeId,
 }) => {
   const [form] = Form.useForm();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -54,9 +57,12 @@ const CouponDrawer: React.FC<CouponDrawerProps> = ({
             });
           }
         } else {
+          const storeApplyCoupon = storeId ? [{ storeId: storeId }] : [];
           const result = await createCoupon({
             ...values,
             userId: user._id,
+            storeApplyCoupon,
+            scope: storeId ? COUPON_SCOPE.specific : COUPON_SCOPE.all,
           });
           if (result) {
             notification.success({ message: "Thêm phiếu giảm giá thành công" });

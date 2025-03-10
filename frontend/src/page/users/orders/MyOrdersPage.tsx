@@ -3,6 +3,7 @@ import { Order } from "../../../type/order.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { getOrders } from "../../../api/order.api";
+import OrderCard from "../../../components/orders/OrderCard";
 
 const MyOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -20,7 +21,13 @@ const MyOrdersPage: React.FC = () => {
     };
     fetchData();
   }, [user]);
-  return <>my orders</>;
+  return (
+    <>
+      {orders?.map((order) => (
+        <OrderCard order={order} />
+      ))}
+    </>
+  );
 };
 
 export default MyOrdersPage;

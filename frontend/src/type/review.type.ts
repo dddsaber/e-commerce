@@ -25,4 +25,5 @@ export interface GetReviewsRequest {
   isDeleteds?: boolean[];
   ratings?: number[];
   productId?: string;
+  storeId?: string;
 }

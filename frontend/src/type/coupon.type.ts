@@ -10,6 +10,7 @@ export interface Coupon {
   _id: string;
   name: string;
   userId: string;
+  scope?: "all" | "specific";
   type: string;
   value: number;
   appliedDate: dayjs.Dayjs;
@@ -33,4 +34,5 @@ export interface GetCouponsRequest {
   expirationDateBegin?: Date;
   expirationDateEnd?: Date;
   storeId?: string;
+  scope?: string;
 }

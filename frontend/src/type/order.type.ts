@@ -1,7 +1,7 @@
 export interface OrderDetails {
   productId?: string;
-  quantity?: number;
-  price?: number;
+  quantity: number;
+  price: number;
   discount?: number;
   _id?: string;
   product?: {
@@ -17,7 +17,7 @@ export interface Order {
   userId?: string;
   processorStaffId?: string;
   couponId?: string;
-  orderDetails?: OrderDetails[] | undefined;
+  orderDetails: OrderDetails[];
   address: {
     province?: string;
     district?: string;
@@ -64,8 +64,8 @@ export interface Order {
   distance?: number;
   description?: string;
   isDeleted?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface GetOrdersRequest {
@@ -74,9 +74,11 @@ export interface GetOrdersRequest {
   searchKey?: string;
   sortBy?: { field: string; order: "asc" | "desc" };
   userId?: string;
+  storeId?: string;
   processorStaffId?: string;
   paymentId?: string;
   statuses?: string[];
   total_low?: number;
   total_high?: number;
+  status?: string;
 }

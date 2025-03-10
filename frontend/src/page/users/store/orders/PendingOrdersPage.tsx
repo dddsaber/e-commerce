@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumb } from "antd";
-import { Coupon } from "../../../../type/coupon.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
 import { getStoreByUserId } from "../../../../api/store.api";
 import { Store } from "../../../../type/store.type";
-import CouponTable from "../../../../components/coupons/CouponTable";
-import CouponDrawer from "../../../../components/coupons/CouponDrawer";
+import { Breadcrumb } from "antd";
+import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
+import { Order } from "../../../../type/order.type";
 import TableSkeleton from "../../../../components/layout/TableSkeleton";
+import { STATUS_MAP } from "../../../../utils/constant";
 
-const StoreCouponsPage: React.FC = () => {
+const PendingOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [store, setStore] = useState<Store>();
+  const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | undefined>();
-  const [store, setStore] = useState<Store>();
+  const showDrawer = () => {};
+
   useEffect(() => {
     const fetchData = async () => {
       if (!user._id) {
@@ -30,15 +31,6 @@ const StoreCouponsPage: React.FC = () => {
     fetchData();
   }, [user]);
 
-  const onClose = () => {
-    setSelectedCoupon(undefined);
-    setIsVisible(false);
-  };
-
-  const showDrawer = () => {
-    setIsVisible(true);
-  };
-
   return (
     <div>
       <Breadcrumb
@@ -48,35 +40,29 @@ const StoreCouponsPage: React.FC = () => {
             title: "Bảng điều khiển",
           },
           {
-            href: "/store-manage/coupons",
-            title: "Quản lý phiếu giảm giá",
+            href: "/store-manage/pending-orders",
+            title: "Đơn hàng chờ xử lý",
           },
         ]}
       />
+
+      {/* Kiểm tra nếu storeId có thì mới hiển thị bảng sản phẩm */}
       {!store && loading ? (
         <TableSkeleton />
       ) : (
         <>
           {store?._id ? (
             <>
-              <CouponTable
-                setSelectedCoupon={setSelectedCoupon}
+              <StoreOrderTable
+                setSelectedOrder={setSelectedOrder}
                 showDrawer={showDrawer}
+                loading={loading}
                 setLoading={setLoading}
                 reload={reload}
                 setReload={setReload}
-                scope="specific"
-                storeId={store?._id}
-              />
-              <CouponDrawer
-                visible={isVisible}
-                onClose={onClose}
-                selectedCoupon={selectedCoupon}
-                loading={loading}
-                setSelectedCoupon={setSelectedCoupon}
-                reload={reload}
-                setReload={setReload}
-                storeId={store?._id}
+                status={STATUS_MAP.pending.value}
+                selectedOrder={selectedOrder}
+                storeId={store._id}
               />
             </>
           ) : (
@@ -88,4 +74,4 @@ const StoreCouponsPage: React.FC = () => {
   );
 };
 
-export default StoreCouponsPage;
+export default PendingOrdersPage;

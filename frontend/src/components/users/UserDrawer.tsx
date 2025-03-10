@@ -7,8 +7,8 @@ import {
   Button,
   DatePicker,
   Switch,
-  notification,
   UploadFile,
+  message,
 } from "antd";
 import { User } from "../../type/user.type";
 import { createUser, updateUser } from "../../api/user.api";
@@ -59,17 +59,17 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
             _id: selectedUser._id,
           });
           if (result) {
-            notification.success({ message: "Cập nhật tài khoản thành công" });
+            message.success("Cập nhật tài khoản thành công");
           }
         } else {
           const result = await createUser(values);
           if (result) {
-            notification.success({ message: "Thêm tài khoản thành công" });
+            message.success("Thêm tài khoản thành công");
           }
         }
       })
       .catch((info) => {
-        console.log("Validate Failed:", info);
+        message.error("Validate Failed:", info);
       })
       .finally(() => {
         form.resetFields();

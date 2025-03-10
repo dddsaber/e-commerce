@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumb, Flex, Spin } from "antd";
+import { Breadcrumb } from "antd";
 import { Product } from "../../../../type/product.type";
 import ProductDrawer from "../../../../components/products/ProductDrawer";
 import StoreProductTable from "../../../../components/products/StoreProductTable";
@@ -7,6 +7,7 @@ import { Store } from "../../../../type/store.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
 import { getStoreByUserId } from "../../../../api/store.api";
+import TableSkeleton from "../../../../components/layout/TableSkeleton";
 
 const StoreProductsManagePage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -22,11 +23,14 @@ const StoreProductsManagePage: React.FC = () => {
       if (!user._id) {
         return;
       }
+      setLoading(true);
       const storeData = await getStoreByUserId(user._id);
       setStore(storeData);
+      setLoading(false);
     };
     fetchData();
   }, [user]);
+
   const onClose = () => {
     setSelectedProduct(undefined);
     setIsVisible(false);
@@ -52,33 +56,36 @@ const StoreProductsManagePage: React.FC = () => {
       />
 
       {/* Kiểm tra nếu storeId có thì mới hiển thị bảng sản phẩm */}
-      {store?._id ? (
-        <>
-          <StoreProductTable
-            setSelectedProduct={setSelectedProduct}
-            showDrawer={showDrawer}
-            loading={loading}
-            setLoading={setLoading}
-            reload={reload}
-            setReload={setReload}
-            storeId={store._id}
-          />
-          <ProductDrawer
-            visible={isVisible}
-            onClose={onClose}
-            selectedProduct={selectedProduct}
-            loading={loading}
-            setLoading={setLoading}
-            setSelectedProduct={setSelectedProduct}
-            reload={reload}
-            setReload={setReload}
-            storeId={store._id}
-          />
-        </>
+      {!store && loading ? (
+        <TableSkeleton />
       ) : (
-        <Flex style={{ justifyContent: "center", alignItems: "center" }}>
-          <Spin size="large" />
-        </Flex>
+        <>
+          {store?._id ? (
+            <>
+              <StoreProductTable
+                setSelectedProduct={setSelectedProduct}
+                showDrawer={showDrawer}
+                setLoading={setLoading}
+                reload={reload}
+                setReload={setReload}
+                storeId={store._id}
+              />
+              <ProductDrawer
+                visible={isVisible}
+                onClose={onClose}
+                selectedProduct={selectedProduct}
+                loading={loading}
+                setLoading={setLoading}
+                setSelectedProduct={setSelectedProduct}
+                reload={reload}
+                setReload={setReload}
+                storeId={store._id}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+        </>
       )}
     </div>
   );

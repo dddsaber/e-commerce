@@ -74,7 +74,7 @@ const CreateOrdersPage = () => {
       console.log(error);
     } finally {
       setLoading(false);
-      navigate("/my-orders");
+      navigate("/success-create-order");
     }
   };
 
@@ -148,7 +148,12 @@ const CreateOrdersPage = () => {
       title: "Thành tiền",
       render: (_: unknown, record: CartItem) => (
         <span style={{ color: "red" }}>
-          {(record.price * record.quantity).toLocaleString()} đ
+          {(
+            record.price *
+            record.quantity *
+            (1 - (record.discount ?? 0))
+          ).toLocaleString()}{" "}
+          đ
         </span>
       ),
     },

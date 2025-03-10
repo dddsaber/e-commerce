@@ -39,6 +39,11 @@ import MyOrdersPage from "./page/users/orders/MyOrdersPage";
 import SearchPage from "./page/users/home/SearchPage";
 import DispatchedOrdersPage from "./page/users/store/orders/DispatchedOrdersPage";
 import CreateOrdersPage from "./page/users/orders/CreateOrdersPage";
+import PendingOrdersPage from "./page/users/store/orders/PendingOrdersPage";
+import TableSkeleton from "./components/layout/TableSkeleton";
+import UnAuthorizedPage from "./page/error/UnAuthorizedPage";
+import NotFoundPage from "./page/error/NotFoundPage";
+import SuccessOrdered from "./page/users/orders/SuccessOrdered";
 
 interface PrivateRouteProps {
   element: ReactElement;
@@ -129,11 +134,19 @@ function App() {
             element={
               <PrivateRoute
                 element={<StoresManagePage />}
-                requiredPermission={[TYPE_USER.admin, TYPE_USER.sales]}
+                requiredPermission={[TYPE_USER.admin]}
               />
             }
           />
-          <Route path="" element={<DashboardPage />} />
+          <Route
+            path=""
+            element={
+              <PrivateRoute
+                element={<DashboardPage />}
+                requiredPermission={[TYPE_USER.admin]}
+              />
+            }
+          />
           <Route
             path="manage-category"
             element={
@@ -157,7 +170,7 @@ function App() {
             element={
               <PrivateRoute
                 element={<ReviewsManagePage />}
-                requiredPermission={[TYPE_USER.admin, TYPE_USER.sales]}
+                requiredPermission={[TYPE_USER.admin]}
               />
             }
           />
@@ -166,7 +179,7 @@ function App() {
             element={
               <PrivateRoute
                 element={<ProductsManagePage />}
-                requiredPermission={[TYPE_USER.admin, TYPE_USER.sales]}
+                requiredPermission={[TYPE_USER.admin]}
               />
             }
           />
@@ -175,7 +188,7 @@ function App() {
             element={
               <PrivateRoute
                 element={<CouponsManagePage />}
-                requiredPermission={[TYPE_USER.admin, TYPE_USER.sales]}
+                requiredPermission={[TYPE_USER.admin]}
               />
             }
           />
@@ -184,7 +197,7 @@ function App() {
             element={
               <PrivateRoute
                 element={<OrdersManagePage />}
-                requiredPermission={[TYPE_USER.admin, TYPE_USER.sales]}
+                requiredPermission={[TYPE_USER.admin]}
               />
             }
           />
@@ -200,12 +213,14 @@ function App() {
           <Route path="/my-orders" element={<MyOrdersPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/create-orders" element={<CreateOrdersPage />} />
+          <Route path="/success-create-order" element={<SuccessOrdered />} />
         </Route>
 
         {/* Sales  */}
         <Route path="/store-manage" element={<AdminLayoutPage />}>
           <Route path="dashboard" element={<StoreManagement />} />
           <Route path="all-orders" element={<AllOrdersPage />} />
+          <Route path="pending-orders" element={<PendingOrdersPage />} />
           <Route path="dispatched-orders" element={<DispatchedOrdersPage />} />
           <Route path="cancel-orders" element={<CancelOrdersPage />} />
           <Route path="products" element={<StoreProductsManagePage />} />
@@ -217,12 +232,14 @@ function App() {
           <Route path="bank-account" element={<StoreBankAccountPage />} />
           <Route path="shop-profile" element={<StoreProfilePage />} />
           <Route path="shop-decoration" element={<StoreDecorationPage />} />
+          <Route path="skeleton" element={<TableSkeleton />} />
         </Route>
         <Route path="/regist-store" element={<RegistStore />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/logout" element={<LogoutPage userId={userId} />} />
-        <Route path="/home" element={<p>Hello</p>} />
+        <Route path="/unauthorized" element={<UnAuthorizedPage />} />
+        <Route path="/not-found" element={<NotFoundPage />} />
       </Routes>
     </>
   );
