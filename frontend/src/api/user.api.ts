@@ -1,5 +1,5 @@
 import { instance } from ".";
-import { GetUsersRequest, User } from "../type/user.type";
+import { Address, GetUsersRequest, User } from "../type/user.type";
 
 const URL = "/user";
 
@@ -40,6 +40,36 @@ export const updateUserStatus = async (
   const response = await instance.put<User>(`${URL}/${id}/update-user-status`, {
     status,
   });
+
+  return response.data;
+};
+
+export const updateUserAddress = async (
+  id: string,
+  address: Address
+): Promise<User> => {
+  const response = await instance.put<User>(
+    `${URL}/${id}/update-user-address`,
+    {
+      address,
+    }
+  );
+
+  return response.data;
+};
+
+export const updateUserPassword = async (
+  id: string,
+  oldPassword: string,
+  newPassword: string
+): Promise<User> => {
+  const response = await instance.put<User>(
+    `${URL}/${id}/update-user-password`,
+    {
+      oldPassword,
+      newPassword,
+    }
+  );
 
   return response.data;
 };

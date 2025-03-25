@@ -1,5 +1,10 @@
 import { instance } from "."; // Giả sử instance đã được cấu hình trước đó
-import { Store, GetStoresRequest, TaxInformation } from "../type/store.type";
+import {
+  Store,
+  GetStoresRequest,
+  TaxInformation,
+  Address,
+} from "../type/store.type";
 
 const URL = "/store";
 
@@ -79,6 +84,17 @@ export const updateStoreStatus = async (
       status,
     }
   );
+  return response.data;
+};
+
+// 🟢 Cập nhật dia chi store
+export const updateStoreAddress = async (
+  id: string,
+  address: Address
+): Promise<Store> => {
+  const response = await instance.put<Store>(`${URL}/${id}/update-address`, {
+    address,
+  });
   return response.data;
 };
 

@@ -17,6 +17,8 @@ import { getCart } from "../../api/cart.api";
 import Search from "antd/es/input/Search";
 import { Store } from "../../type/store.type";
 import { getStoreByUserId } from "../../api/store.api";
+import { useNotifications } from "../../hook/useNotification";
+import NotificationCardM from "../notifications/Notification";
 const { Header } = Layout;
 
 type MenuItem = {
@@ -32,13 +34,15 @@ const ModifyHeader: React.FC = () => {
   const [store, setStore] = useState<Store>();
   const [storeLink, setStoreLink] = useState<string>("/regist-store");
 
+  const { notifications } = useNotifications();
+
   useEffect(() => {
     const userId = user?._id;
     if (userId) {
       const fetchStore = async () => {
         const storeData = await getStoreByUserId(userId);
         setStore(storeData);
-        if (store?.isActive || storeData.isActive) {
+        if (store?.isActive || storeData?.isActive) {
           setStoreLink("/store-manage/dashboard");
         }
       };
@@ -85,12 +89,12 @@ const ModifyHeader: React.FC = () => {
     {
       key: "profile",
       label: "Profile",
-      onClick: () => navigate("/profile"),
+      onClick: () => navigate("/account/profile"),
     },
     {
       key: "my-orders",
       label: "Đơn hàng của tôi",
-      onClick: () => navigate("/my-orders"),
+      onClick: () => navigate("/account/my-orders"),
     },
     {
       key: "logout",
@@ -98,6 +102,13 @@ const ModifyHeader: React.FC = () => {
       onClick: () => navigate("/logout"),
     },
   ];
+  const notificationMenuBar = useMemo<MenuProps["items"]>(() => {
+    return notifications.map((item) => ({
+      key: `notification-${item._id}`,
+      label: <NotificationCardM item={item} />,
+      onClick: () => navigate(`${item.linkTo}`),
+    }));
+  }, [notifications]);
 
   const cartMenuBar: MenuProps["items"] = useMemo(() => {
     return (
@@ -242,13 +253,26 @@ const ModifyHeader: React.FC = () => {
               </Button>
             </Dropdown>
 
-            <Dropdown menu={{ items: userMenuItems }} trigger={["hover"]}>
-              <Button type="text" style={{ color: "black" }}>
+            <Dropdown
+              menu={{
+                items: notificationMenuBar,
+                style: {
+                  maxHeight: "500px",
+                  overflowY: "auto",
+                  padding: 0,
+                  margin: 0,
+                },
+              }}
+              trigger={["hover"]}
+            >
+              <Button
+                type="text"
+                style={{ color: "black" }}
+                onClick={() => navigate("/account/notifications")}
+              >
                 <Badge
                   count={
-                    <span style={{ fontSize: 15 }}>
-                      {cart?.items?.length || 0}
-                    </span>
+                    <span style={{ fontSize: 15 }}>{notifications.length}</span>
                   }
                   offset={[0, 5]}
                   style={{

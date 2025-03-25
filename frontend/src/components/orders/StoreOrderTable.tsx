@@ -21,10 +21,9 @@ import {
   CheckCircleOutlined,
   CloseCircleFilled,
   CloseCircleOutlined,
-  LockOutlined,
+  EditFilled,
   ReloadOutlined,
   SearchOutlined,
-  UnlockOutlined,
 } from "@ant-design/icons";
 import { cancelOrder, getOrders, updateOrderStatus } from "../../api/order.api";
 import { debounce } from "lodash";
@@ -32,7 +31,11 @@ import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { STATUS_MAP } from "../../utils/constant";
 import { getSourceImage } from "../../utils/handle_image_func";
-import { checkStatus } from "../../utils/handle_status_func";
+import {
+  calculateOrderDetails,
+  checkStatus,
+} from "../../utils/handle_status_func";
+import { formatDate } from "../../utils/handle_format_func";
 
 interface OrderTableProps {
   reload: boolean;
@@ -54,6 +57,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
   storeId,
   setSelectedOrder,
   selectedOrder,
+  showDrawer,
 }) => {
   const [cancelNote, setCancelNote] = useState<string>();
   const [isVisible, setIsVisible] = useState<boolean>();
@@ -109,16 +113,6 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
     };
     setFilter(newFilter);
   }, [searchParams]);
-
-  const handleStatus = async (record: Order) => {
-    try {
-      console.log(record);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setReload(!reload);
-    }
-  };
 
   const handleCancelOrder = async () => {
     console.log(selectedOrder, cancelNote);
@@ -259,6 +253,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       title: "STT",
       dataIndex: "index",
       key: "index",
+      fixed: "left" as const,
       width: 10,
       align: "center" as const,
       render: (_: unknown, __: unknown, index: number) => index + 1,
@@ -267,6 +262,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       title: "Mã đơn",
       dataIndex: "_id",
       key: "_id",
+      fixed: "left" as const,
       sorter: true,
       width: 200,
       align: "left" as const,
@@ -291,6 +287,18 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       render: (orderDetails: OrderDetails[]) => orderDetails.length || 0,
     },
     {
+      title: "Tổng tiền sản phẩm",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>
+          {calculateOrderDetails(record.orderDetails).toLocaleString()} đ
+        </span>
+      ),
+    },
+    {
       title: "Phí vận chuyển",
       dataIndex: "shippingFee",
       key: "shippingFee",
@@ -298,6 +306,34 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       width: 100,
       ellipsis: true,
       align: "center" as const,
+      render: (shippingFee: number) => (
+        <span>{shippingFee.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Giảm giá",
+      sorter: true,
+      width: 100,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>
+          {" "}
+          -{" "}
+          {record.coupon
+            ? record.coupon.type === "fixed"
+              ? record.coupon.value || 0
+              : (record.coupon.value || 0) *
+                record.orderDetails.reduce(
+                  (prev, cur) =>
+                    prev +
+                    cur.price * cur.quantity * (1 - (cur?.discount || 0)),
+                  0
+                )
+            : 0}{" "}
+          đ
+        </span>
+      ),
     },
     {
       title: "Tổng tiền",
@@ -307,6 +343,75 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       width: 120,
       ellipsis: true,
       align: "center" as const,
+      render: (total: number) => (
+        <span style={{ fontWeight: "bold" }}>{total.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí thanh toán",
+      sorter: true,
+      width: 60,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>- {record.fees.transaction.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí cố định",
+      sorter: true,
+      width: 60,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>- {record.fees.commission.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí dịch vụ",
+      sorter: true,
+      width: 60,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>- {record.fees.service.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí giao dịch (Tổng)",
+      sorter: true,
+      width: 60,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span style={{ fontWeight: "bold" }}>
+          -{" "}
+          {(
+            record.fees.commission +
+            record.fees.transaction +
+            record.fees.service
+          ).toLocaleString()}{" "}
+          đ
+        </span>
+      ),
+    },
+    {
+      title: "Doanh thu đơn hàng",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span style={{ fontWeight: "bold" }}>
+          {(
+            (record.total ?? 0) -
+            (record.fees.commission +
+              record.fees.transaction +
+              record.fees.service)
+          ).toLocaleString()}{" "}
+          đ
+        </span>
+      ),
     },
     {
       title: "Phương thức TT",
@@ -339,7 +444,24 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
         return <Tag color={statusInfo?.color}>{statusInfo?.label}</Tag>;
       },
     },
-
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sorter: true,
+      width: 160,
+      align: "left" as const,
+      render: (time) => formatDate(time),
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      sorter: true,
+      width: 160,
+      align: "left" as const,
+      render: (time) => formatDate(time),
+    },
     {
       title: "Hành động",
       fixed: "right" as const,
@@ -347,13 +469,6 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       width: 150,
       render: (_: unknown, record: Order) => (
         <Space size="middle">
-          <Tooltip title={record.isDeleted ? "Khôi phục" : "Xóa"}>
-            <Button
-              type="text"
-              onClick={() => handleStatus(record)}
-              icon={!record.isDeleted ? <UnlockOutlined /> : <LockOutlined />}
-            />
-          </Tooltip>
           <Tooltip title="Xác nhận đơn hàng">
             <Button
               type="text"
@@ -389,6 +504,19 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
               disabled={!(record.status === STATUS_MAP.pending.value)}
               style={{
                 color: "red",
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Xem đơn hàng">
+            <Button
+              type="text"
+              onClick={() => {
+                setSelectedOrder(record);
+                showDrawer();
+              }}
+              icon={<EditFilled />}
+              style={{
+                color: "blue",
               }}
             />
           </Tooltip>
@@ -494,7 +622,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
         scroll={{ x: "max-content" }}
         expandable={{
           expandedRowRender: (record) => (
-            <div style={{ overflowX: "auto", width: "100%" }}>
+            <div style={{ padding: 0, backgroundColor: "#fff" }}>
               <Table
                 rowKey={(record) => record._id || "index"}
                 columns={itemColumns}

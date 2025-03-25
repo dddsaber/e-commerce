@@ -83,7 +83,7 @@ const StoreProfilePge: React.FC = () => {
         if (result) {
           message.success("Cập nhật thông tin cửa hàng thành công!");
         } else {
-          message.error("Có l��i xảy ra, vui lòng thử lại!");
+          message.error("Có lỗi xảy ra, vui lòng thử lại!");
         }
       })
       .catch((info) => {
@@ -107,7 +107,7 @@ const StoreProfilePge: React.FC = () => {
           },
           {
             href: "/store-manage/shop-profile",
-            title: "Tất cả đơn hàng",
+            title: "Hồ sơ shop",
           },
         ]}
       />
@@ -159,28 +159,6 @@ const StoreProfilePge: React.FC = () => {
 
                 <Form.Item name="phone" label="Số điện thoại">
                   <Input />
-                </Form.Item>
-
-                <Row gutter={[12, 12]}>
-                  <Col span={8}>
-                    <Form.Item name={["address", "province"]} label="Tỉnh">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item name={["address", "district"]} label="Huyện">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item name={["address", "ward"]} label="Xã">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Form.Item name={["address", "details"]} label="Địa chỉ">
-                  <Input.TextArea rows={2} />
                 </Form.Item>
 
                 <Form.Item name="description" label="Mô tả">

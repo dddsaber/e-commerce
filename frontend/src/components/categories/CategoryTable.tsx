@@ -27,6 +27,7 @@ import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableSkeleton from "../layout/TableSkeleton";
 
 interface CategoryTableProps {
   reload: boolean;
@@ -40,10 +41,10 @@ interface CategoryTableProps {
 const CategoryTable: React.FC<CategoryTableProps> = ({
   reload,
   setReload,
-  loading,
   setLoading,
   setSelectedCategory,
   showDrawer,
+  loading,
 }) => {
   const [data, setData] = useState<Category[]>([]);
   const [filter, setFilter] = useState<GetCategoryRequest>({
@@ -58,6 +59,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
   });
 
   useEffect(() => {
+    console.log(reload, filter);
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -128,7 +130,6 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
 
   const handleEdit = (record: Category) => {
     setSelectedCategory(record);
-    console.log(record);
     showDrawer();
   };
 
@@ -318,49 +319,55 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm danh mục"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <Flex
+            gap={10}
+            justify="space-between"
+            style={{ marginBottom: 10, marginTop: 10 }}
+          >
+            <Flex gap={10}>
+              <Input
+                placeholder="Tìm kiếm danh mục"
+                prefix={<SearchOutlined />}
+                value={searchValue}
+                onChange={handleSearchChange}
+                style={{ marginBottom: 16, width: 800 }}
+              />
+              <span> &nbsp;</span>
+              <Button onClick={handleResearch}>
+                <ReloadOutlined />
+              </Button>
+              <span> &nbsp;</span>
+              <Button type="primary" onClick={() => setReload(!reload)}>
+                <SearchOutlined />
+              </Button>
+            </Flex>
+
+            <Button
+              type="primary"
+              icon={<PlusCircleFilled />}
+              onClick={() => handleAdd()}
+            >
+              Thêm Danh mục
+            </Button>
+          </Flex>
+          <Typography.Title style={{ textAlign: "right" }} level={5}>
+            Total categories: {pagination.total}
+          </Typography.Title>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={data}
+            pagination={pagination}
+            rowKey="name"
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
           />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-        <Typography.Title level={5}>
-          Total categories: {pagination.total}
-        </Typography.Title>
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm Danh mục
-        </Button>
-      </Flex>
-      <Table
-        bordered
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={pagination}
-        rowKey="name"
-        onChange={handleTableChange}
-        scroll={{ x: "max-content" }}
-      />
+        </>
+      )}
     </>
   );
 };

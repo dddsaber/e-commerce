@@ -8,6 +8,7 @@ import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
 import { Order } from "../../../../type/order.type";
 import { STATUS_MAP } from "../../../../utils/constant";
 import TableSkeleton from "../../../../components/layout/TableSkeleton";
+import OrderDrawer from "../../../../components/orders/OrderDrawer";
 
 const DispatchedOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -16,7 +17,13 @@ const DispatchedOrdersPage: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
-  const showDrawer = () => {};
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const showDrawer = () => {
+    setIsVisible(true);
+  };
+  const onClose = () => {
+    setIsVisible(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +70,14 @@ const DispatchedOrdersPage: React.FC = () => {
                 status={STATUS_MAP.shipped.value}
                 selectedOrder={selectedOrder}
                 storeId={store._id}
+              />
+              <OrderDrawer
+                visible={isVisible}
+                onClose={onClose}
+                setSelectedOrder={setSelectedOrder}
+                selectedOrder={selectedOrder}
+                reload={reload}
+                setReload={setReload}
               />
             </>
           ) : (

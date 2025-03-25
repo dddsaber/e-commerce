@@ -7,6 +7,7 @@ import { Breadcrumb } from "antd";
 import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
 import { Order } from "../../../../type/order.type";
 import TableSkeleton from "../../../../components/layout/TableSkeleton";
+import OrderDrawer from "../../../../components/orders/OrderDrawer";
 
 const AllOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -15,7 +16,13 @@ const AllOrdersPage: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
-  const showDrawer = () => {};
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const showDrawer = () => {
+    setIsVisible(true);
+  };
+  const onClose = () => {
+    setIsVisible(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +69,14 @@ const AllOrdersPage: React.FC = () => {
                 status={undefined}
                 selectedOrder={selectedOrder}
                 storeId={store._id}
+              />
+              <OrderDrawer
+                visible={isVisible}
+                onClose={onClose}
+                setSelectedOrder={setSelectedOrder}
+                selectedOrder={selectedOrder}
+                reload={reload}
+                setReload={setReload}
               />
             </>
           ) : (

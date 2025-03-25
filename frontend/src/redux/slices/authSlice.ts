@@ -11,6 +11,7 @@ import {
   loginFacebook,
 } from "../../api/auth.api";
 import { User } from "../../type/user.type";
+import dayjs from "dayjs";
 
 interface AuthResponse {
   user: User;
@@ -29,6 +30,9 @@ interface AuthState {
         phone?: string;
         email?: string;
         username?: string;
+        description?: string;
+        birthday?: dayjs.Dayjs;
+        gender?: boolean;
         address?: {
           province: string;
           district: string;

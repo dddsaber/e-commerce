@@ -19,8 +19,7 @@ import {
   DollarCircleFilled,
   BankOutlined,
   ShopFilled,
-  ProfileFilled,
-  StarOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { Button, Flex, Layout, Menu, Tag, Typography, theme } from "antd";
 import { useMemo, useState } from "react";
@@ -82,6 +81,12 @@ const AdminLayoutPage: React.FC = () => {
             link: "/admin",
           },
           {
+            key: "chats",
+            icon: <MessageOutlined />,
+            label: "Tin nhắn",
+            link: "/admin/chat",
+          },
+          {
             key: "users",
             icon: <UsergroupAddOutlined />,
             label: "Người dùng",
@@ -89,10 +94,23 @@ const AdminLayoutPage: React.FC = () => {
           },
           {
             key: "stores",
-            icon: <UsergroupAddOutlined />,
+            icon: <ShopOutlined />,
             label: "Cửa hàng",
-            link: "/admin/manage-stores",
+            link: "#",
+            children: [
+              {
+                key: "store-info",
+                label: "Thông tin",
+                link: "/admin/manage-stores",
+              },
+              {
+                key: "stores-revenue",
+                label: "Doanh thu ",
+                link: "/admin/stores-revenue",
+              },
+            ],
           },
+
           {
             key: "products",
             icon: <ProductOutlined />,
@@ -155,6 +173,12 @@ const AdminLayoutPage: React.FC = () => {
             icon: <DashboardOutlined />,
             label: "Thống kê",
             link: "/store-manage/dashboard",
+          },
+          {
+            key: "chats",
+            icon: <MessageOutlined />,
+            label: "Tin nhắn",
+            link: "/store-manage/chat",
           },
           {
             key: "orders",
@@ -258,13 +282,16 @@ const AdminLayoutPage: React.FC = () => {
             children: [
               {
                 key: "profile",
-                icon: <ProfileFilled />,
                 label: "Hồ sơ Shop",
                 link: "/store-manage/shop-profile",
               },
               {
+                key: "address",
+                label: "Địa chỉ lấy hàng",
+                link: "/store-manage/shop-address",
+              },
+              {
                 key: "decoration",
-                icon: <StarOutlined />,
                 label: "Trang trí Shop",
                 link: "/store-manage/shop-decoration",
               },
@@ -362,7 +389,7 @@ const AdminLayoutPage: React.FC = () => {
             <Button
               type="text"
               style={{ paddingLeft: 30, color: "white" }}
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate("/account/profile")}
               icon={
                 user.avatar ? (
                   <img

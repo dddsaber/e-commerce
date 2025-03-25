@@ -7,7 +7,7 @@ import {
   Switch,
   message,
   Select,
-  Spin,
+  InputNumber,
 } from "antd";
 import { Category } from "../../type/category.type";
 import {
@@ -30,7 +30,6 @@ interface CategoryDrawerProps {
 const CategoryDrawer: React.FC<CategoryDrawerProps> = ({
   visible,
   reload,
-  loading,
   setLoading,
   setReload,
   setSelectedCategory,
@@ -117,7 +116,18 @@ const CategoryDrawer: React.FC<CategoryDrawerProps> = ({
           <Input placeholder="Nhập tên danh mục" />
         </Form.Item>
 
-        {/* Email */}
+        {/* Phí cố định  */}
+        <Form.Item
+          name="commissionFee"
+          label="Phần trăm phí cố định"
+          rules={[
+            { min: 0, max: 1, message: "Phần trăm phí cố định >=0 và <1" },
+          ]}
+        >
+          <InputNumber placeholder="Nhập phần trăm phí cố định" />
+        </Form.Item>
+
+        {/* Mô tả */}
         <Form.Item name="description" label="Mô tả">
           <Input placeholder="Nhập mô tả danh mục" />
         </Form.Item>
@@ -126,9 +136,6 @@ const CategoryDrawer: React.FC<CategoryDrawerProps> = ({
         <Form.Item label="Danh mục cha" name="parentId">
           <Select
             showSearch
-            notFoundContent={
-              loading ? <Spin size="small" key="loading" /> : null
-            }
             placeholder="Chọn danh mục cha"
             filterOption={(input, option) =>
               (option as unknown as { children: string }).children

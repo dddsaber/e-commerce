@@ -6,6 +6,7 @@ import {
   Breadcrumb,
   Card,
   Col,
+  message,
   Radio,
   RadioChangeEvent,
   Rate,
@@ -17,8 +18,13 @@ import ProductDisplayCard from "../../../components/products/ProductDisplayCard"
 import StoreDisplayCard from "../../../components/products/StoreDisplayCard";
 import TopProductList from "../../../components/products/TopProductList";
 import ProductsList from "../../../components/products/ProductsList";
+import { addCartItem } from "../../../api/cart.api";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 const ProductDetailPage: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [productDetails, setProductDetails] = useState<{
     totalReviews: number;
@@ -34,6 +40,12 @@ const ProductDetailPage: React.FC = () => {
   });
   const [rating, setRating] = useState("all");
 
+  const addCart = async (product: Product, quantity: number) => {
+    const response = await addCartItem(user._id, product._id, quantity);
+    if (response) {
+      message.success(`${quantity} ${product.name} added to cart!`);
+    }
+  };
   const handleRatingChange = (e: RadioChangeEvent) => {
     setRating(e.target.value);
   };
@@ -67,6 +79,7 @@ const ProductDetailPage: React.FC = () => {
       <ProductDisplayCard
         productId={productId!}
         productDetails={productDetails}
+        addCart={addCart}
       />
       <StoreDisplayCard storeId={product?.storeId || ""} />
       <Row gutter={[20, 20]}>

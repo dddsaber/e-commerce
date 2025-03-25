@@ -266,6 +266,7 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
       width: 200,
       ellipsis: true,
       align: "center" as const,
+      render: (cost: number) => <span>{cost.toLocaleString("vi-VN")} đ</span>,
     },
     {
       title: "Giá bán",
@@ -274,6 +275,7 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
       sorter: true,
       width: 150,
       align: "center" as const,
+      render: (price: number) => <span>{price.toLocaleString("vi-VN")} đ</span>,
     },
     {
       title: "Giảm giá",

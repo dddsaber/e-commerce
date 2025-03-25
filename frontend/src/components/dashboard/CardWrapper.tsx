@@ -48,7 +48,7 @@ export default function CardWrapper(): JSX.Element {
               </Col>
               <Col span={8}>
                 <Statistic
-                  title="Total Users"
+                  title="Users"
                   value={cardWrapperInfo?.numberOfUsers}
                 />
               </Col>
@@ -81,7 +81,7 @@ export default function CardWrapper(): JSX.Element {
               </Col>
               <Col span={8}>
                 <Statistic
-                  title="Total Products"
+                  title="Products"
                   value={cardWrapperInfo?.numberOfProducts}
                 />
               </Col>
@@ -114,7 +114,7 @@ export default function CardWrapper(): JSX.Element {
               </Col>
               <Col span={8}>
                 <Statistic
-                  title="Total Stores"
+                  title="Stores"
                   value={cardWrapperInfo?.numberOfStores}
                 />
               </Col>
@@ -147,7 +147,7 @@ export default function CardWrapper(): JSX.Element {
               </Col>
               <Col span={8}>
                 <Statistic
-                  title="Total Revenue"
+                  title="Revenue"
                   value={`$${cardWrapperInfo?.totalRevenue}`}
                 />
               </Col>

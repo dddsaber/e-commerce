@@ -13,7 +13,7 @@ const SuccessOrdered: React.FC = () => {
         <Button
           type="primary"
           key="console"
-          onClick={() => navigate("/my-orders")}
+          onClick={() => navigate("/account/my-orders")}
         >
           Xem đơn hàng
         </Button>,

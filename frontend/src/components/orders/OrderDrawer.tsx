@@ -8,11 +8,30 @@ import {
   Image,
   TableColumnsType,
   Table,
+  Typography,
+  Select,
+  Row,
+  Col,
+  message,
 } from "antd";
 import { Order, OrderDetails } from "../../type/order.type";
 import { getSourceImage } from "../../utils/handle_image_func";
-import { STATUS_MAP } from "../../utils/constant";
+import { STATUS_MAP, TYPE_USER } from "../../utils/constant";
 import { formatDate } from "../../utils/handle_format_func";
+import {
+  CheckCircleFilled,
+  CheckCircleOutlined,
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
+import {
+  calculateOrderDetails,
+  checkStatus,
+} from "../../utils/handle_status_func";
+import { updateOrderStatus } from "../../api/order.api";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface OrderDrawerProps {
   visible: boolean;
@@ -25,12 +44,39 @@ interface OrderDrawerProps {
 
 const OrderDrawer: React.FC<OrderDrawerProps> = ({
   visible,
-  reload,
-  setReload,
   setSelectedOrder,
   onClose,
   selectedOrder = undefined,
+  setReload,
+  reload,
 }) => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const handleUpdateStatus = async () => {
+    const record = await updateOrderStatus(
+      selectedOrder!._id!,
+      selectedOrder!.status!
+    );
+    if (record) {
+      message.success(
+        `Cap nhat don hang ${selectedOrder!._id} sang trang thai ${
+          selectedOrder!.status
+        }`
+      );
+      setReload(!reload);
+    }
+  };
+
+  const handleConfirm = async () => {
+    const response = await updateOrderStatus(
+      selectedOrder!._id!,
+      STATUS_MAP.confirmed.value
+    );
+    if (response) {
+      message.success(`Order ${selectedOrder?._id} has been confirmed!`);
+      setReload(!reload);
+    }
+  };
+
   const itemColumns: TableColumnsType<OrderDetails> = [
     {
       title: "Ảnh",
@@ -58,7 +104,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
       key: "price",
       width: 100,
       align: "center" as const,
-      render: (price: number) => `${price} đ`,
+      render: (price: number) => `${price.toLocaleString()} đ`,
     },
     {
       title: "Giảm",
@@ -85,11 +131,27 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
         } else {
           total = record.price * record.quantity * (1 - (record.discount ?? 0));
         }
-        return `${total.toFixed(2)} đ`;
+        return (
+          <span
+            style={{ fontWeight: "bold" }}
+          >{`${total.toLocaleString()} đ`}</span>
+        );
       },
     },
   ];
 
+  type OrderStatus = keyof typeof STATUS_MAP; // 🔹 Lấy kiểu dữ liệu của status
+
+  const STATUS_FLOW: OrderStatus[] = [
+    "pending",
+    "confirmed",
+    "shipped",
+    "delivered",
+    "completed",
+  ];
+
+  const currentStatus = selectedOrder?.status as OrderStatus | undefined;
+  const currentIndex = currentStatus ? STATUS_FLOW.indexOf(currentStatus) : -1;
   return (
     <Drawer
       title={
@@ -119,51 +181,127 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
         </div>
       }
     >
-      <Descriptions title="" column={2} style={{ marginBottom: "15px" }}>
-        <Descriptions.Item label="Mã đơn">
-          {selectedOrder?._id}
-        </Descriptions.Item>
-        <Descriptions.Item label="Số sản phẩm">
-          {selectedOrder?.orderDetails?.length}
-        </Descriptions.Item>
-        <Descriptions.Item label="Khách hàng">
-          {selectedOrder?.user?.name}
-        </Descriptions.Item>
-        <Descriptions.Item label="Người xử lý đơn">
-          {selectedOrder?.staff?.name}
-        </Descriptions.Item>
-        <Descriptions.Item label="Khoảng cách">
-          {selectedOrder?.distance}
-        </Descriptions.Item>
-        <Descriptions.Item label="Tiền ship">
-          {selectedOrder?.shippingFee}
-        </Descriptions.Item>
-        <Descriptions.Item label="Tổng tiền">
-          {selectedOrder?.total?.toFixed(2) || 0} đ
-        </Descriptions.Item>
-        <Descriptions.Item label="Trạng thái">
-          {STATUS_MAP[selectedOrder?.status as keyof typeof STATUS_MAP]?.label}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phương thức thanh toán">
-          {selectedOrder?.payment?.name || "Không xác định"}
-        </Descriptions.Item>
-        <Descriptions.Item label="Địa chỉ">
-          {selectedOrder?.address
-            ? `${selectedOrder.address.details}, ${selectedOrder.address.ward}, ${selectedOrder.address.district}, ${selectedOrder.address.province}`
-            : "Chưa có thông tin địa chỉ"}
-        </Descriptions.Item>
-        <Descriptions.Item label="Ghi chú khách hàng">
-          {selectedOrder?.customerNote}
-        </Descriptions.Item>
-        <Descriptions.Item label="Ghi chú cửa hàng">
-          {selectedOrder?.staffNote}
-        </Descriptions.Item>
-        <Descriptions.Item label="Mã giảm giá">
-          {selectedOrder?.coupon?.type === "fixed"
-            ? selectedOrder?.coupon?.value || 0 + "đ"
-            : selectedOrder?.coupon?.value || 0 + "%"}
-        </Descriptions.Item>
-      </Descriptions>
+      <Row>
+        <Col span={16}>
+          <Descriptions title="" column={1} style={{ marginBottom: "15px" }}>
+            <Descriptions.Item label="Mã đơn">
+              {selectedOrder?._id}
+            </Descriptions.Item>
+            <Descriptions.Item label="Khách hàng">
+              {selectedOrder?.user?.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Số sản phẩm">
+              {selectedOrder?.orderDetails?.length}
+            </Descriptions.Item>
+            <Descriptions.Item label="Khoảng cách">
+              {selectedOrder?.distance || 0} km
+            </Descriptions.Item>
+            <Descriptions.Item label="Trạng thái">
+              {
+                STATUS_MAP[selectedOrder?.status as keyof typeof STATUS_MAP]
+                  ?.label
+              }
+            </Descriptions.Item>
+            <Descriptions.Item label="Phương thức thanh toán">
+              {selectedOrder?.payment?.name || "Không xác định"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Địa chỉ">
+              {selectedOrder?.address
+                ? `${selectedOrder.address.details}, ${selectedOrder.address.ward}, ${selectedOrder.address.district}, ${selectedOrder.address.province}`
+                : "Chưa có thông tin địa chỉ"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Ghi chú khách hàng">
+              {selectedOrder?.customerNote}
+            </Descriptions.Item>
+            <Descriptions.Item label="Ghi chú cửa hàng">
+              {selectedOrder?.staffNote}
+            </Descriptions.Item>
+            <Descriptions.Item label="Mã giảm giá">
+              {selectedOrder?.coupon?.type === "fixed"
+                ? selectedOrder?.coupon?.value || 0 + "đ"
+                : selectedOrder?.coupon?.value || 0 + "%"}
+            </Descriptions.Item>
+          </Descriptions>
+        </Col>
+        <Col span={8}>
+          <Descriptions
+            title=""
+            column={1}
+            style={{ marginBottom: "15px" }}
+            styles={{ label: { width: "50%" }, content: { width: "50%" } }}
+          >
+            <Descriptions.Item label="Tổng tiền sản phẩm">
+              {calculateOrderDetails(
+                selectedOrder?.orderDetails || []
+              ).toLocaleString()}{" "}
+              đ
+            </Descriptions.Item>
+            <Descriptions.Item label="Tiền ship">
+              {selectedOrder?.shippingFee?.toLocaleString() || 0} đ
+            </Descriptions.Item>
+            <Descriptions.Item label="Số tiền giảm giá">
+              -{" "}
+              {selectedOrder?.coupon?.type === "fixed"
+                ? (selectedOrder?.coupon?.value || 0).toLocaleString()
+                : (
+                    (selectedOrder?.coupon?.value || 0) *
+                    calculateOrderDetails(selectedOrder?.orderDetails || [])
+                  ).toLocaleString()}{" "}
+              đ
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Tổng tiền"
+              styles={{
+                label: { fontWeight: "bold" },
+                content: { fontWeight: "bold" },
+              }}
+            >
+              {selectedOrder?.total?.toLocaleString() || 0} đ
+            </Descriptions.Item>
+            <Descriptions.Item label="Phí thanh toán">
+              - {selectedOrder?.fees.transaction?.toLocaleString() || 0} đ
+            </Descriptions.Item>
+            <Descriptions.Item label="Phí cố định">
+              - {selectedOrder?.fees.commission?.toLocaleString() || 0} đ
+            </Descriptions.Item>
+            <Descriptions.Item label="Phí dịch vụ">
+              - {selectedOrder?.fees.service?.toLocaleString() || 0} đ
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Phí giao dịch"
+              styles={{
+                label: { fontWeight: "bold" },
+                content: { fontWeight: "bold" },
+              }}
+            >
+              -{" "}
+              {(
+                (selectedOrder?.fees.commission || 0) +
+                (selectedOrder?.fees.transaction || 0) +
+                (selectedOrder?.fees.service || 0)
+              ).toLocaleString()}{" "}
+              đ
+            </Descriptions.Item>
+
+            <Descriptions.Item
+              label="Doanh thu"
+              styles={{
+                label: { fontWeight: "bold" },
+                content: { fontWeight: "bold" },
+              }}
+            >
+              {(
+                (selectedOrder?.total || 0) -
+                ((selectedOrder?.fees.commission || 0) +
+                  (selectedOrder?.fees.transaction || 0) +
+                  (selectedOrder?.fees.service || 0))
+              ).toLocaleString()}{" "}
+              đ
+            </Descriptions.Item>
+          </Descriptions>
+        </Col>
+      </Row>
+
       <label>
         <strong>Chi tiết đơn hàng</strong>
       </label>
@@ -213,32 +351,125 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
             : "Chưa cập nhật"}
         </Descriptions.Item>
       </Descriptions>
-      {/* <Flex justify="space-around" style={{ margin: "20px 0 0" }}>
-          <Text>
+      {user.role === TYPE_USER.admin ? (
+        <Flex justify="space-around" style={{ margin: "20px 0 0" }}>
+          <Typography.Text>
             <strong>Cập nhật trạng thái:</strong>
-          </Text>
+          </Typography.Text>
           <Select
             style={{ width: 200 }}
-            value={selectedOrder?.status}
-            onChange={(value) => {
-              setSelectedOrder((prevOrder) => ({
-                ...prevOrder,
+            value={currentStatus}
+            onChange={(value: OrderStatus) => {
+              setSelectedOrder({
+                ...selectedOrder,
                 status: value,
-              }));
+              } as Order); // 🔹 Ép kiểu để tránh lỗi TypeScript
             }}
             placeholder="Chọn trạng thái"
             disabled={
-              selectedOrder?.status === "cancelled" ||
-              selectedOrder?.status === "complete"
+              currentStatus === "cancelled" || currentStatus === "completed"
             }
           >
-            {Object.entries(STATUS_MAP).map(([key, { label, color }]) => (
-              <Select.Option key={key} value={key}>
-                <Text style={{ color: color }}>{label}</Text>
+            {STATUS_FLOW.map((status) => (
+              <Select.Option
+                key={status}
+                value={status}
+                disabled={STATUS_FLOW.indexOf(status) < currentIndex}
+              >
+                <Typography.Text style={{ color: STATUS_MAP[status].color }}>
+                  {STATUS_MAP[status].label}
+                </Typography.Text>
               </Select.Option>
             ))}
           </Select>
-        </Flex> */}
+          <Button
+            style={{
+              color: "blue",
+              border: "1px solid blue",
+            }}
+            onClick={() => handleUpdateStatus()}
+          >
+            <SaveOutlined />
+            Cập nhật trạng thái
+          </Button>
+          <Button
+            type="text"
+            onClick={() => {
+              setSelectedOrder({
+                ...selectedOrder,
+                status: STATUS_MAP.cancelled.value,
+              } as Order);
+            }}
+            disabled={!(selectedOrder?.status === STATUS_MAP.pending.value)}
+            style={{
+              color: "red",
+              border: "1px solid red",
+            }}
+          >
+            {checkStatus(selectedOrder?.status) ? (
+              <>
+                <CloseCircleOutlined />
+                Hủy đơn
+              </>
+            ) : (
+              <>
+                <CloseCircleFilled />
+                Đã hủy
+              </>
+            )}
+          </Button>
+        </Flex>
+      ) : (
+        <div style={{ margin: "15px", textAlign: "center" }}>
+          <Button
+            type="text"
+            onClick={() => handleConfirm()}
+            disabled={!(selectedOrder?.status === STATUS_MAP.pending.value)}
+            style={{
+              color: "green",
+              border: "1px solid green",
+              marginRight: 20,
+            }}
+          >
+            {selectedOrder?.status === STATUS_MAP.pending.value ||
+            selectedOrder?.status === STATUS_MAP.cancelled.value ? (
+              <>
+                <CheckCircleOutlined /> Xác nhận đơn
+              </>
+            ) : (
+              <>
+                <CheckCircleFilled /> Đã xác nhận
+              </>
+            )}
+          </Button>
+          <Button
+            type="text"
+            onClick={() => {
+              setSelectedOrder({
+                ...selectedOrder,
+                status: STATUS_MAP.cancelled.value,
+              } as Order);
+            }}
+            disabled={!(selectedOrder?.status === STATUS_MAP.pending.value)}
+            style={{
+              color: "red",
+              border: "1px solid red",
+            }}
+          >
+            {checkStatus(selectedOrder?.status) ? (
+              <>
+                <CloseCircleOutlined />
+                Hủy đơn
+              </>
+            ) : (
+              <>
+                <CloseCircleFilled />
+                Đã hủy
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </Drawer>
   );
 };

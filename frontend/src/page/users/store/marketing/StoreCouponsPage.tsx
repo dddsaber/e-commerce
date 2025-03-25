@@ -7,7 +7,6 @@ import { getStoreByUserId } from "../../../../api/store.api";
 import { Store } from "../../../../type/store.type";
 import CouponTable from "../../../../components/coupons/CouponTable";
 import CouponDrawer from "../../../../components/coupons/CouponDrawer";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
 
 const StoreCouponsPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -53,36 +52,32 @@ const StoreCouponsPage: React.FC = () => {
           },
         ]}
       />
-      {!store && loading ? (
-        <TableSkeleton />
-      ) : (
+
+      {store?._id ? (
         <>
-          {store?._id ? (
-            <>
-              <CouponTable
-                setSelectedCoupon={setSelectedCoupon}
-                showDrawer={showDrawer}
-                setLoading={setLoading}
-                reload={reload}
-                setReload={setReload}
-                scope="specific"
-                storeId={store?._id}
-              />
-              <CouponDrawer
-                visible={isVisible}
-                onClose={onClose}
-                selectedCoupon={selectedCoupon}
-                loading={loading}
-                setSelectedCoupon={setSelectedCoupon}
-                reload={reload}
-                setReload={setReload}
-                storeId={store?._id}
-              />
-            </>
-          ) : (
-            <></>
-          )}
+          <CouponTable
+            setSelectedCoupon={setSelectedCoupon}
+            showDrawer={showDrawer}
+            setLoading={setLoading}
+            reload={reload}
+            setReload={setReload}
+            scope="specific"
+            storeId={store?._id}
+            loading={loading}
+          />
+          <CouponDrawer
+            visible={isVisible}
+            onClose={onClose}
+            selectedCoupon={selectedCoupon}
+            loading={loading}
+            setSelectedCoupon={setSelectedCoupon}
+            reload={reload}
+            setReload={setReload}
+            storeId={store?._id}
+          />
         </>
+      ) : (
+        <></>
       )}
     </div>
   );

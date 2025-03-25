@@ -39,26 +39,50 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         description={
           product.discount && product.discount !== 0 ? (
             <>
-              <span style={{ color: "#b4182d", fontWeight: "bold" }}>
-                {(product.price * (1 - product.discount)).toLocaleString()}{" "}
-                đ&nbsp;&nbsp;
-                <span style={{ backgroundColor: "#b4182d", color: "#fff" }}>
-                  - {product.discount * 100} %
+              <span style={{ justifyContent: "space-between" }}>
+                <span style={{ color: "#b4182d", fontWeight: "bold" }}>
+                  {(product.price * (1 - product.discount)).toLocaleString(
+                    "vi-VN"
+                  )}{" "}
+                  đ&nbsp;
+                  <span
+                    style={{
+                      backgroundColor: "#b4182d",
+                      color: "#fff",
+                    }}
+                  >
+                    - {product.discount * 100} %
+                  </span>
                 </span>
-                <br />
+                &nbsp;&nbsp;&nbsp;
+                <span
+                  style={{ fontSize: 10, color: "#000", textAlign: "right" }}
+                >
+                  Đã bán: {product.inventory?.soldQuantity ?? 0}
+                </span>
               </span>
+
+              <br />
+
               <del
                 style={{
                   marginLeft: "10px",
                   color: "gray",
                 }}
               >
-                {product.price.toLocaleString()} đ
+                {product.price.toLocaleString("vi-VN")} đ
               </del>
             </>
           ) : (
-            <span style={{ color: "#b4182d", fontWeight: "bold" }}>
-              {product.price.toLocaleString()} đ <br /> <br />
+            <span style={{ justifyContent: "space-between" }}>
+              <span style={{ color: "#b4182d", fontWeight: "bold" }}>
+                {product.price.toLocaleString("vi-VN")} đ
+              </span>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <span style={{ fontSize: 10, color: "#000", textAlign: "right" }}>
+                Đã bán: {product.inventory?.soldQuantity ?? 0}
+              </span>
+              <br /> <br />
             </span>
           )
         }

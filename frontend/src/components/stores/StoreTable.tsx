@@ -29,6 +29,7 @@ import {
 } from "@ant-design/icons";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableSkeleton from "../layout/TableSkeleton";
 interface StoreTableProps {
   reload: boolean;
   setReload: (value: boolean) => void;
@@ -100,7 +101,7 @@ const StoreTable: React.FC<StoreTableProps> = ({
 
   const handleStatus = async (record: Store) => {
     try {
-      const response = await updateStoreStatus(record._id, !record.isActive);
+      const response = await updateStoreStatus(record._id!, !record.isActive);
       if (response) {
         if (response.isActive) message.success("Store has been unblocked!");
         else message.success("Store has been blocked!");
@@ -295,14 +296,14 @@ const StoreTable: React.FC<StoreTableProps> = ({
       ],
       filteredValue: filter.isActives,
       align: "center" as const,
-      render: (_: unknown, { isActive }: { isActive: boolean }) => (
+      render: (isActive: boolean) => (
         <Tag color={isActive ? "green" : "red"} key={isActive.toString()}>
           {isActive ? "Đang hoạt động" : "Đã khóa"}
         </Tag>
       ),
     },
     {
-      title: "Thống kê",
+      title: "Số sản phẩm",
       dataIndex: "statistics",
       key: "statistics",
       width: 200,
@@ -312,8 +313,7 @@ const StoreTable: React.FC<StoreTableProps> = ({
         monthlyRevenue: number;
       }) => (
         <div>
-          <p>Sản phẩm: {statistics.totalProducts}</p>
-          <p>Doanh thu tháng: {statistics.monthlyRevenue}</p>
+          <p>{statistics.totalProducts}</p>
         </div>
       ),
     },
@@ -361,7 +361,9 @@ const StoreTable: React.FC<StoreTableProps> = ({
     },
   ];
 
-  return (
+  return loading ? (
+    <TableSkeleton />
+  ) : (
     <>
       <Flex
         gap={10}

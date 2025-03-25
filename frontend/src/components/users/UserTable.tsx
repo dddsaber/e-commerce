@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import { handleError } from "../../utils/handle_error_func";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableSkeleton from "../layout/TableSkeleton";
 
 interface UserTableProps {
   reload: boolean;
@@ -410,7 +411,9 @@ const UserTable: React.FC<UserTableProps> = ({
     },
   ];
 
-  return (
+  return loading ? (
+    <TableSkeleton />
+  ) : (
     <>
       <Flex
         gap={10}

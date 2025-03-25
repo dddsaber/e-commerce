@@ -70,6 +70,7 @@ const StoreCampaignsPage: React.FC = () => {
                 setReload={setReload}
                 scope="all"
                 storeId={store?._id}
+                loading={loading}
               />
               <CouponDrawer
                 visible={isVisible}

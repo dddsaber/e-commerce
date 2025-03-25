@@ -25,11 +25,13 @@ interface ProductDetails {
 interface ProductDisplayCardProps {
   productId: string;
   productDetails: ProductDetails;
+  addCart: (product: Product, quantity: number) => void;
 }
 
 const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
   productId,
   productDetails,
+  addCart,
 }) => {
   const [product, setProduct] = useState<Product>();
   const [quantity, setQuantity] = useState<number>(1);
@@ -130,7 +132,11 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
               gap={10}
             >
               <Typography.Title level={1} style={{ color: "red", margin: 0 }}>
-                {(product?.price ?? 0) * (1 - (product?.discount ?? 0))} đ
+                {(
+                  (product?.price ?? 0) *
+                  (1 - (product?.discount ?? 0))
+                ).toLocaleString("vi-VN")}{" "}
+                đ
               </Typography.Title>
               <Typography.Title
                 level={2}
@@ -140,7 +146,7 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
                   margin: 0,
                 }}
               >
-                {product?.price} đ
+                {product?.price.toLocaleString("vi-VN")} đ
               </Typography.Title>
               <span
                 style={{
@@ -222,6 +228,7 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
                 border: "1px solid red",
                 borderRadius: 5,
               }}
+              onClick={() => addCart(product!, quantity)}
             >
               Thêm Vào Giỏ Hàng
             </Button>

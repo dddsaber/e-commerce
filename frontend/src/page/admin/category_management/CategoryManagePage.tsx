@@ -34,6 +34,7 @@ const CategoryManagePage: React.FC = () => {
           },
         ]}
       />
+
       <CategoryTable
         setSelectedCategory={setSelectedCategory}
         showDrawer={showDrawer}

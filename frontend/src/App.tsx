@@ -44,7 +44,15 @@ import TableSkeleton from "./components/layout/TableSkeleton";
 import UnAuthorizedPage from "./page/error/UnAuthorizedPage";
 import NotFoundPage from "./page/error/NotFoundPage";
 import SuccessOrdered from "./page/users/orders/SuccessOrdered";
-
+import SettingLayoutPage from "./page/users/SettingLayoutPage";
+import NotificationsPage from "./page/users/notification/NotificationsPage";
+import UserAddressPage from "./page/users/profile/UserAddressPage";
+import ChangePasswordPage from "./page/users/profile/ChangePasswordPage";
+import StoreAddressPage from "./page/users/store/shop/StoreAddressPage";
+import OrdersPage from "./page/users/store/orders/OrdersPage";
+import StoresRevenuePage from "./page/admin/store_management/StoresRevenuePage";
+import ChatPage from "./page/users/chat/ChatPage";
+import "./App.css";
 interface PrivateRouteProps {
   element: ReactElement;
   requiredPermission?: string[];
@@ -121,6 +129,10 @@ function App() {
       <Routes>
         <Route path="/admin" element={<AdminLayoutPage />}>
           <Route
+            path="chat"
+            element={<PrivateRoute element={<ChatPage />} />}
+          />
+          <Route
             path="manage-users"
             element={
               <PrivateRoute
@@ -134,6 +146,15 @@ function App() {
             element={
               <PrivateRoute
                 element={<StoresManagePage />}
+                requiredPermission={[TYPE_USER.admin]}
+              />
+            }
+          />
+          <Route
+            path="stores-revenue"
+            element={
+              <PrivateRoute
+                element={<StoresRevenuePage />}
                 requiredPermission={[TYPE_USER.admin]}
               />
             }
@@ -208,30 +229,56 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
+          {/* not-done-yet */}
           <Route path="/store/:storeId" element={<StorePage />} />
-          <Route path="/profile" element={<UserProfilePage />} />
-          <Route path="/my-orders" element={<MyOrdersPage />} />
+          {/* not-done-yet */}
           <Route path="/search" element={<SearchPage />} />
           <Route path="/create-orders" element={<CreateOrdersPage />} />
+          {/* not-done-yet */}
           <Route path="/success-create-order" element={<SuccessOrdered />} />
+          <Route path="/test" element={<SettingLayoutPage />} />
+          <Route path="/account" element={<SettingLayoutPage />}>
+            {/* not-done-yet */}
+            <Route path="profile" element={<UserProfilePage />} />
+            {/* not-done-yet */}
+            <Route path="notifications" element={<NotificationsPage />} />
+            {/* not-done-yet */}
+            <Route path="security" element={<SettingLayoutPage />} />
+            {/* not-done-yet */}
+            <Route path="manage-address" element={<UserAddressPage />} />
+            <Route path="my-orders" element={<MyOrdersPage />} />
+            <Route path="change-password" element={<ChangePasswordPage />} />
+          </Route>
         </Route>
 
         {/* Sales  */}
         <Route path="/store-manage" element={<AdminLayoutPage />}>
+          <Route
+            path="chat"
+            element={<PrivateRoute element={<ChatPage />} />}
+          />
+          {/* not-done-yet */}
           <Route path="dashboard" element={<StoreManagement />} />
           <Route path="all-orders" element={<AllOrdersPage />} />
           <Route path="pending-orders" element={<PendingOrdersPage />} />
           <Route path="dispatched-orders" element={<DispatchedOrdersPage />} />
           <Route path="cancel-orders" element={<CancelOrdersPage />} />
+          <Route path="orders" element={<OrdersPage />} />
           <Route path="products" element={<StoreProductsManagePage />} />
           <Route path="campaigns" element={<StoreCampaignsPage />} />
           <Route path="coupons" element={<StoreCouponsPage />} />
           <Route path="reviews" element={<StoreReviewsManagePage />} />
+          {/* not-done-yet */}
           <Route path="chat" element={<StoreChatPage />} />
+          {/* not-done-yet */}
           <Route path="revenue" element={<StoreRevenuePage />} />
+          {/* not-done-yet */}
           <Route path="bank-account" element={<StoreBankAccountPage />} />
           <Route path="shop-profile" element={<StoreProfilePage />} />
+          {/* not-done-yet */}
           <Route path="shop-decoration" element={<StoreDecorationPage />} />
+          {/* not-done-yet */}
+          <Route path="shop-address" element={<StoreAddressPage />} />
           <Route path="skeleton" element={<TableSkeleton />} />
         </Route>
         <Route path="/regist-store" element={<RegistStore />} />

@@ -30,7 +30,7 @@ const RegisterPage: React.FC = () => {
       return;
     }
     alert("Register successful");
-    navigate("/home");
+    navigate("/");
   };
 
   return (

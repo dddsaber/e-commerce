@@ -1,7 +1,8 @@
-.custom-skeleton {
+.custom-skeleton-table {
   width: 100% !important;
 }
 
-.custom-skeleton-header {
+.custom-skeleton-table-header {
   height: 100px;
+  width: 100%;
 }

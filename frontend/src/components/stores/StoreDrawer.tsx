@@ -17,6 +17,7 @@ import { createStore, updateStoreInformation } from "../../api/store.api";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { uploadFiles } from "../../api/upload";
 import { getSourceImage } from "../../utils/handle_image_func";
+import { TYPE_IMAGE } from "../../utils/constant";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -132,7 +133,7 @@ const StoreDrawer: React.FC<StoreDrawerProps> = ({
 
         // Upload file và lấy URL ảnh
         let logo = imageUrl;
-        const response = await uploadFiles([file]);
+        const response = await uploadFiles([file], TYPE_IMAGE.store);
         const { fileURLs } = response.data; // Lấy fileURLs từ phản hồi API
         logo = fileURLs[0]; // Lấy URL của ảnh sau khi upload
         console.log(logo);

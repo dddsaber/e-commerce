@@ -19,12 +19,14 @@ import {
 import { getSourceImage } from "../../utils/handle_image_func";
 import { STATUS_MAP } from "../../utils/constant";
 import { formatDate } from "../../utils/handle_format_func";
+import { useNavigate } from "react-router-dom";
 
 interface OrderCardProps {
   order: Order;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+  const navigate = useNavigate();
   const columns = [
     {
       title: "Image",
@@ -41,7 +43,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       title: "SP",
       width: 500,
       render: (record: OrderDetails) => (
-        <span>
+        <span style={{ fontWeight: "bold" }}>
           {record.product?.name} &nbsp; x{record.quantity}
         </span>
       ),
@@ -104,7 +106,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               <Button
                 style={{
                   height: 30,
-                  width: 100,
+                  width: "100%",
                   backgroundColor: "#ee4d2d",
                   color: "#fff",
                   fontWeight: 500,
@@ -114,13 +116,19 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 Chat
               </Button>
             </Col>
-            <Col span={2}>
-              <Button>
+            <Col span={3}>
+              <Button
+                style={{
+                  height: 30,
+                  width: "100%",
+                }}
+                onClick={() => navigate(`/store/${order.store?._id}`)}
+              >
                 <ShopOutlined style={{ height: 30, fontWeight: 500 }} /> Xem
                 Shop
               </Button>
             </Col>
-            <Col span={7}></Col>
+            <Col span={6}></Col>
             <Col span={4}></Col>
 
             <Col
@@ -183,7 +191,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <Button
             style={{
               height: 40,
-              width: 200,
+              width: "100%",
               backgroundColor: "#ee4d2d",
               color: "#fff",
               fontWeight: 500,
@@ -193,12 +201,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </Button>
         </Col>
         <Col span={4}>
-          <Button style={{ height: 40, width: 200, fontWeight: 500 }}>
+          <Button style={{ height: 40, width: "100%", fontWeight: 500 }}>
             Mua lại
           </Button>
         </Col>
         <Col span={4}>
-          <Button style={{ height: 40, width: 200, fontWeight: 500 }}>
+          <Button style={{ height: 40, width: "100%", fontWeight: 500 }}>
             Liên hệ người bán
           </Button>
         </Col>

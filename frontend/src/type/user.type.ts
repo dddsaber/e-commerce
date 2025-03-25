@@ -29,7 +29,7 @@ export interface User {
   name?: string;
   email?: string;
   phone?: string;
-  role: "user" | "shipper" | "admin" | "sales";
+  role: "user" | "shipper" | "admin" | "sales" | "logistics_provider";
   avatar?: string;
   gender?: boolean;
   birthday?: dayjs.Dayjs;

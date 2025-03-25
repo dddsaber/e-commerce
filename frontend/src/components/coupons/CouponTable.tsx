@@ -35,6 +35,7 @@ import { formatDate } from "../../utils/handle_format_func";
 import dayjs from "dayjs";
 import { COUPON_SCOPE } from "../../utils/constant";
 import { checkCouponApplied } from "../../utils/handle_status_func";
+import TableSkeleton from "../layout/TableSkeleton";
 
 interface CouponTableProps {
   reload: boolean;
@@ -44,6 +45,7 @@ interface CouponTableProps {
   showDrawer: () => void;
   scope?: "all" | "specific";
   storeId?: string;
+  loading: boolean;
 }
 
 const CouponTable: React.FC<CouponTableProps> = ({
@@ -54,6 +56,7 @@ const CouponTable: React.FC<CouponTableProps> = ({
   showDrawer,
   scope,
   storeId,
+  loading,
 }) => {
   const [data, setData] = useState<Coupon[]>([]);
   const [filter, setFilter] = useState<GetCouponsRequest>({
@@ -399,49 +402,55 @@ const CouponTable: React.FC<CouponTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm người dùng"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <Flex
+            gap={10}
+            justify="space-between"
+            style={{ marginBottom: 10, marginTop: 10 }}
+          >
+            <Flex gap={10}>
+              <Input
+                placeholder="Tìm kiếm người dùng"
+                prefix={<SearchOutlined />}
+                value={searchValue}
+                onChange={handleSearchChange}
+                style={{ marginBottom: 16, width: 800 }}
+              />
+              <span> &nbsp;</span>
+              <Button onClick={handleResearch}>
+                <ReloadOutlined />
+              </Button>
+              <span> &nbsp;</span>
+              <Button type="primary" onClick={() => setReload(!reload)}>
+                <SearchOutlined />
+              </Button>
+            </Flex>
 
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm phiếu
-        </Button>
-      </Flex>
-      <Typography.Title level={5} style={{ textAlign: "right" }}>
-        Tổng số bản ghi : {pagination.total}
-      </Typography.Title>
-      <Table
-        bordered
-        columns={columns}
-        dataSource={data}
-        pagination={pagination}
-        rowKey="_id"
-        onChange={handleTableChange}
-        scroll={{ x: "max-content" }}
-      />
+            <Button
+              type="primary"
+              icon={<PlusCircleFilled />}
+              onClick={() => handleAdd()}
+            >
+              Thêm phiếu
+            </Button>
+          </Flex>
+          <Typography.Title level={5} style={{ textAlign: "right" }}>
+            Tổng số bản ghi : {pagination.total}
+          </Typography.Title>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={data}
+            pagination={pagination}
+            rowKey="name"
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
+        </>
+      )}
     </>
   );
 };

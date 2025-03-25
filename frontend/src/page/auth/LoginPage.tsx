@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   loginAuth,
-  loginFacebookAuth,
-  loginGithubAuth,
+  // loginFacebookAuth,
+  // loginGithubAuth,
   loginGoogleAuth,
 } from "../../redux/slices/authSlice";
 import { TYPE_USER } from "../../utils/constant";
@@ -52,23 +52,23 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const onLoginOAuth2 = async (key: string) => {
-    try {
-      if (key === "github") {
-        const { user } = await dispatch(loginGithubAuth({})).unwrap();
-        handleNavigate(user);
-      } else if (key === "facebook") {
-        const { user } = await dispatch(loginFacebookAuth({})).unwrap();
+  // const onLoginOAuth2 = async (key: string) => {
+  //   try {
+  //     if (key === "github") {
+  //       const { user } = await dispatch(loginGithubAuth({})).unwrap();
+  //       handleNavigate(user);
+  //     } else if (key === "facebook") {
+  //       const { user } = await dispatch(loginFacebookAuth({})).unwrap();
 
-        handleNavigate(user);
-      } else {
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error("Login OAuth2 failed:", error);
-      navigate("/login");
-    }
-  };
+  //       handleNavigate(user);
+  //     } else {
+  //       navigate("/login");
+  //     }
+  //   } catch (error) {
+  //     console.error("Login OAuth2 failed:", error);
+  //     navigate("/login");
+  //   }
+  // };
 
   const handleLoginSuccess = async (response: CredentialResponse) => {
     try {
@@ -187,15 +187,6 @@ const LoginPage: React.FC = () => {
           }}
           useOneTap={false}
         />
-        <Divider />
-        <Button onClick={() => onLoginOAuth2("facebook")}>
-          Login with facebook
-        </Button>
-        <Divider />
-        <Button onClick={() => onLoginOAuth2("github")}>
-          Login with github
-        </Button>
-        <Link to="http://localhost:5000/auth/google">Google</Link>
       </Flex>
     </Flex>
   );

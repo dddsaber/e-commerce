@@ -10,6 +10,7 @@ export interface Category {
   _id: string;
   name: string;
   description: string;
+  commissionFee: number;
   isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;

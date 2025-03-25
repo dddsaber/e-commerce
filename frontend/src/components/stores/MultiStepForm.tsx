@@ -262,9 +262,16 @@ const Step3: React.FC<{
 }> = ({ onPrev, onNext, setStore, store, userId }) => {
   const [form] = Form.useForm();
 
+  const cccdRegex =
+    /^(0[1-9]|[1-8][0-9]|9[0-8])([0-9]{2})([0-9]{2})([0-9]{6})$/;
   const handleFinish = async () => {
     try {
       const values = await form.validateFields();
+      const identityNumber = values.identityNumber.trim();
+      if (!cccdRegex.test(identityNumber)) {
+        message.error("Số CCCD/CMND không đúng định dạng!");
+        return;
+      }
       const data = await storeIdentityRegistration(store!._id!, userId, values);
       if (data) setStore(data);
       onNext();

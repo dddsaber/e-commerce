@@ -35,6 +35,7 @@ const CouponsManagePage: React.FC = () => {
         ]}
       />
       <CouponTable
+        loading={loading}
         setSelectedCoupon={setSelectedCoupon}
         showDrawer={showDrawer}
         setLoading={setLoading}

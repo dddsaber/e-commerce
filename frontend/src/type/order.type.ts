@@ -11,6 +11,12 @@ export interface OrderDetails {
   };
 }
 
+export interface Fee {
+  commission: number;
+  transaction: number;
+  service: number;
+}
+
 export interface Order {
   _id?: string;
   paymentId?: string;
@@ -18,6 +24,7 @@ export interface Order {
   processorStaffId?: string;
   couponId?: string;
   orderDetails: OrderDetails[];
+  fees: Fee;
   address: {
     province?: string;
     district?: string;
@@ -54,10 +61,6 @@ export interface Order {
     type?: string;
     value?: number;
   };
-  staff?: {
-    _id: string;
-    name?: string;
-  };
   customerNote?: string;
   staffNote?: string;
   cancelNote?: string;
@@ -81,4 +84,5 @@ export interface GetOrdersRequest {
   total_low?: number;
   total_high?: number;
   status?: string;
+  settled?: boolean;
 }

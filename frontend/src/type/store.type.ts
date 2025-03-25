@@ -9,10 +9,10 @@ export interface Statistics {
 }
 
 export interface Address {
-  province: string;
-  district: string;
-  ward: string;
-  details: string;
+  province?: string;
+  district?: string;
+  ward?: string;
+  details?: string;
 }
 
 export interface UserRefDetails {

@@ -76,7 +76,7 @@ export default function LatestOrders(): JSX.Element {
       ) : (
         <List
           itemLayout="horizontal"
-          dataSource={latestOrders}
+          dataSource={latestOrders.slice(0, 2)}
           renderItem={(order: Order) => (
             <List.Item>
               <List.Item.Meta

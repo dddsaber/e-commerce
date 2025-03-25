@@ -1,0 +1,255 @@
+[{
+  "_id": {
+    "$oid": "67d68cad994494baafa4fd16"
+  },
+  "name": "Điện tử",
+  "description": "Thiết bị và đồ công nghệ",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:32:45.665Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:32:45.665Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cbe994494baafa4fd18"
+  },
+  "name": "Thời trang",
+  "description": "Quần áo và phụ kiện",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.09,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:02.030Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:02.030Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cc6994494baafa4fd1a"
+  },
+  "name": "Nhà cửa & Đời sống",
+  "description": "Nội thất, trang trí và đồ dùng cần thiết",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:10.457Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:10.457Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cd0994494baafa4fd1c"
+  },
+  "name": "Làm đẹp & Sức khỏe",
+  "description": "Mỹ phẩm, chăm sóc da và sức khỏe",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.095,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:20.275Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:20.275Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cd7994494baafa4fd1e"
+  },
+  "name": "Thể thao & Dã ngoại",
+  "description": "Dụng cụ thể thao và đồ ngoài trời",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:27.429Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:27.429Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ce5994494baafa4fd20"
+  },
+  "name": "Ô tô & Xe máy",
+  "description": "Phụ tùng và phụ kiện xe",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.05,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:41.965Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:41.965Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cf3994494baafa4fd22"
+  },
+  "name": "Sách & Văn phòng phẩm",
+  "description": "Sách, đồ dùng văn phòng và học tập",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.03,
+  "createdAt": {
+    "$date": "2025-03-16T08:33:55.211Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:33:55.211Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68cfc994494baafa4fd24"
+  },
+  "name": "Đồ chơi & Trò chơi",
+  "description": "Đồ chơi trẻ em và trò chơi boardgame",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:34:04.104Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:34:04.104Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d04994494baafa4fd26"
+  },
+  "name": "Tạp hóa & Thực phẩm",
+  "description": "Thực phẩm tươi sống và đóng gói",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.02,
+  "createdAt": {
+    "$date": "2025-03-16T08:34:12.694Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:34:12.694Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d10994494baafa4fd28"
+  },
+  "name": "Chăm sóc thú cưng",
+  "description": "Sản phẩm cho thú cưng",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:34:24.463Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:34:24.463Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d22994494baafa4fd2a"
+  },
+  "name": "Mẹ & Bé",
+  "description": "Quần áo, phụ kiện và đồ dùng cho bé",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.08,
+  "createdAt": {
+    "$date": "2025-03-16T08:34:42.996Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:34:42.996Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d2e994494baafa4fd2c"
+  },
+  "name": "Nhạc cụ & Phụ kiện âm nhạc",
+  "description": "Nhạc cụ và phụ kiện âm nhạc",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:34:54.247Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:34:54.247Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d3b994494baafa4fd2e"
+  },
+  "name": "Trò chơi điện tử & Console",
+  "description": "Trò chơi điện tử, máy chơi game và phụ kiện",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:35:07.370Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:35:07.370Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d46994494baafa4fd30"
+  },
+  "name": "Đồng hồ & Phụ kiện",
+  "description": "Đồng hồ thời trang và cao cấp",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.08,
+  "createdAt": {
+    "$date": "2025-03-16T08:35:18.783Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:35:18.783Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68d50994494baafa4fd32"
+  },
+  "name": "Thiết bị y tế & Sức khỏe",
+  "description": "Thiết bị y tế và thực phẩm chức năng",
+  "isDeleted": false,
+  "parentId": null,
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:35:28.336Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:35:28.336Z"
+  },
+  "__v": 0
+}]

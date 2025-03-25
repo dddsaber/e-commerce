@@ -24,7 +24,7 @@ const CartPage: React.FC = () => {
   const [checkedItems, setCheckedItems] = useState<Record<string, string[]>>(
     {}
   );
-
+  const [reload, setReload] = useState<boolean>(false);
   useEffect(() => {
     const fetchCart = async () => {
       if (user._id) {
@@ -33,7 +33,37 @@ const CartPage: React.FC = () => {
       }
     };
     fetchCart();
-  }, [user]);
+  }, [user, reload]);
+
+  const handleRemoveItem = async (productId: string, storeId: string) => {
+    await removeCartItem(user._id, productId);
+
+    // Cập nhật lại state giỏ hàng
+    setCart((prevCart) => {
+      if (!prevCart) return prevCart;
+
+      const updatedItems = prevCart.items.map((store) => {
+        if (store.storeId === storeId) {
+          return {
+            ...store,
+            products: store.products.filter((p) => p.productId !== productId),
+          };
+        }
+        return store;
+      });
+
+      return {
+        ...prevCart,
+        items: updatedItems.filter((store) => store.products.length > 0), // Xóa store trống
+      };
+    });
+
+    // Cập nhật lại checkedItems để tránh lỗi checkbox
+    setCheckedItems((prev) => ({
+      ...prev,
+      [storeId]: prev[storeId]?.filter((id) => id !== productId) || [],
+    }));
+  };
 
   const handleNavigateOrder = () => {
     const selectedProducts = cart?.items
@@ -139,16 +169,16 @@ const CartPage: React.FC = () => {
         <InputNumber
           min={1}
           value={quantity}
-          onChange={(value) =>
-            updateCartItem(user._id, record.productId, value ?? 0)
-          }
+          onChange={(value) => {
+            updateCartItem(user._id, record.productId, value ?? 0);
+            setReload(!reload);
+          }}
         />
       ),
     },
 
     {
       title: "Thành tiền",
-
       render: (_: unknown, record: CartItem) => (
         <span style={{ color: "red" }}>
           {(
@@ -163,7 +193,7 @@ const CartPage: React.FC = () => {
     {
       title: "",
       render: (_: unknown, record: CartItem) => (
-        <Button onClick={() => removeCartItem(user._id, record.productId)}>
+        <Button onClick={() => handleRemoveItem(record.productId, storeId)}>
           Xóa
         </Button>
       ),

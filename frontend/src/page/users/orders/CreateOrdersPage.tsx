@@ -40,7 +40,8 @@ const CreateOrdersPage = () => {
   const [selectedPayment, setSelectedPayment] = useState<paymentOptions>();
   const handleSubmit = async () => {
     if (!user.address) {
-      alert("Vui lòng điền đầy đ�� thông tin đ��a chỉ của bạn!");
+      alert("Vui lòng điền đầy đủ thông tin địa chỉ của bạn!");
+      navigate("/account/manage-address");
       return;
     }
     const orders = selectedProducts.map(

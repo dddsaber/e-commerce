@@ -16,10 +16,8 @@ import {
 } from "antd";
 import {
   EditOutlined,
-  LockOutlined,
   ReloadOutlined,
   SearchOutlined,
-  UnlockOutlined,
 } from "@ant-design/icons";
 import { getOrders } from "../../api/order.api";
 import { debounce } from "lodash";
@@ -27,7 +25,8 @@ import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { STATUS_MAP } from "../../utils/constant";
 import { getSourceImage } from "../../utils/handle_image_func";
-
+import { formatDate } from "../../utils/handle_format_func";
+import TableSkeleton from "../layout/TableSkeleton";
 interface OrderTableProps {
   reload: boolean;
   setReload: (value: boolean) => void;
@@ -96,15 +95,15 @@ const OrderTable: React.FC<OrderTableProps> = ({
     setFilter(newFilter);
   }, [searchParams]);
 
-  const handleStatus = async (record: Order) => {
-    try {
-      console.log(record);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setReload(!reload);
-    }
-  };
+  // const handleStatus = async (record: Order) => {
+  //   try {
+  //     console.log(record);
+  //   } catch (error) {
+  //     handleError(error);
+  //   } finally {
+  //     setReload(!reload);
+  //   }
+  // };
 
   const handleResearch = () => {
     setFilter({});
@@ -215,6 +214,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
       title: "STT",
       dataIndex: "index",
       key: "index",
+      fixed: "left" as const,
       width: 30,
       align: "center" as const,
       render: (_: unknown, __: unknown, index: number) => index + 1,
@@ -223,6 +223,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
       title: "Mã đơn",
       dataIndex: "_id",
       key: "_id",
+      fixed: "left" as const,
       sorter: true,
       width: 200,
       align: "left" as const,
@@ -231,15 +232,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
       title: "Người mua",
       dataIndex: ["user", "name"],
       key: "user.name",
-      sorter: true,
-      width: 150,
-      ellipsis: true,
-      align: "right" as const,
-    },
-    {
-      title: "Người xử lý",
-      dataIndex: ["staff", "name"],
-      key: "staff.name",
       sorter: true,
       width: 150,
       ellipsis: true,
@@ -264,6 +256,25 @@ const OrderTable: React.FC<OrderTableProps> = ({
       render: (orderDetails: OrderDetails[]) => orderDetails.length || 0,
     },
     {
+      title: "Tổng tiền sản phẩm",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>
+          {record.orderDetails
+            .reduce(
+              (prev, cur) =>
+                prev + cur.price * cur.quantity * (1 - (cur?.discount || 0)),
+              0
+            )
+            .toLocaleString()}{" "}
+          đ
+        </span>
+      ),
+    },
+    {
       title: "Phí vận chuyển",
       dataIndex: "shippingFee",
       key: "shippingFee",
@@ -273,13 +284,106 @@ const OrderTable: React.FC<OrderTableProps> = ({
       align: "center" as const,
     },
     {
+      title: "Giảm giá",
+      sorter: true,
+      width: 100,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>
+          {" "}
+          -{" "}
+          {record.coupon
+            ? record.coupon.type === "fixed"
+              ? record.coupon.value || 0
+              : (record.coupon.value || 0) *
+                record.orderDetails.reduce(
+                  (prev, cur) =>
+                    prev +
+                    cur.price * cur.quantity * (1 - (cur?.discount || 0)),
+                  0
+                )
+            : 0}{" "}
+          đ
+        </span>
+      ),
+    },
+    {
       title: "Tổng tiền",
       dataIndex: "total",
       key: "total",
       sorter: true,
-      width: 150,
+      width: 120,
       ellipsis: true,
       align: "center" as const,
+      render: (total: number) => (
+        <span style={{ fontWeight: "bold" }}>{total.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí thanh toán",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>{record.fees.transaction.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí cố định",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>{record.fees.commission.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí dịch vụ",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span>{record.fees.service.toLocaleString()} đ</span>
+      ),
+    },
+    {
+      title: "Phí giao dịch",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span style={{ fontWeight: "bold" }}>
+          {(
+            record.fees.commission +
+            record.fees.transaction +
+            record.fees.service
+          ).toLocaleString()}{" "}
+          đ
+        </span>
+      ),
+    },
+    {
+      title: "Doanh thu đơn hàng",
+      sorter: true,
+      width: 120,
+      ellipsis: true,
+      align: "center" as const,
+      render: (record: Order) => (
+        <span style={{ fontWeight: "bold" }}>
+          {(
+            (record.total ?? 0) -
+            (record.fees.commission +
+              record.fees.transaction +
+              record.fees.service)
+          ).toLocaleString()}{" "}
+          đ
+        </span>
+      ),
     },
     {
       title: "Phương thức TT",
@@ -312,7 +416,24 @@ const OrderTable: React.FC<OrderTableProps> = ({
         return <Tag color={statusInfo?.color}>{statusInfo?.label}</Tag>;
       },
     },
-
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sorter: true,
+      width: 160,
+      align: "left" as const,
+      render: (time) => formatDate(time),
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      sorter: true,
+      width: 160,
+      align: "left" as const,
+      render: (time) => formatDate(time),
+    },
     {
       title: "Hành động",
       fixed: "right" as const,
@@ -320,13 +441,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
       width: 150,
       render: (_: unknown, record: Order) => (
         <Space size="middle">
-          <Tooltip title={record.isDeleted ? "Khôi phục" : "Xóa"}>
-            <Button
-              type="text"
-              onClick={() => handleStatus(record)}
-              icon={!record.isDeleted ? <UnlockOutlined /> : <LockOutlined />}
-            />
-          </Tooltip>
           <Tooltip title="Xem thông tin">
             <Button
               type="text"
@@ -400,58 +514,64 @@ const OrderTable: React.FC<OrderTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm bình luận"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-        <Typography.Title level={5}>
-          Total Revews: {pagination.total}
-        </Typography.Title>
-      </Flex>
-      <Table
-        rowKey={(record) => record._id || "index"}
-        bordered
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={pagination}
-        onChange={handleTableChange}
-        scroll={{ x: "max-content" }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <div style={{ overflowX: "auto" }}>
-              <Table
-                rowKey={(record) => record._id || "index"}
-                columns={itemColumns}
-                dataSource={record.orderDetails}
-                size="small"
-                pagination={false}
-                style={{ width: "100%" }}
-                showHeader={false}
-                scroll={{ x: "max-content" }} // Đảm bảo bảng con có thể cuộn ngang
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <Flex
+            gap={10}
+            justify="space-between"
+            style={{ marginBottom: 10, marginTop: 10 }}
+          >
+            <Flex gap={10}>
+              <Input
+                placeholder="Tìm kiếm bình luận"
+                prefix={<SearchOutlined />}
+                value={searchValue}
+                onChange={handleSearchChange}
+                style={{ marginBottom: 16, width: 800 }}
               />
-            </div>
-          ),
-        }}
-      />
+              <span> &nbsp;</span>
+              <Button onClick={handleResearch}>
+                <ReloadOutlined />
+              </Button>
+              <span> &nbsp;</span>
+              <Button type="primary" onClick={() => setReload(!reload)}>
+                <SearchOutlined />
+              </Button>
+            </Flex>
+            <Typography.Title level={5}>
+              Total: {pagination.total}
+            </Typography.Title>
+          </Flex>
+          <Table
+            rowKey={(record) => record._id || "index"}
+            bordered
+            columns={columns}
+            dataSource={data}
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+            expandable={{
+              expandedRowRender: (record) => (
+                <div style={{ overflowX: "auto" }}>
+                  <Table
+                    rowKey={(record) => record._id || "index"}
+                    columns={itemColumns}
+                    dataSource={record.orderDetails}
+                    size="small"
+                    pagination={false}
+                    style={{ width: "100%" }}
+                    showHeader={false}
+                    scroll={{ x: "max-content" }} // Đảm bảo bảng con có thể cuộn ngang
+                  />
+                </div>
+              ),
+            }}
+          />
+        </>
+      )}
     </>
   );
 };

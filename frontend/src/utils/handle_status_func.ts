@@ -1,4 +1,5 @@
 import { Coupon } from "../type/coupon.type";
+import { OrderDetails } from "../type/order.type";
 import { STATUS_MAP } from "./constant";
 
 export const checkStatus = (status?: string) => {
@@ -16,4 +17,11 @@ export const checkCouponApplied = (record: Coupon, storeId: string) => {
     }
   }
   return false;
+};
+
+export const calculateOrderDetails = (orderDetails: OrderDetails[]) => {
+  return orderDetails.reduce(
+    (prev, cur) => prev + cur.price * cur.quantity * (1 - (cur.discount || 0)),
+    0
+  );
 };

@@ -32,6 +32,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { TYPE_USER } from "../../utils/constant";
 import { getStoreByUserId } from "../../api/store.api";
+import TableSkeleton from "../layout/TableSkeleton";
 
 interface ProductTableProps {
   reload: boolean;
@@ -270,6 +271,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
       width: 200,
       ellipsis: true,
       align: "center" as const,
+      render: (cost: number) => <span>{cost.toLocaleString("vi-VN")} đ</span>,
     },
     {
       title: "Giá bán",
@@ -278,6 +280,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
       sorter: true,
       width: 150,
       align: "center" as const,
+      render: (price: number) => <span>{price.toLocaleString("vi-VN")} đ</span>,
     },
     {
       title: "Giảm giá",
@@ -433,42 +436,47 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm sản phẩm"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <Flex
+            gap={10}
+            justify="space-between"
+            style={{ marginBottom: 10, marginTop: 10 }}
+          >
+            <Flex gap={10}>
+              <Input
+                placeholder="Tìm kiếm sản phẩm"
+                prefix={<SearchOutlined />}
+                value={searchValue}
+                onChange={handleSearchChange}
+                style={{ marginBottom: 16, width: 800 }}
+              />
+              <span> &nbsp;</span>
+              <Button onClick={handleResearch}>
+                <ReloadOutlined />
+              </Button>
+              <span> &nbsp;</span>
+              <Button type="primary" onClick={() => setReload(!reload)}>
+                <SearchOutlined />
+              </Button>
+            </Flex>
+            <Typography.Title level={5}>
+              Total products: {pagination.total}
+            </Typography.Title>
+          </Flex>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={data}
+            pagination={pagination}
+            rowKey="_id"
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
           />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-        <Typography.Title level={5}>
-          Total products: {pagination.total}
-        </Typography.Title>
-      </Flex>
-      <Table
-        bordered
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={pagination}
-        rowKey="name"
-        onChange={handleTableChange}
-        scroll={{ x: "max-content" }}
-      />
+        </>
+      )}
     </>
   );
 };

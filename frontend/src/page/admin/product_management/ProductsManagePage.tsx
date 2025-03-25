@@ -34,6 +34,7 @@ const ProductsManagePage: React.FC = () => {
           },
         ]}
       />
+
       <ProductTable
         setSelectedProduct={setSelectedProduct}
         showDrawer={showDrawer}
