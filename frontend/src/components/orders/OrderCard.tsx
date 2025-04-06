@@ -5,6 +5,7 @@ import {
   Card,
   Col,
   Image,
+  message,
   Row,
   Table,
   Tooltip,
@@ -69,15 +70,15 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                     marginRight: "8px",
                   }}
                 >
-                  {price.toLocaleString()} đ
+                  {price.toLocaleString("vi-VN")} đ
                 </span>
                 <span style={{ color: "red", fontWeight: "bold" }}>
-                  {discountedPrice.toLocaleString()} đ
+                  {discountedPrice.toLocaleString("vi-VN")} đ
                 </span>
               </>
             ) : (
               <span style={{ fontWeight: 500 }}>
-                {price.toLocaleString()} đ
+                {price.toLocaleString("vi-VN")} đ
               </span>
             )}
           </div>
@@ -85,15 +86,15 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       },
     },
   ];
-
-  const calculateTotalPrice = (products: OrderDetails[]) => {
-    return products.reduce((total, product) => {
-      return (
-        total + product.price * product.quantity * (1 - (product.discount ?? 0))
-      );
-    }, 0);
+  const handleNavigate = () => {
+    if (!order) {
+      message.error(`Store not found!`);
+      return;
+    }
+    navigate("/chat", {
+      state: { userId: order.store?.userId }, // Truyền userId qua state
+    });
   };
-
   return (
     <Card
       title={
@@ -111,6 +112,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                   color: "#fff",
                   fontWeight: 500,
                 }}
+                onClick={handleNavigate}
               >
                 <MessageOutlined />
                 Chat
@@ -180,9 +182,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           fontWeight: "bold",
         }}
       >
-        Tổng tiền:{" "}
+        Thành tiền:{" "}
         <span style={{ color: "red" }}>
-          {calculateTotalPrice(order.orderDetails).toLocaleString()} đ
+          {(order.total || 0).toLocaleString("vi-VN")} đ
         </span>
       </div>
       <Row gutter={[16, 16]} style={{ marginTop: "40px" }}>
@@ -206,7 +208,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </Button>
         </Col>
         <Col span={4}>
-          <Button style={{ height: 40, width: "100%", fontWeight: 500 }}>
+          <Button
+            style={{ height: 40, width: "100%", fontWeight: 500 }}
+            onClick={handleNavigate}
+          >
             Liên hệ người bán
           </Button>
         </Col>

@@ -2,7 +2,8 @@ import React from "react";
 import { Layout, theme } from "antd";
 import { Outlet } from "react-router-dom";
 import ModifyHeader from "../../components/layout/ModifyHeader";
-const { Content, Footer } = Layout;
+import Modifyfooter from "../../components/layout/ModifiFooter";
+const { Content } = Layout;
 
 const App: React.FC = () => {
   const {
@@ -25,9 +26,7 @@ const App: React.FC = () => {
       >
         <Outlet />
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©{new Date().getFullYear()} Created by Ant UED
-      </Footer>
+      <Modifyfooter />
     </Layout>
   );
 };

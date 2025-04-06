@@ -7,21 +7,12 @@ import {
   Table,
   Tag,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   message,
-  Typography,
   Image,
 } from "antd";
-import {
-  EditOutlined,
-  LockOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-  UnlockOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { getProducts, updateProductStatus } from "../../api/product.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -33,6 +24,7 @@ import { RootState } from "../../redux/store";
 import { TYPE_USER } from "../../utils/constant";
 import { getStoreByUserId } from "../../api/store.api";
 import TableSkeleton from "../layout/TableSkeleton";
+import TableHeader from "../layout/TableHeader";
 
 interface ProductTableProps {
   reload: boolean;
@@ -440,38 +432,25 @@ const ProductTable: React.FC<ProductTableProps> = ({
         <TableSkeleton />
       ) : (
         <>
-          <Flex
-            gap={10}
-            justify="space-between"
-            style={{ marginBottom: 10, marginTop: 10 }}
-          >
-            <Flex gap={10}>
-              <Input
-                placeholder="Tìm kiếm sản phẩm"
-                prefix={<SearchOutlined />}
-                value={searchValue}
-                onChange={handleSearchChange}
-                style={{ marginBottom: 16, width: 800 }}
-              />
-              <span> &nbsp;</span>
-              <Button onClick={handleResearch}>
-                <ReloadOutlined />
-              </Button>
-              <span> &nbsp;</span>
-              <Button type="primary" onClick={() => setReload(!reload)}>
-                <SearchOutlined />
-              </Button>
-            </Flex>
-            <Typography.Title level={5}>
-              Total products: {pagination.total}
-            </Typography.Title>
-          </Flex>
+          <TableHeader
+            handleResearch={handleResearch}
+            handleSearchChange={handleSearchChange}
+            reload={reload}
+            searchValue={searchValue}
+            setReload={setReload}
+          />
           <Table
             bordered
             columns={columns}
             dataSource={data}
-            pagination={pagination}
-            rowKey="_id"
+            loading={loading}
+            pagination={{
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} của ${total} bản ghi`,
+              ...pagination,
+            }}
+            style={{ margin: "0 10px" }}
+            rowKey="username"
             onChange={handleTableChange}
             scroll={{ x: "max-content" }}
           />

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { Store } from "../../../../type/store.type";
-import { Breadcrumb } from "antd";
-import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
-import { Order } from "../../../../type/order.type";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
-import OrderDrawer from "../../../../components/orders/OrderDrawer";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import { Store } from "../../../type/store.type";
+import StoreOrderTable from "../../../components/orders/StoreOrderTable";
+import { Order } from "../../../type/order.type";
+import TableSkeleton from "../../../components/layout/TableSkeleton";
+import OrderDrawer from "../../../components/orders/OrderDrawer";
 
 const AllOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -39,19 +38,6 @@ const AllOrdersPage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/all-orders",
-            title: "Tất cả đơn hàng",
-          },
-        ]}
-      />
-
       {/* Kiểm tra nếu storeId có thì mới hiển thị bảng sản phẩm */}
       {!store && loading ? (
         <TableSkeleton />

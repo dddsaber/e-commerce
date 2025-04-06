@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Table, Select, Button, Breadcrumb, Tag } from "antd";
+import { Row, Col, Card, Table, Select, Button, Tag } from "antd";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,18 +11,18 @@ import {
 } from "chart.js";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { Store } from "../../../../type/store.type";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { STATUS_MAP, TYPE_USER } from "../../../../utils/constant";
+import { RootState } from "../../../redux/store";
+import { Store } from "../../../type/store.type";
+import { getStoreByUserId } from "../../../api/store.api";
+import { STATUS_MAP, TYPE_USER } from "../../../utils/constant";
 import { useNavigate } from "react-router-dom";
-import { RevenueDataChart } from "../../../../type/statistic.type";
+import { RevenueDataChart } from "../../../type/statistic.type";
 import {
   getRevenueChartData,
   getStoresRevenueStats,
-} from "../../../../api/statistic.api";
-import { Order, OrderDetails } from "../../../../type/order.type";
-import { getOrders } from "../../../../api/order.api";
+} from "../../../api/statistic.api";
+import { Order, OrderDetails } from "../../../type/order.type";
+import { getOrders } from "../../../api/order.api";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -242,18 +242,6 @@ const StoreRevenuePage: React.FC = () => {
 
   return (
     <>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage",
-            title: "Trang chủ",
-          },
-          {
-            href: "/store-manage/revenue",
-            title: "Doanh thu",
-          },
-        ]}
-      />
       <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
         <Col span={24}>
           <Card

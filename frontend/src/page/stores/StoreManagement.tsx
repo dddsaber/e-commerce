@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import LatestOrders from "../../../components/dashboard/LatestOrders";
+import LatestOrders from "../../components/dashboard/LatestOrders";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(

@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumb } from "antd";
-import CouponTable from "../../../../components/coupons/CouponTable";
+import { Review } from "../../../type/review.type";
+import ReviewDrawer from "../../../components/reviews/ReviewDrawer";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { Store } from "../../../../type/store.type";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { Coupon } from "../../../../type/coupon.type";
-import CouponDrawer from "../../../../components/coupons/CouponDrawer";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import { Store } from "../../../type/store.type";
+import StoreReviewTable from "../../../components/reviews/StoreReviewTable";
+import TableSkeleton from "../../../components/layout/TableSkeleton";
 
-const StoreCampaignsPage: React.FC = () => {
+const StoreReviewsManagePage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | undefined>(
+  const [selectedReview, setSelectedReview] = useState<Review | undefined>(
     undefined
   );
-
   const [store, setStore] = useState<Store>();
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +32,7 @@ const StoreCampaignsPage: React.FC = () => {
   }, [user]);
 
   const onClose = () => {
-    setSelectedCoupon(undefined);
+    setSelectedReview(undefined);
     setIsVisible(false);
   };
 
@@ -42,45 +41,28 @@ const StoreCampaignsPage: React.FC = () => {
   };
 
   return (
-    <>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage",
-            title: "Trang chủ",
-          },
-          {
-            href: "/store-manage/campaigns",
-            title: "Quản lý phiếu giảm giá",
-          },
-        ]}
-      />
-
+    <div>
       {!store && loading ? (
         <TableSkeleton />
       ) : (
         <>
           {store?._id ? (
             <>
-              <CouponTable
-                setSelectedCoupon={setSelectedCoupon}
+              <StoreReviewTable
+                setSelectedReview={setSelectedReview}
                 showDrawer={showDrawer}
                 setLoading={setLoading}
                 reload={reload}
                 setReload={setReload}
-                scope="all"
-                storeId={store?._id}
-                loading={loading}
+                storeId={store._id}
               />
-              <CouponDrawer
+              <ReviewDrawer
                 visible={isVisible}
                 onClose={onClose}
-                selectedCoupon={selectedCoupon}
-                loading={loading}
-                setSelectedCoupon={setSelectedCoupon}
+                setSelectedReview={setSelectedReview}
+                selectedReview={selectedReview}
                 reload={reload}
                 setReload={setReload}
-                storeId={store?._id}
               />
             </>
           ) : (
@@ -88,8 +70,8 @@ const StoreCampaignsPage: React.FC = () => {
           )}
         </>
       )}
-    </>
+    </div>
   );
 };
 
-export default StoreCampaignsPage;
+export default StoreReviewsManagePage;

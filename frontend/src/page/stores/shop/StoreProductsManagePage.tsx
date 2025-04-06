@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumb } from "antd";
-import { Product } from "../../../../type/product.type";
-import ProductDrawer from "../../../../components/products/ProductDrawer";
-import StoreProductTable from "../../../../components/products/StoreProductTable";
-import { Store } from "../../../../type/store.type";
+import { Product } from "../../../type/product.type";
+import ProductDrawer from "../../../components/products/ProductDrawer";
+import StoreProductTable from "../../../components/products/StoreProductTable";
+import { Store } from "../../../type/store.type";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { getStoreByUserId } from "../../../../api/store.api";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import TableSkeleton from "../../../components/layout/TableSkeleton";
 
 const StoreProductsManagePage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -42,19 +41,6 @@ const StoreProductsManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/products",
-            title: "Quản lý sản phẩm",
-          },
-        ]}
-      />
-
       {/* Kiểm tra nếu storeId có thì mới hiển thị bảng sản phẩm */}
       {!store && loading ? (
         <TableSkeleton />

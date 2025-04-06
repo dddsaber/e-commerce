@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { Address } from "../type/store.type";
 
 export function formatDate(dateString: Date) {
   const date = new Date(dateString);
@@ -48,4 +49,11 @@ export const formatedTime = (
   formatTime = FORMAT_TIME
 ) => {
   return dayjs(date, format).format(formatTime);
+};
+
+export const formatAddress = (address?: Address) => {
+  if (!address) return "";
+  return `${address.ward || ""}, ${address.details || ""}, ${
+    address.district || ""
+  }, ${address.province || ""}`;
 };

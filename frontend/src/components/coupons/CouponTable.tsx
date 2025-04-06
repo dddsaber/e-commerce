@@ -7,21 +7,15 @@ import {
   Table,
   Tag,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   message,
-  Typography,
 } from "antd";
 import {
   CheckCircleFilled,
   DeleteOutlined,
   EditOutlined,
-  PlusCircleFilled,
   RedoOutlined,
-  ReloadOutlined,
-  SearchOutlined,
 } from "@ant-design/icons";
 import {
   applyCouponToStore,
@@ -36,6 +30,7 @@ import dayjs from "dayjs";
 import { COUPON_SCOPE } from "../../utils/constant";
 import { checkCouponApplied } from "../../utils/handle_status_func";
 import TableSkeleton from "../layout/TableSkeleton";
+import TableHeader from "../layout/TableHeader";
 
 interface CouponTableProps {
   reload: boolean;
@@ -406,46 +401,26 @@ const CouponTable: React.FC<CouponTableProps> = ({
         <TableSkeleton />
       ) : (
         <>
-          <Flex
-            gap={10}
-            justify="space-between"
-            style={{ marginBottom: 10, marginTop: 10 }}
-          >
-            <Flex gap={10}>
-              <Input
-                placeholder="Tìm kiếm người dùng"
-                prefix={<SearchOutlined />}
-                value={searchValue}
-                onChange={handleSearchChange}
-                style={{ marginBottom: 16, width: 800 }}
-              />
-              <span> &nbsp;</span>
-              <Button onClick={handleResearch}>
-                <ReloadOutlined />
-              </Button>
-              <span> &nbsp;</span>
-              <Button type="primary" onClick={() => setReload(!reload)}>
-                <SearchOutlined />
-              </Button>
-            </Flex>
-
-            <Button
-              type="primary"
-              icon={<PlusCircleFilled />}
-              onClick={() => handleAdd()}
-            >
-              Thêm phiếu
-            </Button>
-          </Flex>
-          <Typography.Title level={5} style={{ textAlign: "right" }}>
-            Tổng số bản ghi : {pagination.total}
-          </Typography.Title>
+          <TableHeader
+            handleResearch={handleResearch}
+            handleSearchChange={handleSearchChange}
+            reload={reload}
+            searchValue={searchValue}
+            setReload={setReload}
+            handleAdd={handleAdd}
+          />
           <Table
             bordered
             columns={columns}
             dataSource={data}
-            pagination={pagination}
-            rowKey="name"
+            loading={loading}
+            pagination={{
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} của ${total} bản ghi`,
+              ...pagination,
+            }}
+            style={{ margin: "0 10px" }}
+            rowKey="username"
             onChange={handleTableChange}
             scroll={{ x: "max-content" }}
           />

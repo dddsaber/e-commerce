@@ -54,35 +54,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     - {product.discount * 100} %
                   </span>
                 </span>
-                &nbsp;&nbsp;&nbsp;
+                <br />
                 <span
                   style={{ fontSize: 10, color: "#000", textAlign: "right" }}
                 >
                   Đã bán: {product.inventory?.soldQuantity ?? 0}
                 </span>
               </span>
-
-              <br />
-
-              <del
-                style={{
-                  marginLeft: "10px",
-                  color: "gray",
-                }}
-              >
-                {product.price.toLocaleString("vi-VN")} đ
-              </del>
             </>
           ) : (
             <span style={{ justifyContent: "space-between" }}>
               <span style={{ color: "#b4182d", fontWeight: "bold" }}>
                 {product.price.toLocaleString("vi-VN")} đ
               </span>
-              &nbsp;&nbsp;&nbsp;&nbsp;
+              <br />
               <span style={{ fontSize: 10, color: "#000", textAlign: "right" }}>
                 Đã bán: {product.inventory?.soldQuantity ?? 0}
               </span>
-              <br /> <br />
             </span>
           )
         }

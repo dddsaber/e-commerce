@@ -5,6 +5,7 @@ export const TYPE_USER = {
   user: "user",
   sales: "sales",
   shipper: "shipper",
+  logistic_provider: "logistic_provider",
 };
 
 export const TYPE_USER_STR = {
@@ -12,7 +13,7 @@ export const TYPE_USER_STR = {
   user: "Người dùng",
   shipper: "Người giao hàng",
   sales: "Người bán hàng",
-  logistics_provider: "Đơn vị vận chuyển",
+  logistic_provider: "Đơn vị vận chuyển",
 };
 
 export const colorOfType = {
@@ -20,7 +21,7 @@ export const colorOfType = {
   shipper: "green",
   sales: "orange",
   user: "purple",
-  logistics_provider: "blue",
+  logistic_provider: "blue",
 };
 
 export const TYPE_IMAGE = {
@@ -39,6 +40,29 @@ export const STATUS_MAP = {
   cancelled: { label: "Đã hủy", color: "red", value: "cancelled" },
 };
 
+export const DELIVERY_STATUS_MAP = {
+  awaiting_pickup: {
+    label: "Chờ lấy hàng",
+    color: "blue",
+    value: "awaiting_pickup",
+  },
+  in_transit: {
+    label: "Đang vận chuyển",
+    color: "orange",
+    value: "in_transit",
+  },
+  delivered: { label: "Đã giao", color: "green", value: "delivered" },
+  failed: { label: "Giao thất bại", color: "red", value: "failed" },
+};
+
+// Constant trạng thái giao hàng
+export const DELIVERY_STATUS = {
+  AWAITING_PICKUP: "awaiting_pickup",
+  IN_TRANSIT: "in_transit",
+  DELIVERED: "delivered",
+  FAILED: "failed",
+};
+
 export const STATUS_FLOW = [
   "pending",
   "confirmed",
@@ -51,4 +75,40 @@ export const STATUS_FLOW = [
 export const COUPON_SCOPE = {
   all: "all",
   specific: "specific",
+};
+
+export const NOTIFICATION_TYPE = {
+  ORDER_UPDATE: {
+    label: "Đơn hàng đã được cập nhật",
+    color: "orange",
+  },
+  USER_UPDATE: {
+    label: "Thông tin người dùng đã thay đổi",
+    color: "purple",
+  },
+  REPORT_UPDATE: {
+    label: "Báo cáo đã được cập nhật",
+    color: "red",
+  },
+  PRODUCT_UPDATE: {
+    label: "Sản phẩm đã được cập nhật",
+    color: "green",
+  },
+  STORE_UPDATE: {
+    label: "Cửa hàng đã được cập nhật",
+    color: "blue",
+  },
+  COUPON_UPDATE: {
+    label: "Phiếu giảm giá mới",
+    color: "yellow",
+  },
+};
+
+export const NOTIFICATION_TARGET_MODEL = {
+  ORDER: "Order",
+  USER: "User",
+  REPORT: "Report",
+  PRODUCT: "Product",
+  STORE: "Store",
+  COUPON: "Coupon",
 };

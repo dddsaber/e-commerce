@@ -21,10 +21,19 @@ import { getSourceImage } from "../../../utils/handle_image_func";
 import { createOrder } from "../../../api/order.api";
 import { removeCartItem } from "../../../api/cart.api";
 import LoadingModal from "../../../components/layout/LoadingModal";
+import { getDeliveryDetails } from "../../../api/delivery.api";
+import { Coupon } from "../../../type/coupon.type";
+import { getValidCoupons } from "../../../api/coupon.api";
 
 interface paymentOptions {
   value?: string;
   label?: string;
+}
+
+interface DeliveryDetails {
+  distance: number;
+  shippingFee: number;
+  estimatedDate: string;
 }
 
 const CreateOrdersPage = () => {
@@ -38,6 +47,66 @@ const CreateOrdersPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [payments, setPayments] = useState<paymentOptions[]>();
   const [selectedPayment, setSelectedPayment] = useState<paymentOptions>();
+  const [deliveryDetails, setDeliveryDetails] = useState<
+    Record<string, DeliveryDetails>
+  >({});
+
+  const [storeCoupons, setStoreCoupons] = useState<Record<string, Coupon[]>>(
+    {}
+  );
+  const [selectedStoreCoupon, setSelectedStoreCoupon] = useState<
+    Record<string, Coupon>
+  >({});
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      setLoading(true);
+      const coupons: Record<string, Coupon[]> = {};
+      for (const store of selectedProducts) {
+        try {
+          const data = await getValidCoupons(store.storeId);
+          coupons[store.storeId] = data.coupons; // Lưu thông tin coupon theo storeId
+        } catch (error) {
+          console.error(`Loi lấy mã coupon cho ${store.storeId}`, error);
+        }
+      }
+      setLoading(false);
+      setStoreCoupons(coupons); // Cập nhật state với dữ liệu đúng kiểu
+    };
+    fetchCoupons();
+  }, selectedProducts);
+
+  useEffect(() => {
+    const fetchDeliveryDetails = async () => {
+      setLoading(true);
+
+      const details: Record<string, DeliveryDetails> = {};
+      for (const store of selectedProducts) {
+        if (!user.address) {
+          return;
+        }
+        try {
+          const data = await getDeliveryDetails(
+            user?.address,
+            store.storeAddress
+          );
+          details[store.storeId] = data; // Lưu thông tin delivery theo storeId
+        } catch (error) {
+          console.error(
+            `Lỗi lấy thông tin giao hàng cho ${store.storeId}`,
+            error
+          );
+        }
+      }
+      setLoading(false);
+      setDeliveryDetails(details); // Cập nhật state với dữ liệu đúng kiểu
+    };
+
+    if (selectedProducts.length > 0) {
+      fetchDeliveryDetails();
+    }
+  }, [selectedProducts, user.address]);
+
   const handleSubmit = async () => {
     if (!user.address) {
       alert("Vui lòng điền đầy đủ thông tin địa chỉ của bạn!");
@@ -51,6 +120,8 @@ const CreateOrdersPage = () => {
         customerNote: notes[store.storeId] ?? undefined,
         address: user.address,
         paymentId: selectedPayment,
+        couponId: selectedStoreCoupon[store.storeId] || undefined,
+        shippingFee: deliveryDetails[store.storeId].shippingFee,
         orderDetails: store.products.map((product: OrderDetails) => ({
           productId: product.productId,
           quantity: product.quantity,
@@ -125,14 +196,14 @@ const CreateOrdersPage = () => {
                     marginRight: "8px",
                   }}
                 >
-                  {price.toLocaleString()} đ
+                  {price.toLocaleString("vi-VN")} đ
                 </span>
                 <span style={{ color: "red", fontWeight: "bold" }}>
-                  {discountedPrice.toLocaleString()} đ
+                  {discountedPrice.toLocaleString("vi-VN")} đ
                 </span>
               </>
             ) : (
-              <span>{price.toLocaleString()} đ</span>
+              <span>{price.toLocaleString("vi-VN")} đ</span>
             )}
           </div>
         );
@@ -142,7 +213,9 @@ const CreateOrdersPage = () => {
     {
       title: "Số lượng",
       dataIndex: "quantity",
-      render: (quantity: number) => <span>{quantity.toLocaleString()} </span>,
+      render: (quantity: number) => (
+        <span>{quantity.toLocaleString("vi-VN")} </span>
+      ),
     },
 
     {
@@ -153,7 +226,7 @@ const CreateOrdersPage = () => {
             record.price *
             record.quantity *
             (1 - (record.discount ?? 0))
-          ).toLocaleString()}{" "}
+          ).toLocaleString("vi-VN")}{" "}
           đ
         </span>
       ),
@@ -166,6 +239,28 @@ const CreateOrdersPage = () => {
         total + product.price * product.quantity * (1 - (product.discount ?? 0))
       );
     }, 0);
+  };
+
+  const calculateFinalPrice = (store: {
+    storeId: string;
+    products: CartItem[];
+  }) => {
+    const totalProductPrice = calculateTotalPrice(store.products);
+    const shippingFee = deliveryDetails[store.storeId]?.shippingFee || 0;
+    const coupon = selectedStoreCoupon[store.storeId];
+
+    let discount = 0;
+    if (coupon) {
+      discount =
+        coupon.type === "fixed"
+          ? coupon.value
+          : (totalProductPrice * coupon.value) / 100;
+    }
+
+    return (
+      (discount < totalProductPrice ? totalProductPrice - discount : 0) +
+      shippingFee
+    );
   };
 
   return (
@@ -200,10 +295,120 @@ const CreateOrdersPage = () => {
                     pagination={false}
                   />
                   <Row gutter={[12, 12]} style={{ marginTop: 15 }}>
-                    <Col span={2}>
+                    <Col span={16}></Col>
+                    <Col span={4}>
+                      <label>Tổng sản phẩm:</label>
+                    </Col>
+                    <Col span={4}>
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          textAlign: "right",
+                        }}
+                      >
+                        {calculateTotalPrice(store.products).toLocaleString(
+                          "vi-VN"
+                        )}{" "}
+                        đ
+                      </span>
+                    </Col>
+
+                    <Col span={16}></Col>
+                    <Col span={4}>
+                      <label>Giảm giá:</label>
+                    </Col>
+                    <Col span={4}>
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          textAlign: "right",
+                        }}
+                      >
+                        {selectedStoreCoupon[store.storeId]
+                          ? selectedStoreCoupon[store.storeId].type === "fixed"
+                            ? `-${selectedStoreCoupon[
+                                store.storeId
+                              ].value.toLocaleString("vi-VN")} đ`
+                            : `-${(
+                                calculateTotalPrice(store.products) *
+                                (selectedStoreCoupon[store.storeId].value / 100)
+                              ).toLocaleString("vi-VN")} đ`
+                          : "0 đ"}
+                      </span>
+                    </Col>
+
+                    <Col span={16}></Col>
+                    <Col span={4}>
+                      <label>Phí vận chuyển:</label>
+                    </Col>
+                    <Col span={4}>
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          textAlign: "right",
+                        }}
+                      >
+                        {deliveryDetails[store.storeId]?.shippingFee !==
+                        undefined
+                          ? `${deliveryDetails[
+                              store.storeId
+                            ].shippingFee.toLocaleString("vi-VN")} đ`
+                          : "Đang tính..."}
+                      </span>
+                    </Col>
+                    <Col span={16}></Col>
+                    <Col span={4}>
+                      <label>Tổng tiền:</label>
+                    </Col>
+                    <Col span={4}>
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          textAlign: "right",
+                        }}
+                      >
+                        {calculateFinalPrice(store).toLocaleString("vi-VN")} đ
+                      </span>
+                    </Col>
+                    <Col span={3}>
+                      <label>Phiếu thưởng: </label>
+                    </Col>
+                    <Col span={13}>
+                      <Select
+                        value={selectedStoreCoupon[store.storeId]?._id} // Hiển thị ID của coupon được chọn
+                        style={{ width: "100%", margin: "10px 0" }}
+                        onChange={(value) => {
+                          const coupon = storeCoupons[store.storeId]?.find(
+                            (coupon) => coupon._id === value
+                          );
+                          if (!coupon) return;
+                          setSelectedStoreCoupon({
+                            ...selectedStoreCoupon,
+                            [store.storeId]: coupon,
+                          });
+                        }}
+                        placeholder="Chọn mã giảm giá"
+                      >
+                        {storeCoupons[store.storeId]?.map((coupon) => (
+                          <Select.Option key={coupon._id} value={coupon._id}>
+                            {`${coupon.name} - ${
+                              coupon.type === "fixed"
+                                ? coupon.value
+                                : coupon.value + " %"
+                            }`}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Col>
+                    <Col span={8}></Col>
+                    <Col span={3}>
                       <label>Ghi chú:</label>
                     </Col>
-                    <Col span={10}>
+                    <Col span={13}>
                       <Input
                         type="text"
                         value={notes[store.storeId] ?? ""}
@@ -215,22 +420,8 @@ const CreateOrdersPage = () => {
                         }
                       />
                     </Col>
-                    <Col span={12}></Col>
+                    <Col span={8}></Col>
                   </Row>
-
-                  {/* Hiển thị tổng tiền */}
-                  <div
-                    style={{
-                      textAlign: "right",
-                      marginTop: "10px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Tổng tiền:{" "}
-                    <span style={{ color: "red" }}>
-                      {calculateTotalPrice(store.products).toLocaleString()} đ
-                    </span>
-                  </div>
                 </Card>
               </>
             )

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import CouponTable from "../../../components/coupons/CouponTable";
 import CouponDrawer from "../../../components/coupons/CouponDrawer";
 import { Coupon } from "../../../type/coupon.type";
-import { Breadcrumb } from "antd";
 
 const CouponsManagePage: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -22,18 +21,6 @@ const CouponsManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-coupons",
-            title: "Quản lý phiếu giảm giá",
-          },
-        ]}
-      />
       <CouponTable
         loading={loading}
         setSelectedCoupon={setSelectedCoupon}

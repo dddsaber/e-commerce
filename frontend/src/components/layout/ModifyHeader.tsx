@@ -4,6 +4,7 @@ import {
   BellOutlined,
   FolderFilled,
   HomeFilled,
+  MessageOutlined,
   ShopFilled,
   ShoppingCartOutlined,
   UserOutlined,
@@ -14,11 +15,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { Cart } from "../../type/cart.type";
 import { getCart } from "../../api/cart.api";
-import Search from "antd/es/input/Search";
 import { Store } from "../../type/store.type";
 import { getStoreByUserId } from "../../api/store.api";
 import { useNotifications } from "../../hook/useNotification";
 import NotificationCardM from "../notifications/Notification";
+import ModifySearch from "../shared/ModifySearch";
+import "./ModifyHeader.css";
 const { Header } = Layout;
 
 type MenuItem = {
@@ -34,7 +36,7 @@ const ModifyHeader: React.FC = () => {
   const [store, setStore] = useState<Store>();
   const [storeLink, setStoreLink] = useState<string>("/regist-store");
 
-  const { notifications } = useNotifications();
+  const { notifications, totalUnreadNotifications } = useNotifications();
 
   useEffect(() => {
     const userId = user?._id;
@@ -103,11 +105,23 @@ const ModifyHeader: React.FC = () => {
     },
   ];
   const notificationMenuBar = useMemo<MenuProps["items"]>(() => {
-    return notifications.map((item) => ({
+    const menu = notifications.map((item) => ({
       key: `notification-${item._id}`,
       label: <NotificationCardM item={item} />,
       onClick: () => navigate(`${item.linkTo}`),
     }));
+    menu.push({
+      key: "view-all-notifications",
+      label: (
+        <div
+          style={{ textAlign: "center", height: 30, verticalAlign: "middle" }}
+        >
+          <p style={{ marginTop: 10 }}>Xem tất cả thông báo</p>
+        </div>
+      ),
+      onClick: () => navigate("/account/notifications"),
+    });
+    return menu;
   }, [notifications]);
 
   const cartMenuBar: MenuProps["items"] = useMemo(() => {
@@ -208,14 +222,7 @@ const ModifyHeader: React.FC = () => {
             }
           }}
         />
-        <Search
-          style={{
-            padding: 0,
-            width: 600,
-          }}
-          size="large"
-          placeholder="Tìm kiếm"
-        />
+        <ModifySearch />
         <Flex
           justify="space-between"
           align="center"
@@ -272,7 +279,9 @@ const ModifyHeader: React.FC = () => {
               >
                 <Badge
                   count={
-                    <span style={{ fontSize: 15 }}>{notifications.length}</span>
+                    <span style={{ fontSize: 15 }}>
+                      {totalUnreadNotifications}
+                    </span>
                   }
                   offset={[0, 5]}
                   style={{
@@ -287,6 +296,25 @@ const ModifyHeader: React.FC = () => {
                 </Badge>
               </Button>
             </Dropdown>
+
+            <Button
+              onClick={() => navigate("/chat")}
+              style={{ color: "black", border: "none" }}
+            >
+              {" "}
+              <Badge
+                offset={[0, 5]}
+                style={{
+                  color: "white",
+                  background: "red",
+                  borderRadius: "10px",
+                  width: "15px",
+                  height: "15px",
+                }}
+              >
+                <MessageOutlined style={{ fontSize: 30, color: "black" }} />
+              </Badge>
+            </Button>
 
             <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
               <Button

@@ -28,14 +28,7 @@ const TableSkeleton: React.FC = () => {
         >
           <Skeleton.Button active={true} className="custom-skeleton-table" />
         </Col>
-        <Col
-          span={24}
-          style={{
-            textAlign: "right",
-          }}
-        >
-          <Skeleton.Input active={true} style={{ width: 150 }} />
-        </Col>
+
         <Col span={3}>
           <Skeleton.Node
             active={true}

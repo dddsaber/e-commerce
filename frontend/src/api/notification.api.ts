@@ -5,8 +5,14 @@ const URL = "/notification";
 // 🟢 Lấy danh sách người dùng
 export const getNotifications = async (
   userId: string
-): Promise<Notification[]> => {
-  const response = await instance.get<Notification[]>(`${URL}/user/${userId}`);
+): Promise<{
+  notifications: Notification[];
+  totalUnreadNotifications: number;
+}> => {
+  const response = await instance.get<{
+    notifications: Notification[];
+    totalUnreadNotifications: number;
+  }>(`${URL}/user/${userId}`);
 
   return response.data;
 };
@@ -30,5 +36,12 @@ export const readNotification = async (id: string): Promise<Notification> => {
     return {} as Notification;
   }
   const response = await instance.patch<Notification>(`${URL}/${id}/read`);
+  return response.data;
+};
+
+export const createNotification = async (
+  record: unknown
+): Promise<Notification> => {
+  const response = await instance.post<Notification>(URL, record);
   return response.data;
 };

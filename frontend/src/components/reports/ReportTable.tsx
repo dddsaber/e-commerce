@@ -7,26 +7,18 @@ import {
   Table,
   Tag,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   message,
-  Typography,
 } from "antd";
-import {
-  EyeOutlined,
-  LockOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-  UnlockOutlined,
-} from "@ant-design/icons";
+import { EyeOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { getReports, updateReportStatus } from "../../api/report.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { formatDate } from "../../utils/handle_format_func";
 import TableSkeleton from "../layout/TableSkeleton";
+import TableHeader from "../layout/TableHeader";
 
 interface ReportTableProps {
   reload: boolean;
@@ -408,37 +400,24 @@ const ReportTable: React.FC<ReportTableProps> = ({
         <TableSkeleton />
       ) : (
         <>
-          <Flex
-            gap={10}
-            justify="space-between"
-            style={{ marginBottom: 10, marginTop: 10 }}
-          >
-            <Flex gap={10}>
-              <Input
-                placeholder="Tìm kiếm báo cáo"
-                prefix={<SearchOutlined />}
-                value={searchValue}
-                onChange={handleSearchChange}
-                style={{ marginBottom: 16, width: 800 }}
-              />
-              <span> &nbsp;</span>
-              <Button onClick={handleResearch}>
-                <ReloadOutlined />
-              </Button>
-              <span> &nbsp;</span>
-              <Button type="primary" onClick={() => setReload(!reload)}>
-                <SearchOutlined />
-              </Button>
-            </Flex>
-            <Typography.Title level={5}>
-              Total reports: {pagination.total}
-            </Typography.Title>
-          </Flex>
+          <TableHeader
+            handleResearch={handleResearch}
+            handleSearchChange={handleSearchChange}
+            reload={reload}
+            searchValue={searchValue}
+            setReload={setReload}
+          />
           <Table
             bordered
             columns={columns}
             dataSource={data}
-            pagination={pagination}
+            loading={loading}
+            pagination={{
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} của ${total} bản ghi`,
+              ...pagination,
+            }}
+            style={{ margin: "0 10px" }}
             rowKey="_id"
             onChange={handleTableChange}
             scroll={{ x: "max-content" }}

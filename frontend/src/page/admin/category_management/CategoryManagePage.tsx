@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Breadcrumb } from "antd";
 import { Category } from "../../../type/category.type";
 import CategoryTable from "../../../components/categories/CategoryTable";
 import CategoryDrawer from "../../../components/categories/CategoryDrawer";
@@ -22,19 +21,6 @@ const CategoryManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-category",
-            title: "Quản lý danh mục",
-          },
-        ]}
-      />
-
       <CategoryTable
         setSelectedCategory={setSelectedCategory}
         showDrawer={showDrawer}

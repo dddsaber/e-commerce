@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumb } from "antd";
-import { Coupon } from "../../../../type/coupon.type";
+import { Coupon } from "../../../type/coupon.type";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { Store } from "../../../../type/store.type";
-import CouponTable from "../../../../components/coupons/CouponTable";
-import CouponDrawer from "../../../../components/coupons/CouponDrawer";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import { Store } from "../../../type/store.type";
+import CouponTable from "../../../components/coupons/CouponTable";
+import CouponDrawer from "../../../components/coupons/CouponDrawer";
 
 const StoreCouponsPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -40,19 +39,6 @@ const StoreCouponsPage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/coupons",
-            title: "Quản lý phiếu giảm giá",
-          },
-        ]}
-      />
-
       {store?._id ? (
         <>
           <CouponTable

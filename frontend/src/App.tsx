@@ -20,26 +20,25 @@ import CartPage from "./page/users/cart/CartPage";
 import HomePage from "./page/users/home/HomePage";
 import ProductDetailPage from "./page/users/products/ProductDetailPage";
 import OrdersManagePage from "./page/admin/order_management/OrdersManagePage";
-import StorePage from "./page/users/store/StorePage";
-import RegistStore from "./page/users/store/RegistStore";
-import StoreManagement from "./page/users/store/StoreManagement";
-import AllOrdersPage from "./page/users/store/orders/AllOrdersPage";
-import CancelOrdersPage from "./page/users/store/orders/CancelOrdersPage";
-import StoreProductsManagePage from "./page/users/store/shop/StoreProductsManagePage";
-import StoreCampaignsPage from "./page/users/store/marketing/StoreCampaignsPage";
-import StoreCouponsPage from "./page/users/store/marketing/StoreCouponsPage";
-import StoreReviewsManagePage from "./page/users/store/customers-services/StoreReviewsManagePage";
-import StoreChatPage from "./page/users/store/customers-services/StoreChatPage";
-import StoreRevenuePage from "./page/users/store/finance/StoreRevenuePage";
-import StoreBankAccountPage from "./page/users/store/finance/StoreBankAccountPage";
-import StoreProfilePage from "./page/users/store/shop/StoreProfilePage";
-import StoreDecorationPage from "./page/users/store/shop/StoreDecorationPage";
+import StorePage from "./page/stores/StorePage";
+import RegistStore from "./page/stores/RegistStore";
+import StoreManagement from "./page/stores/StoreManagement";
+import AllOrdersPage from "./page/stores/orders/AllOrdersPage";
+import CancelOrdersPage from "./page/stores/orders/CancelOrdersPage";
+import StoreProductsManagePage from "./page/stores/shop/StoreProductsManagePage";
+import StoreCampaignsPage from "./page/stores/marketing/StoreCampaignsPage";
+import StoreCouponsPage from "./page/stores/marketing/StoreCouponsPage";
+import StoreReviewsManagePage from "./page/stores/customers-services/StoreReviewsManagePage";
+import StoreRevenuePage from "./page/stores/finance/StoreRevenuePage";
+import StoreBankAccountPage from "./page/stores/finance/StoreBankAccountPage";
+import StoreProfilePage from "./page/stores/shop/StoreProfilePage";
+import StoreDecorationPage from "./page/stores/shop/StoreDecorationPage";
 import UserProfilePage from "./page/users/profile/UserProfilePage";
 import MyOrdersPage from "./page/users/orders/MyOrdersPage";
 import SearchPage from "./page/users/home/SearchPage";
-import DispatchedOrdersPage from "./page/users/store/orders/DispatchedOrdersPage";
+import DispatchedOrdersPage from "./page/stores/orders/DispatchedOrdersPage";
 import CreateOrdersPage from "./page/users/orders/CreateOrdersPage";
-import PendingOrdersPage from "./page/users/store/orders/PendingOrdersPage";
+import PendingOrdersPage from "./page/stores/orders/PendingOrdersPage";
 import TableSkeleton from "./components/layout/TableSkeleton";
 import UnAuthorizedPage from "./page/error/UnAuthorizedPage";
 import NotFoundPage from "./page/error/NotFoundPage";
@@ -48,11 +47,15 @@ import SettingLayoutPage from "./page/users/SettingLayoutPage";
 import NotificationsPage from "./page/users/notification/NotificationsPage";
 import UserAddressPage from "./page/users/profile/UserAddressPage";
 import ChangePasswordPage from "./page/users/profile/ChangePasswordPage";
-import StoreAddressPage from "./page/users/store/shop/StoreAddressPage";
-import OrdersPage from "./page/users/store/orders/OrdersPage";
+import StoreAddressPage from "./page/stores/shop/StoreAddressPage";
+import OrdersPage from "./page/stores/orders/OrdersPage";
 import StoresRevenuePage from "./page/admin/store_management/StoresRevenuePage";
 import ChatPage from "./page/users/chat/ChatPage";
 import "./App.css";
+import AllDeliveriesPage from "./page/logistic_providers/AllDeliveriesPage";
+import AwaitPickupDeliveries from "./page/logistic_providers/AwaitPickupDeliveries";
+import OnTransitDeliveries from "./page/logistic_providers/OnTransitDeliveries";
+import FailedDeliveries from "./page/logistic_providers/FailedDeliveries";
 interface PrivateRouteProps {
   element: ReactElement;
   requiredPermission?: string[];
@@ -268,8 +271,7 @@ function App() {
           <Route path="campaigns" element={<StoreCampaignsPage />} />
           <Route path="coupons" element={<StoreCouponsPage />} />
           <Route path="reviews" element={<StoreReviewsManagePage />} />
-          {/* not-done-yet */}
-          <Route path="chat" element={<StoreChatPage />} />
+
           {/* not-done-yet */}
           <Route path="revenue" element={<StoreRevenuePage />} />
           {/* not-done-yet */}
@@ -281,6 +283,20 @@ function App() {
           <Route path="shop-address" element={<StoreAddressPage />} />
           <Route path="skeleton" element={<TableSkeleton />} />
         </Route>
+        {/* Logistic provider */}
+        <Route path="/delivery" element={<AdminLayoutPage />}>
+          <Route path="all-deliveries" element={<AllDeliveriesPage />} />
+          <Route
+            path="await-pickup-deliveries"
+            element={<AwaitPickupDeliveries />}
+          />
+          <Route
+            path="on-transit-deliveries"
+            element={<OnTransitDeliveries />}
+          />
+          <Route path="failed-deliveries" element={<FailedDeliveries />} />
+        </Route>
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/regist-store" element={<RegistStore />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

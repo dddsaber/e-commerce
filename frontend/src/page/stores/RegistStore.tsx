@@ -1,10 +1,10 @@
 import React from "react";
-import MultiStepForm from "../../../components/stores/MultiStepForm";
+import MultiStepForm from "../../components/stores/MultiStepForm";
 import { Button, Dropdown, Flex, Layout, MenuProps, theme } from "antd";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../redux/store";
 import { UserOutlined } from "@ant-design/icons";
-import { getSourceImage } from "../../../utils/handle_image_func";
+import { getSourceImage } from "../../utils/handle_image_func";
 import { useNavigate } from "react-router-dom";
 
 const RegistStore: React.FC = () => {

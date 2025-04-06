@@ -13,6 +13,16 @@ export const getCoupons = async (
   return response.data;
 };
 
+// 🟢 Lấy danh sách phiếu giảm giá hợp lệ
+export const getValidCoupons = async (
+  storeId: string
+): Promise<{ coupons: Coupon[] }> => {
+  const response = await instance.get<{
+    coupons: Coupon[];
+  }>(`${URL}/valid-coupons/${storeId}`);
+  return response.data;
+};
+
 // 🟢 Tạo mới phiếu giảm giá
 export const createCoupon = async (body: Coupon): Promise<Coupon> => {
   const response = await instance.post<Coupon>(`${URL}/create-coupon`, body);

@@ -1,7 +1,5 @@
-import { Breadcrumb } from "antd";
 import React, { useState } from "react";
 import StoreRevenueTable from "../../../components/stores/StoreRevenueTable";
-import StoreRevenueChart from "../../../components/stores/StoreRevenueChart";
 import { StoreRevenue } from "../../../type/statistic.type";
 
 const StoresRevenuePage: React.FC = () => {
@@ -12,21 +10,6 @@ const StoresRevenuePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/stores-revenue",
-            title: "Quản lý cửa hàng",
-          },
-        ]}
-      />
-      <div style={{ width: "100%" }}>
-        <StoreRevenueChart data={data} />
-      </div>
       <StoreRevenueTable
         reload={reload}
         setLoading={setLoading}

@@ -4,8 +4,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   Avatar,
   Button,
-  Flex,
-  Input,
   message,
   Space,
   Table,
@@ -13,23 +11,16 @@ import {
   TablePaginationConfig,
   Tag,
   Tooltip,
-  Typography,
 } from "antd";
 import { getStores, updateStoreStatus } from "../../api/store.api";
 import { handleError } from "../../utils/handle_error_func";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
-import {
-  EditOutlined,
-  LockOutlined,
-  PlusCircleFilled,
-  ReloadOutlined,
-  SearchOutlined,
-  UnlockOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
 import TableSkeleton from "../layout/TableSkeleton";
+import TableHeader from "../layout/TableHeader";
 interface StoreTableProps {
   reload: boolean;
   setReload: (value: boolean) => void;
@@ -365,48 +356,26 @@ const StoreTable: React.FC<StoreTableProps> = ({
     <TableSkeleton />
   ) : (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{
-          margin: "10px 0 ",
-        }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm cửa hàng"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-        <Typography.Title level={5}>
-          Total stores: {pagination.total}
-        </Typography.Title>
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm cửa hàng
-        </Button>
-      </Flex>
+      <TableHeader
+        handleResearch={handleResearch}
+        handleSearchChange={handleSearchChange}
+        reload={reload}
+        searchValue={searchValue}
+        setReload={setReload}
+        handleAdd={handleAdd}
+      />
       <Table
         bordered
         columns={columns}
         dataSource={data}
         loading={loading}
-        pagination={pagination}
-        rowKey="username"
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} của ${total} bản ghi`,
+          ...pagination,
+        }}
+        style={{ margin: "0 10px" }}
+        rowKey="_id"
         onChange={handleTableChange}
         scroll={{ x: "max-content" }}
       />

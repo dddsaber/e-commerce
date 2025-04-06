@@ -25,13 +25,6 @@ export interface Order {
   couponId?: string;
   orderDetails: OrderDetails[];
   fees: Fee;
-  address: {
-    province?: string;
-    district?: string;
-    ward?: string;
-    details?: string;
-  };
-  shippingFee?: number;
   total?: number;
   status?: string;
   statusTimestamps?: {
@@ -42,6 +35,7 @@ export interface Order {
     cancelled?: Date;
     completed?: Date;
   };
+  distance?: number;
   user?: {
     _id: string;
     name?: string;
@@ -50,6 +44,7 @@ export interface Order {
     _id: string;
     name?: string;
     logo?: string;
+    userId: string;
   };
   payment?: {
     _id: string;
@@ -61,10 +56,10 @@ export interface Order {
     type?: string;
     value?: number;
   };
+  delivery?: Delivery;
   customerNote?: string;
   staffNote?: string;
   cancelNote?: string;
-  distance?: number;
   description?: string;
   isDeleted?: boolean;
   createdAt: Date;
@@ -85,4 +80,53 @@ export interface GetOrdersRequest {
   total_high?: number;
   status?: string;
   settled?: boolean;
+}
+
+export interface Delivery {
+  _id: string;
+  orderId: string;
+  courier?: string;
+  trackingNumber?: string;
+  estimatedDate?: Date;
+  deliveredDate?: Date;
+  failedReason?: string;
+  recipientName: string;
+  phoneNumber: string;
+  address: {
+    province: string;
+    district: string;
+    ward: string;
+    details?: string;
+  };
+  postalCode?: string;
+  shippingFee: number;
+  codAmount: number;
+  paymentStatus: string;
+  deliveryLogs: {
+    _id: string;
+    location: string;
+    timestamp: Date;
+    warehouseInfo: {
+      _id: string;
+      name: string;
+      address: {
+        province: string;
+        district: string;
+        ward: string;
+        details?: string;
+      };
+    };
+  }[];
+  status: string;
+}
+
+export interface GetDeliveryRequest {
+  skip?: number;
+  limit?: number;
+  searchKey?: string;
+  sortBy?: { field: string; order: "asc" | "desc" };
+  warehouseId?: string;
+  includeAll?: boolean;
+  statuses?: string[];
+  status?: string;
 }

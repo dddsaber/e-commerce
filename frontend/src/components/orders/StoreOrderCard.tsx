@@ -210,10 +210,10 @@ const StoreOrderCard: React.FC<OrderCardProps> = ({ order }) => {
             </Descriptions.Item>
             <Descriptions.Item label="Địa chỉ giao hàng">
               {`${
-                (order.address.details,
-                order.address.ward,
-                order.address.district,
-                order.address.province)
+                (order.delivery?.address.details,
+                order.delivery?.address.ward,
+                order.delivery?.address.district,
+                order.delivery?.address.province)
               }`}
             </Descriptions.Item>
           </Descriptions>

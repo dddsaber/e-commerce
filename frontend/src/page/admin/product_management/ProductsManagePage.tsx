@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import ProductTable from "../../../components/products/ProductTable";
 import ProductDrawer from "../../../components/products/ProductDrawer";
 import { Product } from "../../../type/product.type";
-import { Breadcrumb } from "antd";
 
 const ProductsManagePage: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -22,19 +21,6 @@ const ProductsManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-products",
-            title: "Quản lý sản phẩm",
-          },
-        ]}
-      />
-
       <ProductTable
         setSelectedProduct={setSelectedProduct}
         showDrawer={showDrawer}

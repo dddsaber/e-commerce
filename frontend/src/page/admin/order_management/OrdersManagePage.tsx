@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Breadcrumb } from "antd";
 import { Order } from "../../../type/order.type";
 import OrderTable from "../../../components/orders/OrderTable";
 import OrderDrawer from "../../../components/orders/OrderDrawer";
@@ -22,18 +21,6 @@ const OrdersManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-orders",
-            title: "Quản lý đơn hàng",
-          },
-        ]}
-      />
       <OrderTable
         setSelectedOrder={setSelectedOrder}
         showDrawer={showDrawer}

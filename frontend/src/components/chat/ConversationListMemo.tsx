@@ -1,16 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Card, Flex, Space, Tooltip, Typography, Avatar } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import { DebounceSelect } from "./DebounceSelect";
+import { Card, Flex, Typography, Avatar } from "antd";
+// import { ReloadOutlined } from "@ant-design/icons";
+// import { TYPE_USER, TYPE_USER_STR } from "../../utils/constant";
+// import { getUsers } from "../../api/user.api";
+// import { DebounceSelect } from "./DebounceSelect";
 import { Conversation } from "../../type/conversation.type";
 import { RootState } from "../../redux/store";
 import { User } from "../../type/user.type";
 import { FORMAT_FULL_TIME, formatedDate } from "../../utils/handle_format_func";
 import { getSourceImage } from "../../utils/handle_image_func";
-import { TYPE_USER, TYPE_USER_STR } from "../../utils/constant";
-import { getUsers } from "../../api/user.api";
+import dayjs from "dayjs";
+
 import {
   createConversation,
   getConversationsByUserId,
@@ -20,18 +21,20 @@ interface ConversationListMemoProps {
   onJoin: (conversation: Conversation, isNew?: boolean) => void;
   reload: boolean;
   selectedConversation?: Conversation;
+  userId?: string;
 }
 
-interface OptionType {
-  value: string;
-  label: string;
-}
+// interface OptionType {
+//   value: string;
+//   label: string;
+// }
 
 const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
   onJoin,
   reload,
+  userId,
 }) => {
-  const [userSearch, setUserSearch] = useState<OptionType | null>(null);
+  // const [userSearch, setUserSearch] = useState<OptionType | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
   const [isReloadConversation, setIsReloadConversation] = useState(false);
@@ -42,64 +45,74 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
       const data = await getConversationsByUserId(user._id);
       setConversations(data);
       if (data.length > 0) {
-        onJoin(data[0]);
+        if (userId) {
+          const conversation = conversations.find((conv) =>
+            [userId, user._id].every(
+              (val, index) => val === conv.participants[index]._id
+            )
+          );
+          if (conversation) {
+            onJoin(conversation);
+          } else {
+            const conversation = await createConversation({
+              participants: [userId, user._id],
+            });
+            onJoin(conversation, true);
+            setIsReloadConversation((prev) => !prev);
+          }
+        } else onJoin(data[0]);
       }
     };
 
     initData();
   }, [user?._id, isReloadConversation, onJoin, reload]);
 
-  const handleSelected = async (selected: string) => {
-    console.log("oke");
-    console.log(selected);
-    if (!selected) return;
-    const participantId = selected;
-    const existConversation = conversations.find((item) =>
-      item.participants.some((participant) => participant._id === participantId)
-    );
+  // const handleSelected = async (selected: string) => {
+  //   if (!selected) return;
+  //   const participantId = selected;
+  //   const existConversation = conversations.find((item) =>
+  //     item.participants.some((participant) => participant._id === participantId)
+  //   );
 
-    if (existConversation) {
-      onJoin(existConversation);
-    } else {
-      console.log("ok");
+  //   if (existConversation) {
+  //     onJoin(existConversation);
+  //   } else {
+  //     const conversation = await createConversation({
+  //       participants: [participantId, user._id],
+  //     });
+  //     onJoin(conversation, true);
+  //     setIsReloadConversation((prev) => !prev);
+  //   }
+  // };
+  // const fetchUserList = useCallback(
+  //   async (searchKey = "") => {
+  //     try {
+  //       const result = await getUsers({
+  //         searchKey,
+  //         limit: 10,
+  //         roles: [
+  //           TYPE_USER.admin,
+  //           TYPE_USER.user,
+  //           TYPE_USER.shipper,
+  //           TYPE_USER.sales,
+  //         ],
+  //       });
 
-      const conversation = await createConversation({
-        participants: [participantId, user._id],
-      });
-      console.log(conversation);
-      onJoin(conversation, true);
-      setIsReloadConversation((prev) => !prev);
-    }
-  };
-  const fetchUserList = useCallback(
-    async (searchKey = "") => {
-      try {
-        const result = await getUsers({
-          searchKey,
-          limit: 10,
-          roles: [
-            TYPE_USER.admin,
-            TYPE_USER.user,
-            TYPE_USER.shipper,
-            TYPE_USER.sales,
-          ],
-        });
-
-        return result.users
-          .filter((item: User) => item._id !== user._id)
-          .map((item: User) => ({
-            label: `${TYPE_USER_STR[item.role || ""]} | ${
-              item.name || "Chưa xác định"
-            } - ${item.phone || "Trống"}`,
-            value: item._id,
-          }));
-      } catch (error) {
-        console.error("Error fetching user list:", error);
-        return [];
-      }
-    },
-    [user]
-  );
+  //       return result.users
+  //         .filter((item: User) => item._id !== user._id)
+  //         .map((item: User) => ({
+  //           label: `${TYPE_USER_STR[item.role || ""]} | ${
+  //             item.name || "Chưa xác định"
+  //           } - ${item.phone || "Trống"}`,
+  //           value: item._id,
+  //         }));
+  //     } catch (error) {
+  //       console.error("Error fetching user list:", error);
+  //       return [];
+  //     }
+  //   },
+  //   [user]
+  // );
 
   const renderTimeChatMessage = (date: string) => {
     const now = dayjs();
@@ -115,7 +128,7 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
 
   return (
     <div style={{ paddingLeft: 10, width: "100%", minWidth: 270 }}>
-      <Space
+      {/* <Space
         direction="vertical"
         style={{ paddingRight: 18, width: "100%", marginTop: 10 }}
       >
@@ -142,7 +155,7 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
           refreshData={!!user?._id}
           value={userSearch || undefined}
         />
-      </Space>
+      </Space> */}
       {conversations.length === 0 && (
         <Flex justify="center" style={{ padding: 10 }}>
           <Typography.Text type="secondary">
@@ -153,7 +166,12 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
       <Flex
         vertical
         gap={10}
-        style={{ height: "70vh", overflowY: "auto", paddingRight: 10 }}
+        style={{
+          marginTop: "15px",
+          maxHeight: "80vh",
+          overflowY: "auto",
+          paddingRight: 10,
+        }}
       >
         {conversations.map((conversation) => {
           const participant =
@@ -162,7 +180,12 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
           return (
             <Card
               key={conversation._id}
-              style={{ cursor: "pointer", width: "100%" }}
+              style={{
+                cursor: "pointer",
+                width: "100%",
+                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                borderRadius: "8px", // Bo góc nhẹ cho đẹp hơn
+              }}
               hoverable
               onClick={() => onJoin(conversation)}
             >

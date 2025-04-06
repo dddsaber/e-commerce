@@ -70,6 +70,7 @@ const CartPage: React.FC = () => {
       .map((store) => ({
         storeId: store.storeId,
         storeName: store.storeName,
+        storeAddress: store.storeAddress,
         products: store.products.filter((product) =>
           checkedItems[store.storeId]?.includes(product.productId)
         ),

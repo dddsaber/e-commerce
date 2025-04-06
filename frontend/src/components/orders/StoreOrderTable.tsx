@@ -9,7 +9,6 @@ import {
   Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   Typography,
   Tag,
   Image,
@@ -22,20 +21,26 @@ import {
   CloseCircleFilled,
   CloseCircleOutlined,
   EditFilled,
-  ReloadOutlined,
-  SearchOutlined,
 } from "@ant-design/icons";
 import { cancelOrder, getOrders, updateOrderStatus } from "../../api/order.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
-import { STATUS_MAP } from "../../utils/constant";
+import {
+  NOTIFICATION_TARGET_MODEL,
+  NOTIFICATION_TYPE,
+  STATUS_MAP,
+} from "../../utils/constant";
 import { getSourceImage } from "../../utils/handle_image_func";
 import {
   calculateOrderDetails,
   checkStatus,
 } from "../../utils/handle_status_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableHeader from "../layout/TableHeader";
+import { createNotification } from "../../api/notification.api";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface OrderTableProps {
   reload: boolean;
@@ -59,6 +64,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
   selectedOrder,
   showDrawer,
 }) => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [cancelNote, setCancelNote] = useState<string>();
   const [isVisible, setIsVisible] = useState<boolean>();
   const [data, setData] = useState<Order[]>([]);
@@ -145,7 +151,21 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
       STATUS_MAP.confirmed.value
     );
     if (response) {
-      message.success(`Order ${record._id} has been confirmed!`);
+      message.success(`Order ${response._id} has been confirmed!`);
+      const notification = await createNotification({
+        userId: response.userId!,
+        createdBy: user._id,
+        title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
+        message: `Đơn hàng ${response._id} đã được ${
+          STATUS_MAP[response.status as keyof typeof STATUS_MAP].label
+        }`,
+        target: response._id!,
+        targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
+        image: selectedOrder?.orderDetails[0].product?.image,
+      });
+      if (!notification) {
+        message.error("Tạo thông báo thất bại!");
+      }
       setReload(!reload);
     }
   };
@@ -300,14 +320,14 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
     },
     {
       title: "Phí vận chuyển",
-      dataIndex: "shippingFee",
-      key: "shippingFee",
+      dataIndex: ["delivery", "shippingFee"],
+      key: "delivery.shippingFee",
       sorter: true,
       width: 100,
       ellipsis: true,
       align: "center" as const,
       render: (shippingFee: number) => (
-        <span>{shippingFee.toLocaleString()} đ</span>
+        <span>{(shippingFee || 0).toLocaleString()} đ</span>
       ),
     },
     {
@@ -379,7 +399,6 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
     },
     {
       title: "Phí giao dịch (Tổng)",
-      sorter: true,
       width: 60,
       ellipsis: true,
       align: "center" as const,
@@ -586,38 +605,26 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm bình luận"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-      </Flex>
-      <Typography.Title level={5} style={{ textAlign: "right" }}>
-        Total : {pagination.total}
-      </Typography.Title>
+      <TableHeader
+        handleResearch={handleResearch}
+        handleSearchChange={handleSearchChange}
+        reload={reload}
+        searchValue={searchValue}
+        setReload={setReload}
+      />
       <Table
         rowKey={(record) => record._id || "index"}
         bordered
         columns={columns}
         dataSource={data}
-        pagination={pagination}
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} của ${total} bản ghi`,
+          ...pagination,
+        }}
+        style={{
+          margin: "0 10px",
+        }}
         onChange={handleTableChange}
         scroll={{ x: "max-content" }}
         expandable={{

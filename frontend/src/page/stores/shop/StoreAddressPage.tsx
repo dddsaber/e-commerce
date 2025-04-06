@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { Address, Store } from "../../../../type/store.type";
-import {
-  getStoreByUserId,
-  updateStoreAddress,
-} from "../../../../api/store.api";
+import { RootState } from "../../../redux/store";
+import { Address, Store } from "../../../type/store.type";
+import { getStoreByUserId, updateStoreAddress } from "../../../api/store.api";
 import { Breadcrumb, Button, Card, Flex, message } from "antd";
-import AddressSkeleton from "../../../../components/address/AddressSkeleton";
-import AddressComponent from "../../../../components/address/AddressComponent";
+import AddressSkeleton from "../../../components/address/AddressSkeleton";
+import AddressComponent from "../../../components/address/AddressComponent";
 
 const StoreAddressPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);

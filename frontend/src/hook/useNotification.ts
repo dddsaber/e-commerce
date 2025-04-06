@@ -11,6 +11,8 @@ export const useNotifications = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [totalUnreadNotifications, setTotalUnreadNotifications] =
+    useState<number>(0);
 
   useEffect(() => {
     console.log(user);
@@ -22,7 +24,8 @@ export const useNotifications = () => {
     const fetchNotifications = async () => {
       try {
         const data = await getNotifications(user._id);
-        setNotifications(data);
+        setNotifications(data.notifications);
+        setTotalUnreadNotifications(data.totalUnreadNotifications);
       } catch (error) {
         console.error("Lỗi khi lấy thông báo:", error);
       }
@@ -37,6 +40,7 @@ export const useNotifications = () => {
 
         if (data && data.length) {
           setNotifications((prev) => [...data, ...prev]); // Thêm thông báo mới vào danh sách
+          setTotalUnreadNotifications((prev) => prev + data.length); // Tăng số thông báo chưa đoc
         }
       } catch (error) {
         console.error("Lỗi kết nối Long Polling:", error);
@@ -49,5 +53,5 @@ export const useNotifications = () => {
     pollNotifications();
   }, [user]);
 
-  return { notifications };
+  return { notifications, totalUnreadNotifications };
 };

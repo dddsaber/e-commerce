@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { Store } from "../../../../type/store.type";
-import { Breadcrumb } from "antd";
-import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
-import { Order } from "../../../../type/order.type";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
-import { STATUS_MAP } from "../../../../utils/constant";
-import OrderDrawer from "../../../../components/orders/OrderDrawer";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import { Store } from "../../../type/store.type";
+import StoreOrderTable from "../../../components/orders/StoreOrderTable";
+import { Order } from "../../../type/order.type";
+import TableSkeleton from "../../../components/layout/TableSkeleton";
+import OrderDrawer from "../../../components/orders/OrderDrawer";
+import { STATUS_MAP } from "../../../utils/constant";
 
-const PendingOrdersPage: React.FC = () => {
+const DispatchedOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [store, setStore] = useState<Store>();
@@ -40,19 +39,6 @@ const PendingOrdersPage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/pending-orders",
-            title: "Đơn hàng chờ xử lý",
-          },
-        ]}
-      />
-
       {/* Kiểm tra nếu storeId có thì mới hiển thị bảng sản phẩm */}
       {!store && loading ? (
         <TableSkeleton />
@@ -67,7 +53,7 @@ const PendingOrdersPage: React.FC = () => {
                 setLoading={setLoading}
                 reload={reload}
                 setReload={setReload}
-                status={STATUS_MAP.pending.value}
+                status={STATUS_MAP.shipped.value}
                 selectedOrder={selectedOrder}
                 storeId={store._id}
               />
@@ -89,4 +75,4 @@ const PendingOrdersPage: React.FC = () => {
   );
 };
 
-export default PendingOrdersPage;
+export default DispatchedOrdersPage;

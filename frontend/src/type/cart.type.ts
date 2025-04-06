@@ -1,3 +1,5 @@
+import { Address } from "./user.type";
+
 export interface CartItem {
   productId: string;
   productName: string;
@@ -15,6 +17,7 @@ export interface Cart {
   items: {
     storeId: string;
     storeName: string;
+    storeAddress: Address;
     logo: string;
     products: CartItem[];
   }[];

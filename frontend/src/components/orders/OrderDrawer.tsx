@@ -16,7 +16,12 @@ import {
 } from "antd";
 import { Order, OrderDetails } from "../../type/order.type";
 import { getSourceImage } from "../../utils/handle_image_func";
-import { STATUS_MAP, TYPE_USER } from "../../utils/constant";
+import {
+  NOTIFICATION_TARGET_MODEL,
+  NOTIFICATION_TYPE,
+  STATUS_MAP,
+  TYPE_USER,
+} from "../../utils/constant";
 import { formatDate } from "../../utils/handle_format_func";
 import {
   CheckCircleFilled,
@@ -32,6 +37,7 @@ import {
 import { updateOrderStatus } from "../../api/order.api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { createNotification } from "../../api/notification.api";
 
 interface OrderDrawerProps {
   visible: boolean;
@@ -62,6 +68,20 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
           selectedOrder!.status
         }`
       );
+      const notification = await createNotification({
+        userId: record.userId!,
+        createdBy: user._id,
+        title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
+        message: `Đơn hàng ${record._id} đã được cập nhật sang trạng thái ${
+          STATUS_MAP[record.status as keyof typeof STATUS_MAP].label
+        }`,
+        target: record._id!,
+        targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
+        image: selectedOrder?.orderDetails[0].product?.image,
+      });
+      if (!notification) {
+        message.error("Tạo thông báo thất bại!");
+      }
       setReload(!reload);
     }
   };
@@ -73,6 +93,20 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
     );
     if (response) {
       message.success(`Order ${selectedOrder?._id} has been confirmed!`);
+      const notification = await createNotification({
+        userId: response.userId!,
+        createdBy: user._id,
+        title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
+        message: `Đơn hàng ${response._id} đã được cập nhật sang trạng thái ${
+          STATUS_MAP[response.status as keyof typeof STATUS_MAP].label
+        }`,
+        target: response._id!,
+        targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
+        image: selectedOrder?.orderDetails[0].product?.image,
+      });
+      if (!notification) {
+        message.error("Tạo thông báo thất bại!");
+      }
       setReload(!reload);
     }
   };
@@ -104,7 +138,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
       key: "price",
       width: 100,
       align: "center" as const,
-      render: (price: number) => `${price.toLocaleString()} đ`,
+      render: (price: number) => `${price.toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Giảm",
@@ -132,9 +166,9 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
           total = record.price * record.quantity * (1 - (record.discount ?? 0));
         }
         return (
-          <span
-            style={{ fontWeight: "bold" }}
-          >{`${total.toLocaleString()} đ`}</span>
+          <span style={{ fontWeight: "bold" }}>{`${total.toLocaleString(
+            "vi-VN"
+          )} đ`}</span>
         );
       },
     },
@@ -193,9 +227,6 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
             <Descriptions.Item label="Số sản phẩm">
               {selectedOrder?.orderDetails?.length}
             </Descriptions.Item>
-            <Descriptions.Item label="Khoảng cách">
-              {selectedOrder?.distance || 0} km
-            </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
               {
                 STATUS_MAP[selectedOrder?.status as keyof typeof STATUS_MAP]
@@ -206,8 +237,8 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
               {selectedOrder?.payment?.name || "Không xác định"}
             </Descriptions.Item>
             <Descriptions.Item label="Địa chỉ">
-              {selectedOrder?.address
-                ? `${selectedOrder.address.details}, ${selectedOrder.address.ward}, ${selectedOrder.address.district}, ${selectedOrder.address.province}`
+              {selectedOrder?.delivery?.address
+                ? `${selectedOrder.delivery.address.details}, ${selectedOrder.delivery.address.ward}, ${selectedOrder.delivery.address.district}, ${selectedOrder.delivery.address.province}`
                 : "Chưa có thông tin địa chỉ"}
             </Descriptions.Item>
             <Descriptions.Item label="Ghi chú khách hàng">
@@ -233,20 +264,22 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
             <Descriptions.Item label="Tổng tiền sản phẩm">
               {calculateOrderDetails(
                 selectedOrder?.orderDetails || []
-              ).toLocaleString()}{" "}
+              ).toLocaleString("vi-VN")}{" "}
               đ
             </Descriptions.Item>
             <Descriptions.Item label="Tiền ship">
-              {selectedOrder?.shippingFee?.toLocaleString() || 0} đ
+              {selectedOrder?.delivery?.shippingFee?.toLocaleString("vi-VN") ||
+                0}{" "}
+              đ
             </Descriptions.Item>
             <Descriptions.Item label="Số tiền giảm giá">
               -{" "}
               {selectedOrder?.coupon?.type === "fixed"
-                ? (selectedOrder?.coupon?.value || 0).toLocaleString()
+                ? (selectedOrder?.coupon?.value || 0).toLocaleString("vi-VN")
                 : (
                     (selectedOrder?.coupon?.value || 0) *
                     calculateOrderDetails(selectedOrder?.orderDetails || [])
-                  ).toLocaleString()}{" "}
+                  ).toLocaleString("vi-VN")}{" "}
               đ
             </Descriptions.Item>
             <Descriptions.Item
@@ -256,16 +289,17 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
                 content: { fontWeight: "bold" },
               }}
             >
-              {selectedOrder?.total?.toLocaleString() || 0} đ
+              {selectedOrder?.total?.toLocaleString("vi-VN") || 0} đ
             </Descriptions.Item>
             <Descriptions.Item label="Phí thanh toán">
-              - {selectedOrder?.fees.transaction?.toLocaleString() || 0} đ
+              - {selectedOrder?.fees.transaction?.toLocaleString("vi-VN") || 0}{" "}
+              đ
             </Descriptions.Item>
             <Descriptions.Item label="Phí cố định">
-              - {selectedOrder?.fees.commission?.toLocaleString() || 0} đ
+              - {selectedOrder?.fees.commission?.toLocaleString("vi-VN") || 0} đ
             </Descriptions.Item>
             <Descriptions.Item label="Phí dịch vụ">
-              - {selectedOrder?.fees.service?.toLocaleString() || 0} đ
+              - {selectedOrder?.fees.service?.toLocaleString("vi-VN") || 0} đ
             </Descriptions.Item>
             <Descriptions.Item
               label="Phí giao dịch"
@@ -279,7 +313,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
                 (selectedOrder?.fees.commission || 0) +
                 (selectedOrder?.fees.transaction || 0) +
                 (selectedOrder?.fees.service || 0)
-              ).toLocaleString()}{" "}
+              ).toLocaleString("vi-VN")}{" "}
               đ
             </Descriptions.Item>
 
@@ -295,7 +329,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
                 ((selectedOrder?.fees.commission || 0) +
                   (selectedOrder?.fees.transaction || 0) +
                   (selectedOrder?.fees.service || 0))
-              ).toLocaleString()}{" "}
+              ).toLocaleString("vi-VN")}{" "}
               đ
             </Descriptions.Item>
           </Descriptions>

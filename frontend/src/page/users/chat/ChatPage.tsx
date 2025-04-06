@@ -23,17 +23,22 @@ import {
 } from "antd";
 import { getChatsByConversationId } from "../../../api/chat.api";
 import { getSourceImage } from "../../../utils/handle_image_func";
-import { SendOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, SendOutlined } from "@ant-design/icons";
 import { SpaceDiv } from "../../../components/chat/SpaceDiv";
 import { MessageList, MessageType } from "react-chat-elements";
 import ConversationListMemo from "../../../components/chat/ConversationListMemo";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ChatPage: React.FC = () => {
+  const location = useLocation();
+  const userId = location.state?.userId || null;
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<Chat[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [participant, setParticipant] = useState<Participant>();
   const [isReloadConversationList, setIsReloadConversationList] =
@@ -123,7 +128,6 @@ const ChatPage: React.FC = () => {
         conversationId: selectedConversation?._id,
       };
 
-      console.log(selectedConversation._id);
       socket.emit(TYPE_SOCKET.message, {
         roomId: selectedConversation._id,
         message: data,
@@ -157,17 +161,17 @@ const ChatPage: React.FC = () => {
     const nameLeft = participant?.name || "Người dùng website";
 
     return messages.map((message) => {
-      const { sendBy, sendTo } = message;
+      const { sendBy } = message;
       const position: string = sendBy._id === user._id ? "right" : "left";
 
       const isRight = position === "right";
-
+      console.log(isRight);
       return {
         type: "text",
         id: message._id,
         position: position,
         text: message.text,
-        title: isRight ? sendTo.name : nameLeft,
+        title: isRight ? sendBy.name : nameLeft,
         focus: false,
         date: new Date(message.updatedAt),
         avatar: isRight ? undefined : photoLeft,
@@ -176,20 +180,41 @@ const ChatPage: React.FC = () => {
   }, [messages, participant?.name, participant?.avatar, user._id]);
 
   return (
-    <Card styles={{ body: { padding: 0 } }}>
+    <Card
+      styles={{ body: { padding: 0, overflow: "hidden" } }}
+      style={{
+        overflow: "hidden",
+      }}
+    >
       <Row gutter={[4, 4]}>
         <Col span={6} style={{}}>
+          <Button
+            icon={<ArrowLeftOutlined />}
+            style={{
+              marginLeft: 10,
+              backgroundColor: "#fff",
+              color: "#000",
+              borderRadius: 5,
+              fontWeight: "bold",
+              border: "none",
+            }}
+            onClick={() => navigate("/")}
+          >
+            Trở lại
+          </Button>
+          <hr style={{ width: "90%" }} />
           <ConversationListMemo
             onJoin={handleJoinConversation}
             selectedConversation={selectedConversation}
             reload={isReloadConversationList}
+            userId={userId}
           />
         </Col>
         <Col
           span={18}
           style={{
             borderLeft: "1px solid #f2f2f2",
-            height: "95vh",
+            height: "100vh",
             backgroundColor: "#f4f4f4",
             padding: 0,
           }}
@@ -213,17 +238,6 @@ const ChatPage: React.FC = () => {
               }
               title={participant?.name || "Chưa xác định"}
             />
-            {/* <Button
-                onClick={() => console.log("Menu Clicked")}
-                type="text"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <MenuOutlined />
-              </Button> */}
           </Flex>
           <SpaceDiv height={10} />
           <Flex

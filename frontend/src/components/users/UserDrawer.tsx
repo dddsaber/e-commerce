@@ -165,6 +165,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
             <Select.Option value="shipper">Shipper</Select.Option>
             <Select.Option value="admin">Quản trị viên</Select.Option>
             <Select.Option value="sales">Nhân viên bán hàng</Select.Option>
+            <Select.Option value="logistic_provider">
+              Nhân viên quản lý kho
+            </Select.Option>
           </Select>
         </Form.Item>
 

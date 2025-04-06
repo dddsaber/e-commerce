@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ReportTable from "../../../components/reports/ReportTable";
-import { Breadcrumb } from "antd";
 import { Report } from "../../../type/report.type";
 import ReportDrawer from "../../../components/reports/ReportDrawer";
 
@@ -22,18 +21,6 @@ const ReportsManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-reports",
-            title: "Quản lý báo cáo",
-          },
-        ]}
-      />
       <ReportTable
         setSelectedReport={setSelectedReport}
         showDrawer={showDrawer}

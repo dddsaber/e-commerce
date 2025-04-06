@@ -8,21 +8,11 @@ import {
   Table,
   Tag,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   message,
-  Typography,
 } from "antd";
-import {
-  EditOutlined,
-  LockOutlined,
-  PlusCircleFilled,
-  ReloadOutlined,
-  SearchOutlined,
-  UnlockOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { getUsers, updateUserStatus } from "../../api/user.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -30,6 +20,7 @@ import dayjs from "dayjs";
 import { handleError } from "../../utils/handle_error_func";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableHeader from "../layout/TableHeader";
 import TableSkeleton from "../layout/TableSkeleton";
 
 interface UserTableProps {
@@ -235,6 +226,14 @@ const UserTable: React.FC<UserTableProps> = ({
       ),
     },
     {
+      title: "Mã người dùng",
+      dataIndex: "_id",
+      key: "_id",
+      sorter: true,
+      width: 170,
+      align: "left" as const,
+    },
+    {
       title: "Tên đăng nhập",
       dataIndex: "username",
       key: "username",
@@ -348,6 +347,7 @@ const UserTable: React.FC<UserTableProps> = ({
         { text: "Shipper", value: "shipper" },
         { text: "Quản trị viên", value: "admin" },
         { text: "Sales", value: "sales" },
+        { text: "Người quản lý kho", value: "logistic_provider" },
       ],
       filteredValue: filter.roles, // Sử dụng filter.roles ở đây
       render: (role: string) => {
@@ -356,6 +356,7 @@ const UserTable: React.FC<UserTableProps> = ({
           shipper: "Shipper",
           admin: "Quản trị viên",
           sales: "Sales",
+          logistic_provider: "Người quản lý kho",
         };
         return rolesMap[role] || role;
       },
@@ -415,45 +416,25 @@ const UserTable: React.FC<UserTableProps> = ({
     <TableSkeleton />
   ) : (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm người dùng"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-        <Typography.Title level={5}>
-          Total users: {pagination.total}
-        </Typography.Title>
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm người dùng
-        </Button>
-      </Flex>
+      <TableHeader
+        handleResearch={handleResearch}
+        handleSearchChange={handleSearchChange}
+        reload={reload}
+        searchValue={searchValue}
+        setReload={setReload}
+        handleAdd={handleAdd}
+      />
       <Table
         bordered
         columns={columns}
         dataSource={data}
         loading={loading}
-        pagination={pagination}
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} của ${total} bản ghi`,
+          ...pagination,
+        }}
+        style={{ margin: "0 10px" }}
         rowKey="username"
         onChange={handleTableChange}
         scroll={{ x: "max-content" }}

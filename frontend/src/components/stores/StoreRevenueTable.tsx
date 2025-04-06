@@ -11,7 +11,6 @@ import {
   TableColumnsType,
   TablePaginationConfig,
   Tag,
-  Typography,
 } from "antd";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
@@ -19,6 +18,7 @@ import { useSearchParams } from "react-router-dom";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { debounce } from "lodash";
 import TableSkeleton from "../layout/TableSkeleton";
+import StoreRevenueChart from "./StoreRevenueChart";
 
 interface StoreRevenueProps {
   loading: boolean;
@@ -327,7 +327,13 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
         gap={10}
         justify="space-between"
         style={{
-          margin: "10px 0 ",
+          marginBottom: 10,
+          position: "sticky", // Giữ cố định nhưng vẫn nằm trong luồng bình thường
+          top: 0, // Gắn sát mép trên
+          backgroundColor: "white", // Màu nền của header
+          zIndex: 1000, // Đảm bảo nó hiển thị trên các thành phần khác
+          padding: "5px 5px 0 10px", // Thêm padding để không quá sát
+          boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Flex gap={10}>
@@ -358,10 +364,7 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
           <Select.Option value="false">Chưa kết toán</Select.Option>
         </Select>
       </Flex>
-      <Typography.Title style={{ textAlign: "right" }} level={5}>
-        Total stores: {pagination.total}
-      </Typography.Title>
-
+      <StoreRevenueChart data={data} />
       <Table
         bordered
         columns={columns}
@@ -370,6 +373,12 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
         rowKey="_id"
         scroll={{ x: "max-content" }}
         onChange={handleTableChange}
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} của ${total} bản ghi`,
+          ...pagination,
+        }}
+        style={{ margin: "0 10px" }}
       />
     </>
   );

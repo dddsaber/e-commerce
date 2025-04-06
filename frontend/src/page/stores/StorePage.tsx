@@ -1,11 +1,11 @@
 import { Avatar, Button, Card, Col, Descriptions, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Store } from "../../../type/store.type";
-import { getStoreById } from "../../../api/store.api";
-import { getSourceImage } from "../../../utils/handle_image_func";
+import { Store } from "../../type/store.type";
+import { getStoreById } from "../../api/store.api";
+import { getSourceImage } from "../../utils/handle_image_func";
 import { MessageOutlined, PlusOutlined } from "@ant-design/icons";
-import ProductHero from "../../../components/products/ProductHero";
+import ProductHero from "../../components/products/ProductHero";
 
 const StorePage: React.FC = () => {
   const [store, setStore] = useState<Store>();

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Breadcrumb } from "antd";
 import { Review } from "../../../type/review.type";
 import ReviewTable from "../../../components/reviews/ReviewTable";
 import ReviewDrawer from "../../../components/reviews/ReviewDrawer";
@@ -22,18 +21,6 @@ const ReviewsManagePage: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-reviews",
-            title: "Quản lý bình luận",
-          },
-        ]}
-      />
       <ReviewTable
         setSelectedReview={setSelectedReview}
         showDrawer={showDrawer}

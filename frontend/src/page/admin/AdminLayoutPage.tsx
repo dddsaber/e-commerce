@@ -5,7 +5,6 @@ import {
   MessageOutlined,
   ShoppingCartOutlined,
   UserOutlined,
-  UserSwitchOutlined,
   UsergroupAddOutlined,
   FolderOutlined,
   FileTextOutlined,
@@ -20,12 +19,13 @@ import {
   BankOutlined,
   ShopFilled,
   ShopOutlined,
+  TruckFilled,
 } from "@ant-design/icons";
 import { Button, Flex, Layout, Menu, Tag, Typography, theme } from "antd";
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
-import { colorOfType, TYPE_USER_STR } from "../../utils/constant";
+import { colorOfType, TYPE_USER, TYPE_USER_STR } from "../../utils/constant";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { User } from "../../type/user.type";
 import { useLocation } from "react-router-dom";
@@ -72,7 +72,7 @@ const AdminLayoutPage: React.FC = () => {
     const menuItems: MenuItem[] = [];
 
     switch (role) {
-      case "admin":
+      case TYPE_USER.admin:
         menuItems.push(
           {
             key: "dashboards",
@@ -149,24 +149,16 @@ const AdminLayoutPage: React.FC = () => {
           }
         );
         break;
-      case "shipper":
-        menuItems.push(
-          {
-            key: "delivery",
-            icon: <UserSwitchOutlined />,
-            label: "Hồ sơ bệnh án",
-            link: "/profile-medical",
-          },
-          {
-            key: "chat",
-            icon: <MessageOutlined />,
-            label: "Tin nhắn",
-            link: "/chat",
-          }
-        );
+      case TYPE_USER.shipper:
+        menuItems.push({
+          key: "chat",
+          icon: <MessageOutlined />,
+          label: "Tin nhắn",
+          link: "/chat",
+        });
         break;
 
-      case "sales":
+      case TYPE_USER.sales:
         menuItems.push(
           {
             key: "dashboard",
@@ -178,7 +170,7 @@ const AdminLayoutPage: React.FC = () => {
             key: "chats",
             icon: <MessageOutlined />,
             label: "Tin nhắn",
-            link: "/store-manage/chat",
+            link: "/chat",
           },
           {
             key: "orders",
@@ -250,7 +242,7 @@ const AdminLayoutPage: React.FC = () => {
                 key: "chat",
                 icon: <MessageOutlined />,
                 label: "Tin nhắn",
-                link: "/store-manage/chat",
+                link: "/chat",
               },
             ],
           },
@@ -299,7 +291,37 @@ const AdminLayoutPage: React.FC = () => {
           }
         );
         break;
-      case "user":
+      case TYPE_USER.logistic_provider:
+        menuItems.push({
+          key: "delivery-manage",
+          icon: <TruckFilled />,
+          label: "Quản lý đơn vận chuyển",
+          link: "#",
+          children: [
+            {
+              key: "all-deliveries",
+              label: "Tất cả",
+              link: "/delivery/all-deliveries",
+            },
+            {
+              key: "await-pickup-deliveries",
+              label: "Chờ lấy hàng",
+              link: "/delivery/await-pickup-deliveries",
+            },
+            {
+              key: "on-transit-deliveries",
+              label: "Đang vận chuyển",
+              link: "/delivery/on-transit-deliveries",
+            },
+            {
+              key: "cancel-deliveries",
+              label: "Đơn vận chuyển thất bại",
+              link: "/delivery/failed-deliveries",
+            },
+          ],
+        });
+        break;
+      case TYPE_USER.user:
         break;
     }
 
@@ -438,11 +460,9 @@ const AdminLayoutPage: React.FC = () => {
       <Content
         style={{
           margin: 0,
-          padding: "10px 16px 0 16px",
           minHeight: "100vh",
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
-          overflow: "auto",
           backgroundColor: "#eaeaea",
         }}
       >

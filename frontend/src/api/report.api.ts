@@ -2,7 +2,7 @@ import { instance } from ".";
 import { GetReportsRequest, Report } from "../type/report.type";
 const URL = "/report";
 
-// 🟢 Lấy danh sách người dùng
+// 🟢 Lấy danh sách report
 export const getReports = async (
   params: GetReportsRequest
 ): Promise<{ reports: Report[]; totalReports: number }> => {

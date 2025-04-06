@@ -2,9 +2,9 @@ import { Col, Image, Row, Typography } from "antd";
 import React, { useState } from "react";
 import { Notification } from "../../type/notification.type";
 import { formatDate } from "../../utils/handle_format_func";
-import img from "../../assets/enlish_book.jpg";
 import "./NotificationCard.css";
 import { readNotification } from "../../api/notification.api";
+import { getSourceImage } from "../../utils/handle_image_func";
 
 interface NotificationCardProps {
   notification: Notification;
@@ -34,7 +34,10 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       onClick={handleRead}
     >
       <Col span={3} style={{ margin: 15 }}>
-        <Image src={img} className="square" />
+        <Image
+          src={getSourceImage(notification.image || "")}
+          className="square"
+        />
       </Col>
       <Col span={18} style={{ marginLeft: 10 }}>
         <Typography.Title level={5} style={{ marginTop: 15 }}>

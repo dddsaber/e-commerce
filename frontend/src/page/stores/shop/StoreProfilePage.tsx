@@ -15,17 +15,17 @@ import {
   Breadcrumb,
   Image,
 } from "antd";
-import { Store } from "../../../../type/store.type";
+import { Store } from "../../../type/store.type";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
+import { RootState } from "../../../redux/store";
 import {
   getStoreByUserId,
   updateStoreInformation,
-} from "../../../../api/store.api";
-import UploadImage from "../../../../components/shared/UploadImage";
-import { TYPE_IMAGE } from "../../../../utils/constant";
-import { formatDate } from "../../../../utils/handle_format_func";
-import { getSourceImage } from "../../../../utils/handle_image_func";
+} from "../../../api/store.api";
+import UploadImage from "../../../components/shared/UploadImage";
+import { TYPE_IMAGE } from "../../../utils/constant";
+import { formatDate } from "../../../utils/handle_format_func";
+import { getSourceImage } from "../../../utils/handle_image_func";
 
 const { Title } = Typography;
 

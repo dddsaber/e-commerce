@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { getStoreByUserId } from "../../../../api/store.api";
-import { Store } from "../../../../type/store.type";
+import { RootState } from "../../../redux/store";
+import { getStoreByUserId } from "../../../api/store.api";
+import { Store } from "../../../type/store.type";
 import { Breadcrumb } from "antd";
-import StoreOrderTable from "../../../../components/orders/StoreOrderTable";
-import { Order } from "../../../../type/order.type";
-import { STATUS_MAP } from "../../../../utils/constant";
-import TableSkeleton from "../../../../components/layout/TableSkeleton";
-import OrderDrawer from "../../../../components/orders/OrderDrawer";
+import { Order } from "../../../type/order.type";
+import TableSkeleton from "../../../components/layout/TableSkeleton";
+import OrdersDisplay from "../../../components/orders/OrdersDisplay";
 
-const CancelOrdersPage: React.FC = () => {
+const OrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [store, setStore] = useState<Store>();
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const showDrawer = () => {
-    setIsVisible(true);
-  };
-  const onClose = () => {
-    setIsVisible(false);
-  };
+  const showDrawer = () => {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,8 +39,8 @@ const CancelOrdersPage: React.FC = () => {
             title: "Bảng điều khiển",
           },
           {
-            href: "/store-manage/cancel-orders",
-            title: "Đơn hàng bị hủy",
+            href: "/store-manage/all-orders",
+            title: "Tất cả đơn hàng",
           },
         ]}
       />
@@ -60,24 +52,16 @@ const CancelOrdersPage: React.FC = () => {
         <>
           {store?._id ? (
             <>
-              <StoreOrderTable
+              <OrdersDisplay
                 setSelectedOrder={setSelectedOrder}
                 showDrawer={showDrawer}
                 loading={loading}
                 setLoading={setLoading}
                 reload={reload}
                 setReload={setReload}
-                status={STATUS_MAP.cancelled.value}
+                status={undefined}
                 selectedOrder={selectedOrder}
                 storeId={store._id}
-              />
-              <OrderDrawer
-                visible={isVisible}
-                onClose={onClose}
-                setSelectedOrder={setSelectedOrder}
-                selectedOrder={selectedOrder}
-                reload={reload}
-                setReload={setReload}
               />
             </>
           ) : (
@@ -89,4 +73,4 @@ const CancelOrdersPage: React.FC = () => {
   );
 };
 
-export default CancelOrdersPage;
+export default OrdersPage;

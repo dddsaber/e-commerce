@@ -5,6 +5,7 @@ import {
   Col,
   Descriptions,
   Flex,
+  message,
   Row,
   Typography,
 } from "antd";
@@ -30,6 +31,16 @@ const StoreDisplayCard: React.FC<StoreDisplayCardProps> = ({ storeId }) => {
     };
     fetchData();
   }, [storeId]);
+
+  const handleNavigate = () => {
+    if (!store) {
+      message.error(`Store not found!`);
+      return;
+    }
+    navigate("/chat", {
+      state: { userId: store.userId }, // Truyền userId qua state
+    });
+  };
 
   return (
     <Card style={{ margin: "20px 0" }}>
@@ -61,6 +72,7 @@ const StoreDisplayCard: React.FC<StoreDisplayCardProps> = ({ storeId }) => {
                 border: "1px solid white",
                 borderRadius: 5,
               }}
+              onClick={handleNavigate}
             >
               Chat ngay
             </Button>

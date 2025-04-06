@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Store } from "../../../type/store.type";
-import { Breadcrumb } from "antd";
 import StoreTable from "../../../components/stores/StoreTable";
 import StoreDrawer from "../../../components/stores/StoreDrawer";
 const StoresManagePage: React.FC = () => {
@@ -20,18 +19,6 @@ const StoresManagePage: React.FC = () => {
   };
   return (
     <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-          {
-            href: "/admin/manage-stores",
-            title: "Quản lý cửa hàng",
-          },
-        ]}
-      />
       <StoreTable
         loading={loading}
         reload={reload}

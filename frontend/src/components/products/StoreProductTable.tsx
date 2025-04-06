@@ -7,28 +7,19 @@ import {
   Table,
   Tag,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
   message,
-  Typography,
   Image,
 } from "antd";
-import {
-  EditOutlined,
-  LockOutlined,
-  PlusCircleFilled,
-  ReloadOutlined,
-  SearchOutlined,
-  UnlockOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { getProducts, updateProductStatus } from "../../api/product.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { handleError } from "../../utils/handle_error_func";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
+import TableHeader from "../layout/TableHeader";
 
 interface ProductTableProps {
   storeId?: string;
@@ -414,40 +405,14 @@ const StoreProductTable: React.FC<ProductTableProps> = ({
 
   return (
     <>
-      <Flex
-        gap={10}
-        justify="space-between"
-        style={{ marginBottom: 10, marginTop: 10 }}
-      >
-        <Flex gap={10}>
-          <Input
-            placeholder="Tìm kiếm sản phẩm"
-            prefix={<SearchOutlined />}
-            value={searchValue}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, width: 800 }}
-          />
-          <span> &nbsp;</span>
-          <Button onClick={handleResearch}>
-            <ReloadOutlined />
-          </Button>
-          <span> &nbsp;</span>
-          <Button type="primary" onClick={() => setReload(!reload)}>
-            <SearchOutlined />
-          </Button>
-        </Flex>
-
-        <Button
-          type="primary"
-          icon={<PlusCircleFilled />}
-          onClick={() => handleAdd()}
-        >
-          Thêm sản phẩm
-        </Button>
-      </Flex>
-      <Typography.Title level={5} style={{ textAlign: "right" }}>
-        Total : {pagination.total}
-      </Typography.Title>
+      <TableHeader
+        handleResearch={handleResearch}
+        handleSearchChange={handleSearchChange}
+        reload={reload}
+        searchValue={searchValue}
+        setReload={setReload}
+        handleAdd={handleAdd}
+      />
       <Table
         bordered
         columns={columns}

@@ -6,19 +6,12 @@ import {
   Space,
   Table,
   Tooltip,
-  Input,
   TableColumnsType,
   TablePaginationConfig,
-  Flex,
-  Typography,
   Tag,
   Image,
 } from "antd";
-import {
-  EditOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { getOrders } from "../../api/order.api";
 import { debounce } from "lodash";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -27,6 +20,7 @@ import { STATUS_MAP } from "../../utils/constant";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { formatDate } from "../../utils/handle_format_func";
 import TableSkeleton from "../layout/TableSkeleton";
+import TableHeader from "../layout/TableHeader";
 interface OrderTableProps {
   reload: boolean;
   setReload: (value: boolean) => void;
@@ -276,12 +270,15 @@ const OrderTable: React.FC<OrderTableProps> = ({
     },
     {
       title: "Phí vận chuyển",
-      dataIndex: "shippingFee",
-      key: "shippingFee",
+      dataIndex: ["delivery", "shippingFee"],
+      key: "delivery.shippingFee",
       sorter: true,
       width: 100,
       ellipsis: true,
       align: "center" as const,
+      render: (shippingFee: number) => (
+        <span>{(shippingFee || 0).toLocaleString()} đ</span>
+      ),
     },
     {
       title: "Giảm giá",
@@ -518,39 +515,25 @@ const OrderTable: React.FC<OrderTableProps> = ({
         <TableSkeleton />
       ) : (
         <>
-          <Flex
-            gap={10}
-            justify="space-between"
-            style={{ marginBottom: 10, marginTop: 10 }}
-          >
-            <Flex gap={10}>
-              <Input
-                placeholder="Tìm kiếm bình luận"
-                prefix={<SearchOutlined />}
-                value={searchValue}
-                onChange={handleSearchChange}
-                style={{ marginBottom: 16, width: 800 }}
-              />
-              <span> &nbsp;</span>
-              <Button onClick={handleResearch}>
-                <ReloadOutlined />
-              </Button>
-              <span> &nbsp;</span>
-              <Button type="primary" onClick={() => setReload(!reload)}>
-                <SearchOutlined />
-              </Button>
-            </Flex>
-            <Typography.Title level={5}>
-              Total: {pagination.total}
-            </Typography.Title>
-          </Flex>
+          <TableHeader
+            handleResearch={handleResearch}
+            handleSearchChange={handleSearchChange}
+            reload={reload}
+            searchValue={searchValue}
+            setReload={setReload}
+          />
           <Table
             rowKey={(record) => record._id || "index"}
             bordered
             columns={columns}
             dataSource={data}
             loading={loading}
-            pagination={pagination}
+            pagination={{
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} của ${total} bản ghi`,
+              ...pagination,
+            }}
+            style={{ margin: "0 10px" }}
             onChange={handleTableChange}
             scroll={{ x: "max-content" }}
             expandable={{

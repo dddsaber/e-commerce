@@ -30,10 +30,13 @@ const LoginPage: React.FC = () => {
         navigate("/");
         break;
       case TYPE_USER.sales:
-        navigate("/");
+        navigate("/store-manage");
         break;
       case TYPE_USER.shipper:
         navigate("/");
+        break;
+      case TYPE_USER.logistic_provider:
+        navigate("/delivery/all-deliveries");
         break;
       default:
         navigate("/login", { replace: true });
