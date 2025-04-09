@@ -10,6 +10,7 @@ const TYPE_USER = {
   user: "user",
   sales: "sales",
   shipper: "shipper",
+  logistic_provider: "logistic_provider",
 };
 
 const TYPE_IMAGE = {

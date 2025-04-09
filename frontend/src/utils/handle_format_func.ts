@@ -1,7 +1,10 @@
 import dayjs from "dayjs";
 import { Address } from "../type/store.type";
 
-export function formatDate(dateString: Date) {
+export function formatDate(dateString?: Date) {
+  if (!dateString) {
+    return "";
+  }
   const date = new Date(dateString);
 
   // Lấy giờ, phút, giây
@@ -53,7 +56,7 @@ export const formatedTime = (
 
 export const formatAddress = (address?: Address) => {
   if (!address) return "";
-  return `${address.ward || ""}, ${address.details || ""}, ${
+  return `${address.details || ""}, ${address.ward || ""}, ${
     address.district || ""
   }, ${address.province || ""}`;
 };

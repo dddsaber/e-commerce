@@ -49,7 +49,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </span>
       ),
     },
-
     {
       title: "Giá",
       dataIndex: "price",
@@ -166,13 +165,18 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       }
       style={{ marginBottom: 20 }}
     >
-      <Table
-        dataSource={order.orderDetails}
-        columns={columns}
-        rowKey="productId"
-        pagination={false}
-        showHeader={false}
-      />
+      <div
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate(`/account/order/${order._id}`)}
+      >
+        <Table
+          dataSource={order.orderDetails}
+          columns={columns}
+          rowKey="productId"
+          pagination={false}
+          showHeader={false}
+        />
+      </div>
 
       {/* Hiển thị tổng tiền */}
       <div

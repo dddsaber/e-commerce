@@ -112,3 +112,18 @@ export const NOTIFICATION_TARGET_MODEL = {
   STORE: "Store",
   COUPON: "Coupon",
 };
+
+export const ORDER_STEP_STATUS = [
+  "pending",
+  "confirmed",
+  "shipped",
+  "delivered",
+  "completed",
+];
+
+export const REPORT_TYPE = {
+  REVIEW: "REVIEW",
+  PRODUCT: "PRODUCT",
+  USER: "USER",
+  STORE: "STORE",
+};

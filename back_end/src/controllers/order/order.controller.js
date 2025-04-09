@@ -19,6 +19,14 @@ const {
 const { default: mongoose } = require("mongoose");
 const { createDelivery } = require("../delivery/delivery.controller");
 const Delivery = require("../../models/Delivery.model");
+const {
+  getOrderProjection,
+  getDeliveryLookupStages,
+  getStoreLookupStages,
+  getProductLookupStages,
+  getUserLookupStages,
+  getPaymentLookupStages,
+} = require("../../../../back_end/src/controllers/order/order.pipeline");
 
 // ----------------------------------------------------------------
 // Create Order
@@ -470,172 +478,24 @@ const getOrders = async (req, res) => {
     const pipeline = [];
 
     if (statuses && statuses.length > 0) {
-      pipeline.push({
-        $match: {
-          status: { $in: statuses },
-        },
-      });
+      pipeline.push({ $match: { status: { $in: statuses } } });
     }
 
     const totalFilter = {};
-    if (total_low !== undefined) {
-      totalFilter.$gte = total_low;
-    }
-    if (total_high !== undefined) {
-      totalFilter.$lte = total_high;
-    }
-
+    if (total_low !== undefined) totalFilter.$gte = total_low;
+    if (total_high !== undefined) totalFilter.$lte = total_high;
     if (Object.keys(totalFilter).length > 0) {
-      pipeline.push({
-        $match: {
-          total: totalFilter,
-        },
-      });
+      pipeline.push({ $match: { total: totalFilter } });
     }
 
-    // 🔹 Lookup delivery trực tiếp từ Order (thay vì từ product.storeId)
-    pipeline.push({
-      $lookup: {
-        from: "deliveries", // Collection stores
-        localField: "_id", // storeId trong Order
-        foreignField: "orderId", // _id trong stores
-        as: "deliveryInfo",
-      },
-    });
+    // Lookups
+    pipeline.push(...getDeliveryLookupStages());
+    pipeline.push(...getStoreLookupStages());
+    pipeline.push(...getProductLookupStages());
+    pipeline.push(...getUserLookupStages());
+    pipeline.push(...getPaymentLookupStages());
 
-    // 🔹 Chuyển delivery từ array thành object
-    pipeline.push({
-      $addFields: {
-        delivery: { $arrayElemAt: ["$deliveryInfo", 0] },
-      },
-    });
-
-    // 🔹 Unwind để giữ delivery là object
-    pipeline.push({
-      $unwind: {
-        path: "$delivery",
-        preserveNullAndEmptyArrays: true, // Nếu không có store vẫn giữ đơn hàng
-      },
-    });
-
-    // 🔹 Lookup store trực tiếp từ Order (thay vì từ product.storeId)
-    pipeline.push({
-      $lookup: {
-        from: "stores", // Collection stores
-        localField: "storeId", // storeId trong Order
-        foreignField: "_id", // _id trong stores
-        as: "storeInfo",
-      },
-    });
-
-    // 🔹 Chuyển store từ array thành object
-    pipeline.push({
-      $addFields: {
-        store: { $arrayElemAt: ["$storeInfo", 0] },
-      },
-    });
-
-    // 🔹 Unwind để giữ store là object
-    pipeline.push({
-      $unwind: {
-        path: "$store",
-        preserveNullAndEmptyArrays: true, // Nếu không có store vẫn giữ đơn hàng
-      },
-    });
-
-    // 🔹 Lookup product từ orderDetails.productId
-    pipeline.push({
-      $lookup: {
-        from: "products",
-        localField: "orderDetails.productId",
-        foreignField: "_id",
-        as: "productInfo",
-      },
-    });
-
-    // 🔹 Gán product vào đúng orderDetails tương ứng
-    pipeline.push({
-      $addFields: {
-        orderDetails: {
-          $map: {
-            input: "$orderDetails",
-            as: "detail",
-            in: {
-              $mergeObjects: [
-                "$$detail",
-                {
-                  product: {
-                    $arrayElemAt: [
-                      {
-                        $filter: {
-                          input: "$productInfo",
-                          as: "prod",
-                          cond: { $eq: ["$$prod._id", "$$detail.productId"] },
-                        },
-                      },
-                      0,
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    });
-
-    // 🔹 Bỏ mảng productInfo không cần thiết
-    pipeline.push({
-      $unset: "productInfo",
-    });
-
-    // 🔹 Lookup user
-    pipeline.push({
-      $lookup: {
-        from: "users",
-        localField: "userId",
-        foreignField: "_id",
-        as: "user",
-      },
-    });
-
-    pipeline.push({
-      $addFields: {
-        user: { $arrayElemAt: ["$user", 0] },
-      },
-    });
-
-    pipeline.push({
-      $unwind: {
-        path: "$user",
-        preserveNullAndEmptyArrays: true,
-      },
-    });
-
-    // 🔹 Lookup payment
-    pipeline.push({
-      $lookup: {
-        from: "payments",
-        localField: "paymentId",
-        foreignField: "_id",
-        as: "payment",
-      },
-    });
-
-    pipeline.push({
-      $addFields: {
-        payment: { $arrayElemAt: ["$payment", 0] },
-      },
-    });
-
-    pipeline.push({
-      $unwind: {
-        path: "$payment",
-        preserveNullAndEmptyArrays: true,
-      },
-    });
-
-    // 🔹 Lọc kết quả theo searchKey
+    // Search
     if (searchKey) {
       pipeline.push({
         $match: {
@@ -652,18 +512,15 @@ const getOrders = async (req, res) => {
       });
     }
 
-    if (userId) {
+    // Filter by IDs and fields
+    if (userId)
       pipeline.push({
         $match: { userId: new mongoose.Types.ObjectId(userId) },
       });
-    }
-
-    if (storeId) {
+    if (storeId)
       pipeline.push({
         $match: { storeId: new mongoose.Types.ObjectId(storeId) },
       });
-    }
-
     if (processorStaffId) {
       pipeline.push({
         $match: {
@@ -671,110 +528,31 @@ const getOrders = async (req, res) => {
         },
       });
     }
-
-    if (settled) {
-      pipeline.push({
-        $match: { settled: settled },
-      });
-    }
-
-    if (paymentId) {
+    if (settled !== undefined) pipeline.push({ $match: { settled } });
+    if (paymentId)
       pipeline.push({
         $match: { paymentId: new mongoose.Types.ObjectId(paymentId) },
       });
-    }
+    if (status) pipeline.push({ $match: { status } });
 
-    if (status) {
-      pipeline.push({
-        $match: { status: status },
-      });
-    }
-
-    // 🔹 Tính tổng số đơn hàng
+    // Count total orders
     const countPipeline = [...pipeline, { $count: "totalCount" }];
     const countResult = await Order.aggregate(countPipeline);
     const totalOrders = countResult.length > 0 ? countResult[0].totalCount : 0;
 
-    // 🔹 Sắp xếp kết quả
+    // Sort
     pipeline.push({
       $sort: sortBy
         ? { [sortBy.field]: sortBy.order === "asc" ? 1 : -1 }
         : { createdAt: -1 },
     });
 
-    // 🔹 Phân trang
+    // Pagination
     if (skip) pipeline.push({ $skip: skip });
     if (limit) pipeline.push({ $limit: limit });
 
-    // 🔹 Chỉ lấy các trường cần thiết
-    pipeline.push({
-      $project: {
-        _id: 1,
-        address: 1,
-        shippingFee: 1,
-        total: 1,
-        status: 1,
-        statusTimestamps: 1,
-        customerNote: 1,
-        staffNote: 1,
-        cancelNote: 1,
-        distance: 1,
-        description: 1,
-        fees: 1,
-        createdAt: 1,
-        updatedAt: 1,
-
-        // 🏪 Store (đưa ra ngoài orderDetails)
-        "store._id": 1,
-        "store.name": 1,
-        "store.logo": 1,
-
-        // 🛒 Order details
-        "orderDetails.product.name": 1,
-        "orderDetails.product._id": 1,
-        "orderDetails.product.image": 1,
-        "orderDetails.quantity": 1,
-        "orderDetails.price": 1,
-        "orderDetails.discount": 1,
-        "orderDetails._id": 1,
-
-        // 🎟️ Coupon
-        "coupon._id": 1,
-        "coupon.name": 1,
-        "coupon.type": 1,
-        "coupon.value": 1,
-
-        // 💳 Payment
-        "payment._id": 1,
-        "payment.name": 1,
-
-        // 👤 User
-        "user._id": 1,
-        "user.name": 1,
-        "user.username": 1,
-
-        // Delivery
-        "delivery._id": 1,
-
-        "delivery.courier": 1,
-        "delivery.trackingNumber": 1,
-        "delivery.estimatedDate": 1,
-        "delivery.deliveredDate": 1,
-        "delivery.failedReason": 1,
-
-        "delivery.recipientName": 1,
-        "delivery.phoneNumber": 1,
-        "delivery.address": 1,
-        "delivery.postalCode": 1,
-
-        "delivery.shippingFee": 1,
-        "delivery.codAmount": 1,
-        "delivery.paymentStatus": 1,
-
-        "delivery.deliveryLogs": 1,
-        "delivery.status": 1,
-      },
-    });
+    // Final projection
+    pipeline.push(getOrderProjection());
 
     const orders = await Order.aggregate(pipeline);
 
@@ -799,8 +577,9 @@ const getOrders = async (req, res) => {
 // ----------------------------------------------------------------
 const getOrderById = async (req, res) => {
   const { orderId } = req.params;
-
+  console.log(orderId);
   try {
+    // Kiểm tra định dạng orderId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return response(
         res,
@@ -811,156 +590,26 @@ const getOrderById = async (req, res) => {
       );
     }
 
+    const objectId = new mongoose.Types.ObjectId(orderId);
+
+    // Xây pipeline lấy chi tiết đơn hàng
     const pipeline = [
-      { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
+      { $match: { _id: objectId } },
 
-      // 🔹 Lookup user (populate userId -> user)
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      { $addFields: { user: { $arrayElemAt: ["$user", 0] } } },
-      { $unset: "userId" },
-
-      // 🔹 Lookup store
-      {
-        $lookup: {
-          from: "stores",
-          localField: "storeId",
-          foreignField: "_id",
-          as: "store",
-        },
-      },
-      { $addFields: { store: { $arrayElemAt: ["$store", 0] } } },
-      { $unset: "storeId" },
-
-      // 🔹 Lookup payment
-      {
-        $lookup: {
-          from: "payments",
-          localField: "paymentId",
-          foreignField: "_id",
-          as: "payment",
-        },
-      },
-      { $addFields: { payment: { $arrayElemAt: ["$payment", 0] } } },
-      { $unset: "paymentId" },
-
-      // 🔹 Lookup delivery
-      {
-        $lookup: {
-          from: "deliveries",
-          localField: "_id",
-          foreignField: "orderId",
-          as: "delivery",
-        },
-      },
-      { $addFields: { delivery: { $arrayElemAt: ["$delivery", 0] } } },
-
-      // 🔹 Lookup product from orderDetails
-      {
-        $lookup: {
-          from: "products",
-          localField: "orderDetails.productId",
-          foreignField: "_id",
-          as: "productInfo",
-        },
-      },
-      {
-        $addFields: {
-          orderDetails: {
-            $map: {
-              input: "$orderDetails",
-              as: "detail",
-              in: {
-                $mergeObjects: [
-                  "$$detail",
-                  {
-                    product: {
-                      $arrayElemAt: [
-                        {
-                          $filter: {
-                            input: "$productInfo",
-                            as: "prod",
-                            cond: { $eq: ["$$prod._id", "$$detail.productId"] },
-                          },
-                        },
-                        0,
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      { $unset: "productInfo" },
-
-      // 🔹 Chỉ lấy các trường cần thiết
-      {
-        $project: {
-          _id: 1,
-          address: 1,
-          shippingFee: 1,
-          total: 1,
-          status: 1,
-          statusTimestamps: 1,
-          customerNote: 1,
-          staffNote: 1,
-          cancelNote: 1,
-          distance: 1,
-          description: 1,
-          fees: 1,
-          createdAt: 1,
-          updatedAt: 1,
-
-          "store._id": 1,
-          "store.name": 1,
-          "store.logo": 1,
-          "store.userId": 1,
-
-          "orderDetails.product.name": 1,
-          "orderDetails.product._id": 1,
-          "orderDetails.product.image": 1,
-          "orderDetails.quantity": 1,
-          "orderDetails.price": 1,
-          "orderDetails.discount": 1,
-          "orderDetails._id": 1,
-
-          "payment._id": 1,
-          "payment.name": 1,
-
-          "user._id": 1,
-          "user.name": 1,
-          "user.username": 1,
-
-          "delivery._id": 1,
-          "delivery.courier": 1,
-          "delivery.trackingNumber": 1,
-          "delivery.estimatedDate": 1,
-          "delivery.deliveredDate": 1,
-          "delivery.failedReason": 1,
-          "delivery.recipientName": 1,
-          "delivery.phoneNumber": 1,
-          "delivery.address": 1,
-          "delivery.postalCode": 1,
-          "delivery.shippingFee": 1,
-          "delivery.codAmount": 1,
-          "delivery.paymentStatus": 1,
-          "delivery.deliveryLogs": 1,
-          "delivery.status": 1,
-        },
-      },
+      // Thêm thông tin người dùng, cửa hàng, thanh toán, giao hàng, sản phẩm
+      ...getUserLookupStages(),
+      ...getStoreLookupStages(),
+      ...getPaymentLookupStages(),
+      ...getDeliveryLookupStages(),
+      ...getProductLookupStages(),
     ];
+    pipeline.push(getOrderProjection());
+    // Thực thi pipeline
+    const [order] = await Order.aggregate(pipeline);
 
-    const order = await Order.aggregate(pipeline);
+    console.log(order);
 
-    if (!order || order.length === 0) {
+    if (!order) {
       return response(res, StatusCodes.NOT_FOUND, false, {}, "Order not found");
     }
 
@@ -968,7 +617,7 @@ const getOrderById = async (req, res) => {
       res,
       StatusCodes.OK,
       true,
-      order[0],
+      order,
       "Order retrieved successfully"
     );
   } catch (error) {

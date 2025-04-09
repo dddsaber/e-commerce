@@ -162,9 +162,7 @@ const Step2: React.FC<{
   };
 
   useEffect(() => {
-    console.log(store);
     if (store?.taxInformation) {
-      console.log("Giá trị store nhận được:", store); // Debug dữ liệu store
       form.setFieldsValue({
         businessType: store?.taxInformation?.businessType || "",
         receiveEInvoiceEmail: store?.taxInformation?.receiveEInvoiceEmail || "",

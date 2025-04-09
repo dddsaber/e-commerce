@@ -364,6 +364,46 @@ const changeUserPassword = async (req, res) => {
 const acceptPasswordChange = async (req, res) => {};
 
 // ----------------------------------------------------------------
+// Assign role to user
+// ----------------------------------------------------------------
+const assignRoleToUser = async (req, res) => {
+  const { userId } = req.params;
+  const { roleId } = req.body;
+
+  if (!roleId) {
+    return response(
+      res,
+      StatusCodes.BAD_REQUEST,
+      false,
+      {},
+      "Role ID is required"
+    );
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { roleId: roleId },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return response(res, StatusCodes.NOT_FOUND, false, {}, "User not found");
+    }
+
+    return response(
+      res,
+      StatusCodes.OK,
+      true,
+      updatedUser,
+      "Role assigned to user"
+    );
+  } catch (error) {
+    return handleError(res, error);
+  }
+};
+
+// ----------------------------------------------------------------
 // Exports modules
 // ----------------------------------------------------------------
 module.exports = {
@@ -374,4 +414,5 @@ module.exports = {
   changeUserStatus,
   changeUserAddress,
   changeUserPassword,
+  assignRoleToUser,
 };

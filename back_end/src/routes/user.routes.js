@@ -7,6 +7,7 @@ const {
   changeUserStatus,
   changeUserAddress,
   changeUserPassword,
+  assignRoleToUser,
 } = require("../controllers/user/user.controller");
 
 const router = Router();
@@ -24,5 +25,7 @@ router.put("/:userId/update-user-address", changeUserAddress);
 router.put("/:userId/update-user-password", changeUserPassword);
 
 router.get("/:userId", getUserById);
+
+router.post("/:userId/assign-role", assignRoleToUser);
 
 module.exports = router;

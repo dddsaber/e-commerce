@@ -44,3 +44,10 @@ export const cancelOrder = async (
 
   return response.data;
 };
+
+// Get order details
+export const getOrderById = async (id: string): Promise<Order> => {
+  console.log(id);
+  const response = await instance.get<Order>(`${URL}/${id}/order`);
+  return response.data;
+};

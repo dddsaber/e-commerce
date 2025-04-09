@@ -283,13 +283,14 @@ const ProductDrawer: React.FC<ProductDrawerProps> = ({
             <Form.Item name="categoryId" label="Danh mục">
               <Select
                 showSearch
-                style={{ width: "100%" }}
+                virtual={false}
+                style={{ width: "100%", overflowY: "auto" }}
                 notFoundContent={
                   loading ? <Spin size="small" key="loading" /> : null
                 }
                 placeholder="Chọn danh mục"
                 filterOption={(input, option) =>
-                  (option as unknown as { children: string }).children
+                  (option?.label as string)
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }

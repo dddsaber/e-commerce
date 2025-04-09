@@ -56,6 +56,7 @@ import AllDeliveriesPage from "./page/logistic_providers/AllDeliveriesPage";
 import AwaitPickupDeliveries from "./page/logistic_providers/AwaitPickupDeliveries";
 import OnTransitDeliveries from "./page/logistic_providers/OnTransitDeliveries";
 import FailedDeliveries from "./page/logistic_providers/FailedDeliveries";
+import OrderDetailsPage from "./page/users/orders/OrderDetailsPage";
 interface PrivateRouteProps {
   element: ReactElement;
   requiredPermission?: string[];
@@ -241,6 +242,8 @@ function App() {
           <Route path="/success-create-order" element={<SuccessOrdered />} />
           <Route path="/test" element={<SettingLayoutPage />} />
           <Route path="/account" element={<SettingLayoutPage />}>
+            <Route path="order/:orderId" element={<OrderDetailsPage />} />
+
             {/* not-done-yet */}
             <Route path="profile" element={<UserProfilePage />} />
             {/* not-done-yet */}

@@ -45,7 +45,7 @@ const chatRouter = require("./src/routes/chat.routes");
 const conversationRouter = require("./src/routes/conversation.routes");
 const warehouseRouter = require("./src/routes/warehouse.routes");
 const deliveryRouter = require("./src/routes/delivery.routes");
-
+const permissionRouter = require("./src/routes/permission.routes");
 app.use("/auth", authRouter);
 
 app.use("/chat", chatRouter);
@@ -83,6 +83,8 @@ app.use("/warehouse", warehouseRouter);
 app.use("/delivery", deliveryRouter);
 
 app.use("/changedata", changeDataRouter);
+
+app.use("/permission", permissionRouter);
 
 app.use("/file", fileRouter);
 

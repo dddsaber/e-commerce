@@ -20,13 +20,13 @@ const NotificationCardM: React.FC<NotificationCardProps> = ({ item }) => {
       }}
       className="change-color-hover"
     >
-      <Col span={6}>
+      <Col span={4}>
         <Image
           src={getSourceImage(item.image || "")}
           style={{ height: 45, width: 45 }}
         />
       </Col>
-      <Col span={18}>
+      <Col span={20}>
         <Typography.Title level={5} style={{ margin: 0 }}>
           {item.title}
         </Typography.Title>
