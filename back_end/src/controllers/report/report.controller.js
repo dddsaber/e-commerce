@@ -21,6 +21,7 @@ const isValidCategory = (category) => {
 const createReport = async (req, res) => {
   const { userId, title, content, reportCategory, reportedId, linkTo } =
     req.body;
+  console.log(req.body);
   if (!userId) {
     return response(res, StatusCodes.BAD_REQUEST, false, {}, "Missing userId");
   }

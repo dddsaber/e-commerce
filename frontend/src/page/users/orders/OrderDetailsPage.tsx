@@ -25,7 +25,12 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { ORDER_STEP_STATUS, STATUS_MAP } from "../../../utils/constant";
-import { formatAddress, formatDate } from "../../../utils/handle_format_func";
+import {
+  formatAddress,
+  formatDate,
+  formatLink,
+  LINK_TYPE,
+} from "../../../utils/handle_format_func";
 import { calculateOrderDetails } from "../../../utils/handle_status_func";
 
 interface StepType {
@@ -73,6 +78,9 @@ const OrderDetailsPage = () => {
           width={80}
           src={getSourceImage(record.product?.image || "")}
           alt={record.product?.name || ""}
+          onClick={() =>
+            navigate(formatLink(LINK_TYPE.PRODUCT, record.product?._id || ""))
+          }
         />
       ),
     },

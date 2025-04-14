@@ -29,6 +29,7 @@ const reportSchema = mongoose.Schema(
     reportedId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      refPath: "reportCategory",
     },
     isHandle: {
       type: Boolean,

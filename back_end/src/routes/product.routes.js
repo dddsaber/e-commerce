@@ -8,6 +8,9 @@ const {
   updateProductStatus,
   getRateAndSold,
 } = require("../controllers/product/product.controller");
+const {
+  recommendProducts,
+} = require("../controllers/product/collaborative_filtering.controller");
 
 const router = Router();
 
@@ -22,5 +25,7 @@ router.get("/:productId", getProductById);
 router.put("/:productId/update-product-status", updateProductStatus);
 
 router.get("/:productId/rate-and-sold", getRateAndSold);
+
+router.get("/recommend/:userId", recommendProducts);
 
 module.exports = router;

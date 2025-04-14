@@ -22,15 +22,32 @@ const ProductsList: React.FC = () => {
   }, [page]);
 
   return (
-    <Card
-      title="GỢI Ý HÔM NAY"
-      style={{ marginBottom: 12 }}
-      headStyle={{
-        textAlign: "center",
-        fontSize: 25,
-        textTransform: "capitalize",
-      }}
-    >
+    <>
+      <Card
+        title="GỢI Ý HÔM NAY"
+        style={{
+          marginBottom: 12,
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          border: "none",
+        }}
+        styles={{
+          header: {
+            textAlign: "center",
+            fontSize: 25,
+            textTransform: "capitalize",
+            backgroundColor: "white",
+          },
+          body: {
+            backgroundColor: "red",
+            height: 1,
+            padding: 0, // đảm bảo không có padding làm cao hơn 1px
+          },
+        }}
+      >
+        {/* Không có nội dung bên trong nên body chỉ hiển thị 1px chiều cao màu đỏ */}
+      </Card>
+
       <InfiniteScroll
         dataLength={productsList.length}
         next={() => setPage((prev) => prev + 1)}
@@ -42,13 +59,20 @@ const ProductsList: React.FC = () => {
       >
         <Row gutter={[12, 12]}>
           {productsList.map((product) => (
-            <Col span={4} key={product._id}>
+            <Col
+              key={product._id}
+              xs={24} // 1 sản phẩm / dòng trên màn hình nhỏ (<576px)
+              sm={12} // 2 sản phẩm / dòng (≥576px)
+              md={8} // 3 sản phẩm / dòng (≥768px)
+              lg={6} // 4 sản phẩm / dòng (≥992px)
+              xl={4} // 6 sản phẩm / dòng (≥1200px)
+            >
               <ProductCard product={product} />
             </Col>
           ))}
         </Row>
       </InfiniteScroll>
-    </Card>
+    </>
   );
 };
 

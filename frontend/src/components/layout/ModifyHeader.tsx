@@ -1,11 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Badge, Button, Dropdown, Flex, Layout, Menu, MenuProps } from "antd";
+import {
+  Badge,
+  Button,
+  Dropdown,
+  Flex,
+  Image,
+  Layout,
+  MenuProps,
+  Space,
+} from "antd";
 import {
   BellOutlined,
-  FolderFilled,
-  HomeFilled,
   MessageOutlined,
-  ShopFilled,
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -21,14 +27,11 @@ import { useNotifications } from "../../hook/useNotification";
 import NotificationCardM from "../notifications/Notification";
 import ModifySearch from "../shared/ModifySearch";
 import "./ModifyHeader.css";
+import icon_img from "../../assets/icon.jpg";
+import { TYPE_USER } from "../../utils/constant";
+
 const { Header } = Layout;
 
-type MenuItem = {
-  key: string;
-  icon: JSX.Element;
-  label: string;
-  link: string;
-};
 const ModifyHeader: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
@@ -61,42 +64,22 @@ const ModifyHeader: React.FC = () => {
     };
     fetchCart();
   });
-  const menuBars: MenuItem[] = useMemo(() => {
-    const menuItems: MenuItem[] = [];
-
-    menuItems.push({
-      key: "home",
-      icon: <HomeFilled />,
-      label: "Trang chủ",
-      link: "/",
-    });
-
-    menuItems.push({
-      key: "category",
-      icon: <FolderFilled />,
-      label: "Danh mục",
-      link: "/",
-    });
-
-    menuItems.push({
-      key: "seller",
-      icon: <ShopFilled />,
-      label: "Kênh người bán",
-      link: storeLink,
-    });
-    return menuItems;
-  }, [storeLink]);
 
   const userMenuItems: MenuProps["items"] = [
     {
       key: "profile",
-      label: "Profile",
+      label: "Hồ sơ",
       onClick: () => navigate("/account/profile"),
     },
     {
       key: "my-orders",
-      label: "Đơn hàng của tôi",
+      label: "Đơn mua",
       onClick: () => navigate("/account/my-orders"),
+    },
+    {
+      key: "store",
+      label: "Kênh người bán",
+      onClick: () => navigate(`${storeLink}`),
     },
     {
       key: "logout",
@@ -199,29 +182,22 @@ const ModifyHeader: React.FC = () => {
           top: 0,
           zIndex: 1,
           width: "100%",
+          padding: "20px 40px",
+          backgroundColor: "white",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
           display: "flex",
           alignItems: "center",
-          justifyItems: "space-between",
-          padding: "35px 0",
-          backgroundColor: "white",
-          verticalAlign: "middle",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          justifyContent: "space-between",
         }}
       >
-        <Menu
-          theme="light"
-          mode="horizontal"
-          defaultSelectedKeys={["2"]}
-          items={menuBars}
-          style={{ flex: 1, minWidth: 0, padding: 0 }}
-          onClick={(e) => {
-            const key = e.key;
-            const item = menuBars.find((menuItem) => menuItem.key === key); // Tìm menu item theo key
-            if (item) {
-              navigate(item.link); // Điều hướng khi click vào menu
-            }
-          }}
+        <Image
+          src={icon_img}
+          style={{ height: "60px", cursor: "pointer", margin: "0 10px" }}
+          preview={false}
+          onClick={() => navigate("/")}
         />
+        <Space style={{ width: "20%" }} />
+
         <ModifySearch />
         <Flex
           justify="space-between"
@@ -298,7 +274,13 @@ const ModifyHeader: React.FC = () => {
             </Dropdown>
 
             <Button
-              onClick={() => navigate("/chat")}
+              onClick={() => {
+                if (user.role === TYPE_USER.admin) {
+                  navigate("/admin/chat");
+                } else if (user.role === TYPE_USER.sales) {
+                  navigate("/store-manage/chat");
+                } else navigate("/chat");
+              }}
               style={{ color: "black", border: "none" }}
             >
               {" "}

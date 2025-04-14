@@ -22,12 +22,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
   return (
     <Card
-      style={{ textAlign: "center", paddingTop: "15px" }}
+      style={{
+        textAlign: "center",
+        paddingTop: "15px",
+        minHeight: 300,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
       hoverable
       cover={
         <Link to={`/product/${product._id}`}>
           <img
-            style={{ width: 160, margin: 3 }}
+            style={{
+              width: "100%",
+              maxWidth: 160,
+              margin: "0 auto",
+              display: "block",
+            }}
             alt={product.name}
             src={getSourceImage(product.image || "")}
           />
@@ -37,9 +49,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <Card.Meta
         title={product.name}
         description={
-          product.discount && product.discount !== 0 ? (
-            <>
-              <span style={{ justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {product.discount && product.discount !== 0 ? (
+              <>
                 <span style={{ color: "#b4182d", fontWeight: "bold" }}>
                   {(product.price * (1 - product.discount)).toLocaleString(
                     "vi-VN"
@@ -49,30 +61,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     style={{
                       backgroundColor: "#b4182d",
                       color: "#fff",
+                      padding: "0 4px",
+                      borderRadius: 2,
+                      marginLeft: 4,
+                      fontSize: 12,
                     }}
                   >
-                    - {product.discount * 100} %
+                    -{product.discount * 100}%
                   </span>
                 </span>
-                <br />
-                <span
-                  style={{ fontSize: 10, color: "#000", textAlign: "right" }}
-                >
+                <span style={{ fontSize: 10, color: "#000" }}>
                   Đã bán: {product.inventory?.soldQuantity ?? 0}
                 </span>
-              </span>
-            </>
-          ) : (
-            <span style={{ justifyContent: "space-between" }}>
-              <span style={{ color: "#b4182d", fontWeight: "bold" }}>
-                {product.price.toLocaleString("vi-VN")} đ
-              </span>
-              <br />
-              <span style={{ fontSize: 10, color: "#000", textAlign: "right" }}>
-                Đã bán: {product.inventory?.soldQuantity ?? 0}
-              </span>
-            </span>
-          )
+              </>
+            ) : (
+              <>
+                <span style={{ color: "#b4182d", fontWeight: "bold" }}>
+                  {product.price.toLocaleString("vi-VN")} đ
+                </span>
+                <span style={{ fontSize: 10, color: "#000" }}>
+                  Đã bán: {product.inventory?.soldQuantity ?? 0}
+                </span>
+              </>
+            )}
+          </div>
         }
       />
       <Button

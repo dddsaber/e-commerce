@@ -71,10 +71,10 @@ const userSchema = mongoose.Schema(
       fullname: {
         type: String,
       },
-      identityCardFrontImage: {
+      frontImage: {
         type: String,
       },
-      identityCardBackImage: {
+      backImage: {
         type: String,
       },
     },

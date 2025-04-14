@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Order, OrderDetails } from "../../type/order.type";
 import {
   Button,
@@ -21,13 +21,16 @@ import { getSourceImage } from "../../utils/handle_image_func";
 import { STATUS_MAP } from "../../utils/constant";
 import { formatDate } from "../../utils/handle_format_func";
 import { useNavigate } from "react-router-dom";
+import ReviewModalMulti from "../reviews/ReviewModelMulti";
 
 interface OrderCardProps {
   order: Order;
+  userId: string;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
   const navigate = useNavigate();
+  const [reviewVisible, setReviewVisible] = useState(false);
   const columns = [
     {
       title: "Image",
@@ -202,6 +205,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               color: "#fff",
               fontWeight: 500,
             }}
+            onClick={() => setReviewVisible(true)}
           >
             Đánh giá
           </Button>
@@ -220,6 +224,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </Button>
         </Col>
       </Row>
+      <ReviewModalMulti
+        isVisible={reviewVisible}
+        products={order.orderDetails}
+        userId={userId}
+        setIsVisible={setReviewVisible}
+      />
     </Card>
   );
 };

@@ -40,7 +40,7 @@ const productSchema = mongoose.Schema(
       type: String,
     },
     size: {
-      type: String,
+      type: [String],
     },
     rating: {
       type: Number,
@@ -51,6 +51,18 @@ const productSchema = mongoose.Schema(
     numberOfRatings: {
       type: Number,
       default: 0,
+    },
+    height: {
+      type: Number,
+    },
+    width: {
+      type: Number,
+    },
+    length: {
+      type: Number,
+    },
+    weight: {
+      type: Number,
     },
     isActive: {
       type: Boolean,

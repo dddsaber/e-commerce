@@ -19,9 +19,7 @@ const financeSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    revenue: {
-      type: String,
-    },
+
     transactionHistory: [
       {
         amount: {

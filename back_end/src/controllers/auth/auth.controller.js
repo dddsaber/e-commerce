@@ -12,6 +12,7 @@ const {
 } = require("../../utils/config.utils");
 const { handleError } = require("../../utils/error.utils");
 const { compare } = require("bcrypt");
+const Role = require("../../models/Role.model");
 
 // ----------------------------------------------------------------
 // User registers a new account
@@ -43,12 +44,14 @@ const register = async (req, res) => {
     const hashedPassword = await securePassword(password);
     const username = generateRandomUsername();
 
+    const role = await Role.findOne({ name: "user" });
     const user = await User.create({
       username: username,
       fullName: fullName,
       phone: phone,
       password: hashedPassword,
       role: "user",
+      roleId: role._id,
       isActive: true,
     });
 

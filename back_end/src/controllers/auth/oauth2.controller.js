@@ -8,6 +8,7 @@ const {
 const response = require("../../utils/response.utils");
 const { StatusCodes } = require("http-status-codes");
 const { handleError } = require("../../utils/error.utils");
+const Role = require("../../models/Role.model");
 
 // ----------------------------------------------------------------
 // Login with Google
@@ -26,6 +27,8 @@ const loginWithGoogle = async (req, res) => {
       providerId: oauth2response.data.sub,
     });
     if (!user) {
+      const role = await Role.findOne({ name: "user" });
+
       user = await User.create({
         provider: "google",
         providerId: oauth2response.data.sub,
@@ -35,6 +38,7 @@ const loginWithGoogle = async (req, res) => {
         username: oauth2response.data.username ?? generateRandomUsername(),
         isActive: true,
         role: "user",
+        roleId: role._id,
       });
     }
     const accessToken = createAccessToken(user);

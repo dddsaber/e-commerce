@@ -55,10 +55,6 @@ const storeSchema = mongoose.Schema(
         type: Number,
         default: 0,
       },
-      visited: {
-        type: Number,
-        default: 0,
-      },
     },
     address: {
       province: {
@@ -102,10 +98,11 @@ const storeSchema = mongoose.Schema(
     },
     paymentCycle: {
       type: String,
+      enum: ["weekly", "monthly"],
+      default: "weekly",
     },
     registrationDate: {
       type: Date,
-      enum: ["weekly", "monthly"],
     },
     isActive: {
       type: Boolean,

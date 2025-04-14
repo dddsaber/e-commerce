@@ -5,7 +5,7 @@ const Review = require("../../models/Review.model");
 const Product = require("../../models/Product.model");
 const Store = require("../../models/Store.model");
 const User = require("../../models/User.model");
-const { ObjectId } = require("mongodb");
+const mongoose = require("mongoose"); // Import mongoose để sử dụng Types.ObjectId
 
 // ----------------------------------------------------------------
 // Handle Add rating
@@ -451,7 +451,7 @@ const getReviews = async (req, res) => {
     if (productId) {
       pipeline.push({
         $match: {
-          productId: new ObjectId(productId), // Chuyển string thành ObjectId
+          productId: new mongoose.Types.ObjectId(productId), // Chuyển string thành ObjectId
         },
       });
     }
@@ -459,7 +459,7 @@ const getReviews = async (req, res) => {
     if (storeId) {
       pipeline.push({
         $match: {
-          storeId: new ObjectId(storeId), // Chuyển string thành ObjectId
+          storeId: new mongoose.Types.ObjectId(storeId), // Chuyển string thành ObjectId
         },
       });
     }
@@ -525,30 +525,51 @@ const getReviews = async (req, res) => {
 // ----------------------------------------------------------------
 // Get Reviews By Product's Id
 // ----------------------------------------------------------------
-const getReviewsByProductId = async (req, res) => {
-  const { productId } = req.params;
-  const { rating } = req.query;
-  if (!productId) {
+const checkReviewExistence = async (req, res) => {
+  const { userId, productId } = req.params;
+
+  // Kiểm tra xem có thiếu tham số không
+  if (!productId || !userId) {
     return response(
       res,
       StatusCodes.BAD_REQUEST,
       false,
       {},
-      "Missing required field: productId"
+      "Missing required field: productId or userId"
     );
   }
+  // Validate if productId and userId are valid ObjectIds
+  if (
+    !mongoose.Types.ObjectId.isValid(productId) ||
+    !mongoose.Types.ObjectId.isValid(userId)
+  ) {
+    return response(
+      res,
+      StatusCodes.BAD_REQUEST,
+      false,
+      {},
+      "Invalid productId or userId"
+    );
+  }
+
+  // Chuyển productId và userId thành ObjectId
+  const productObjectId = new mongoose.Types.ObjectId(productId);
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
   try {
-    const reviews = await Review.find({
-      productId: productId,
-      rating: { $gte: rating || 0 }, // Filter reviews by rating if provided in query
+    // Tìm review trong cơ sở dữ liệu
+    const review = await Review.findOne({
+      productId: productObjectId,
+      userId: userObjectId,
       isDeleted: false,
     });
-    if (!reviews) {
+
+    if (!review) {
       return response(
         res,
-        StatusCodes.NOT_FOUND,
-        false,
-        {},
+        StatusCodes.OK,
+        true,
+        { hasReview: false, review: {} },
         "No reviews found for this product"
       );
     }
@@ -557,54 +578,11 @@ const getReviewsByProductId = async (req, res) => {
       res,
       StatusCodes.OK,
       true,
-      reviews,
+      { review, hasReview: true },
       "Reviews fetched successfully"
     );
   } catch (error) {
-    return handleError(res, error.message);
-  }
-};
-
-// ----------------------------------------------------------------
-// Get Reviews By User's Id
-// ----------------------------------------------------------------
-const getReviewsByUserId = async (req, res) => {
-  const { userId } = req.params;
-  const { rating } = req.query;
-  if (!userId) {
-    return response(
-      res,
-      StatusCodes.BAD_REQUEST,
-      false,
-      {},
-      "Missing required field: userId"
-    );
-  }
-  try {
-    const reviews = await Review.find({
-      userId: userId,
-      rating: { $gte: rating || 0 }, // Filter reviews by rating if provided in query
-      isDeleted: false,
-    });
-
-    if (!reviews) {
-      return response(
-        res,
-        StatusCodes.NOT_FOUND,
-        false,
-        {},
-        "No reviews found for this user"
-      );
-    }
-
-    return response(
-      res,
-      StatusCodes.OK,
-      true,
-      reviews,
-      "Reviews fetched successfully"
-    );
-  } catch (error) {
+    console.log("Error:", error.message); // Debugging
     return handleError(res, error.message);
   }
 };
@@ -664,7 +642,6 @@ module.exports = {
   updateReview,
   updateReviewStatus,
   getReviews,
-  getReviewsByProductId,
-  getReviewsByUserId,
+  checkReviewExistence,
   getReviewById,
 };

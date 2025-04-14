@@ -46,6 +46,7 @@ const conversationRouter = require("./src/routes/conversation.routes");
 const warehouseRouter = require("./src/routes/warehouse.routes");
 const deliveryRouter = require("./src/routes/delivery.routes");
 const permissionRouter = require("./src/routes/permission.routes");
+const askWithGemini = require("./src/controllers/chat-bot/chatBot.controller");
 app.use("/auth", authRouter);
 
 app.use("/chat", chatRouter);
@@ -95,6 +96,16 @@ app.use((err, req, res, next) => {
 });
 
 // Socket.io setup
+app.post("/chat-bot", async (req, res) => {
+  const { message } = req.body;
+  try {
+    const response = await askWithGemini(message);
+    res.json({ reply: response });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi khi gọi Gemini" });
+  }
+});
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*" } });

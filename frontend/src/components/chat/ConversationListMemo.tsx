@@ -8,9 +8,8 @@ import { Card, Flex, Typography, Avatar } from "antd";
 import { Conversation } from "../../type/conversation.type";
 import { RootState } from "../../redux/store";
 import { User } from "../../type/user.type";
-import { FORMAT_FULL_TIME, formatedDate } from "../../utils/handle_format_func";
+import { renderTimeChatMessage } from "../../utils/handle_format_func";
 import { getSourceImage } from "../../utils/handle_image_func";
-import dayjs from "dayjs";
 
 import {
   createConversation,
@@ -113,18 +112,6 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
   //   },
   //   [user]
   // );
-
-  const renderTimeChatMessage = (date: string) => {
-    const now = dayjs();
-    const dateMessage = dayjs(date);
-    const diff = now.diff(dateMessage, "minute");
-
-    if (diff === 0) return `${now.diff(dateMessage, "second")} giây trước`;
-    if (diff < 60) return `${diff} phút trước`;
-    if (diff < 24 * 60) return `${Math.floor(diff / 60)} giờ trước`;
-    if (diff < 7 * 24 * 60) return `${Math.floor(diff / (24 * 60))} ngày trước`;
-    return formatedDate(date, FORMAT_FULL_TIME);
-  };
 
   return (
     <div style={{ paddingLeft: 10, width: "100%", minWidth: 270 }}>

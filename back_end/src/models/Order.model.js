@@ -12,10 +12,6 @@ const orderSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    processorStaffId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     couponId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Coupon",
@@ -82,7 +78,6 @@ const orderSchema = mongoose.Schema(
         type: Date,
       },
     },
-    distance: { type: Number },
     customerNote: {
       type: String,
     },

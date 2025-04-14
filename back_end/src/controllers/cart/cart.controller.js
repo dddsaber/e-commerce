@@ -299,23 +299,13 @@ const getCartByUserId = async (req, res) => {
   }
 
   try {
-    // 🔹 Populate storeId để lấy tên store
-    const cart = await Cart.findOne({ userId: userId }).populate({
+    const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
       populate: { path: "storeId", model: "Store" },
     });
 
     if (!cart) {
-      const newCart = await Cart.create({ userId: userId, items: [] });
-      if (!newCart) {
-        return response(
-          res,
-          StatusCodes.INTERNAL_SERVER_ERROR,
-          false,
-          {},
-          "Failed to create cart"
-        );
-      }
+      const newCart = await Cart.create({ userId, items: [] });
       return response(
         res,
         StatusCodes.OK,
@@ -325,56 +315,41 @@ const getCartByUserId = async (req, res) => {
       );
     }
 
-    const validItems = [];
-    for (let i = 0; i < cart.items.length; i++) {
-      const item = cart.items[i];
-      const product = await Product.findOne({
-        _id: item.productId,
-        isActive: true,
-      });
-      if (!product) {
-        cart.items.splice(i, 1);
-        i--;
-        continue;
-      }
-      const inventory = await Inventory.findOne({ productId: item.productId });
-      if (!inventory) {
-        cart.items.splice(i, 1);
-        i--;
-        continue;
-      }
-      if (inventory.quantity < item.quantity) {
-        cart.items[i].quantity = inventory.quantity;
-      }
-      validItems.push(item);
-    }
-    cart.items = validItems;
+    // 🔸 Lọc sản phẩm không hợp lệ + cập nhật số lượng nếu vượt quá tồn kho
+    const validItems = await Promise.all(
+      cart.items.map(async (item) => {
+        const product = item.productId;
+        if (!product || !product.isActive) return null;
+
+        const inventory = await Inventory.findOne({ productId: product._id });
+        if (!inventory) return null;
+
+        item.quantity = Math.min(item.quantity, inventory.quantity);
+        return item;
+      })
+    );
+
+    cart.items = validItems.filter(Boolean); // Loại bỏ null
     await cart.save();
 
-    // 🔹 Gom nhóm theo storeId
-    const groupedItems = cart.items.reduce((acc, item) => {
-      const storeId = item.productId.storeId?._id;
-      const storeName = item.productId.storeId?.name || "Unknown Store";
-      const storeAddress = item.productId.storeId?.address;
-      const logo = item.productId.storeId?.logo || "default.png";
+    // 🔸 Gom nhóm theo storeId
+    const groupedItems = {};
+    cart.items.forEach((item) => {
+      const store = item.productId.storeId;
+      const storeId = store?._id?.toString();
+      if (!storeId) return;
 
-      if (!acc[storeId]) {
-        acc[storeId] = {
+      if (!groupedItems[storeId]) {
+        groupedItems[storeId] = {
           storeId,
-          storeName,
-          storeAddress,
-          logo,
+          storeName: store.name || "Unknown Store",
+          storeAddress: store.address,
+          logo: store.logo || "default.png",
           products: [],
         };
       }
 
-      // Loại bỏ storeId và storeName trong từng sản phẩm
-      const {
-        storeId: _,
-        storeName: __,
-        storeAddress: ___,
-        ...productData
-      } = {
+      groupedItems[storeId].products.push({
         productId: item.productId._id,
         productName: item.productId.name,
         quantity: item.quantity,
@@ -382,11 +357,8 @@ const getCartByUserId = async (req, res) => {
         discount: item.productId.discount,
         image: item.productId.image,
         _id: item._id,
-      };
-
-      acc[storeId].products.push(productData);
-      return acc;
-    }, {});
+      });
+    });
 
     return response(
       res,

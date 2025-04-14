@@ -60,3 +60,24 @@ export const formatAddress = (address?: Address) => {
     address.district || ""
   }, ${address.province || ""}`;
 };
+
+export const formatLink = (type: string, id: string) => {
+  return `/${type}/${id}`;
+};
+
+export const LINK_TYPE = {
+  PRODUCT: "product",
+  ORDER: "order",
+};
+
+export const renderTimeChatMessage = (date: string) => {
+  const now = dayjs();
+  const dateMessage = dayjs(date);
+  const diff = now.diff(dateMessage, "minute");
+
+  if (diff === 0) return `${now.diff(dateMessage, "second")} giây trước`;
+  if (diff < 60) return `${diff} phút trước`;
+  if (diff < 24 * 60) return `${Math.floor(diff / 60)} giờ trước`;
+  if (diff < 7 * 24 * 60) return `${Math.floor(diff / (24 * 60))} ngày trước`;
+  return formatedDate(date, FORMAT_FULL_TIME);
+};

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Inventory, Product } from "../../../type/product.type";
-import { getProductById, getRateAndSold } from "../../../api/product.api";
+import { Product } from "../../../type/product.type";
+import { getProductById } from "../../../api/product.api";
 import { useParams } from "react-router-dom";
 import {
   Breadcrumb,
@@ -26,18 +26,7 @@ const ProductDetailPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [productDetails, setProductDetails] = useState<{
-    totalReviews: number;
-    rating: number;
-    inventory: Inventory;
-  }>({
-    totalReviews: 0,
-    rating: 0,
-    inventory: {
-      soldQuantity: 0,
-      quantity: 0,
-    },
-  });
+
   const [rating, setRating] = useState("all");
 
   const addCart = async (product: Product, quantity: number) => {
@@ -55,8 +44,6 @@ const ProductDetailPage: React.FC = () => {
     const fetchProduct = async () => {
       const data = await getProductById(productId || "");
       setProduct(data);
-      const detailsData = await getRateAndSold(productId || "");
-      setProductDetails(detailsData);
     };
     fetchProduct();
   }, [productId]);
@@ -71,45 +58,20 @@ const ProductDetailPage: React.FC = () => {
             title: "Trang chủ",
           },
           {
+            href: "/search",
+            title: `${product?.category.name}`,
+          },
+          {
             href: "/",
-            title: "San pham",
+            title: `${product?.name}`,
           },
         ]}
       />
-      <ProductDisplayCard
-        productId={productId!}
-        productDetails={productDetails}
-        addCart={addCart}
-      />
+      <ProductDisplayCard product={product!} addCart={addCart} />
       <StoreDisplayCard storeId={product?.storeId || ""} />
       <Row gutter={[20, 20]}>
         <Col span={20}>
           <Card>
-            <Typography.Title
-              level={3}
-              style={{
-                backgroundColor: "#f7f7f7",
-                padding: "15px 20px 30px",
-                alignItems: "center",
-                borderRadius: "10px",
-                margin: "0",
-                textTransform: "uppercase",
-              }}
-            >
-              Chi tiết sản phẩm
-            </Typography.Title>
-            <Typography.Text style={{ marginTop: 10 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-              eleifend lobortis consectetur. Donec gravida ex vel dui efficitur,
-              ac vestibulum felis tempus. Nullam vel velit libero. Sed auctor,
-              nunc vel pharetra ultricies, mauris nisi tristique ligula, at
-              placerat orci felis in velit. Sed id dolor sed nunc pulvinar
-              finibus. Nulla facilisi. Donec vel libero et urna ornare placerat.
-              Donec sodales, ipsum sit amet condimentum gravida, ipsum metus
-              bibendum neque, vel vulputate ipsum ligula ut enim. Sed vel libero
-              eu est posuere consectetur. Donec dignissim diam non neque
-              lobortis, a facilisis mi ultricies.
-            </Typography.Text>
             <Typography.Title
               level={3}
               style={{
@@ -123,18 +85,7 @@ const ProductDetailPage: React.FC = () => {
             >
               Mô tả sản phẩm
             </Typography.Title>
-            <Typography.Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-              eleifend lobortis consectetur. Donec gravida ex vel dui efficitur,
-              ac vestibulum felis tempus. Nullam vel velit libero. Sed auctor,
-              nunc vel pharetra ultricies, mauris nisi tristique ligula, at
-              placerat orci felis in velit. Sed id dolor sed nunc pulvinar
-              finibus. Nulla facilisi. Donec vel libero et urna ornare placerat.
-              Donec sodales, ipsum sit amet condimentum gravida, ipsum metus
-              bibendum neque, vel vulputate ipsum ligula ut enim. Sed vel libero
-              eu est posuere consectetur. Donec dignissim diam non neque
-              lobortis, a facilisis mi ultricies.
-            </Typography.Text>
+            <Typography.Text>{product?.description}</Typography.Text>
           </Card>
           <Card
             title="ĐÁNH GIÁ SẢN PHẨM"
@@ -165,10 +116,9 @@ const ProductDetailPage: React.FC = () => {
                     marginBottom: 15,
                   }}
                 >
-                  <span style={{ fontSize: 36 }}>{productDetails.rating}</span>{" "}
-                  / 5
+                  <span style={{ fontSize: 36 }}>{product?.rating}</span> / 5
                 </Typography.Text>
-                <Rate value={productDetails.rating} allowHalf />
+                <Rate value={product?.rating} allowHalf />
               </Col>
               <Col
                 span={19}

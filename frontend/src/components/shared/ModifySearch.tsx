@@ -91,7 +91,11 @@ const ModifySearch = () => {
 
   return (
     <AutoComplete
-      style={{ width: "40%", borderRadius: "30px" }}
+      style={{
+        width: "50%",
+        borderRadius: "30px",
+        backgroundColor: "#f3f3f367",
+      }}
       options={options}
       onSearch={handleSearch}
       onSelect={handleSelect}

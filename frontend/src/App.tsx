@@ -48,7 +48,6 @@ import NotificationsPage from "./page/users/notification/NotificationsPage";
 import UserAddressPage from "./page/users/profile/UserAddressPage";
 import ChangePasswordPage from "./page/users/profile/ChangePasswordPage";
 import StoreAddressPage from "./page/stores/shop/StoreAddressPage";
-import OrdersPage from "./page/stores/orders/OrdersPage";
 import StoresRevenuePage from "./page/admin/store_management/StoresRevenuePage";
 import ChatPage from "./page/users/chat/ChatPage";
 import "./App.css";
@@ -261,31 +260,151 @@ function App() {
         <Route path="/store-manage" element={<AdminLayoutPage />}>
           <Route
             path="chat"
-            element={<PrivateRoute element={<ChatPage />} />}
+            element={
+              <PrivateRoute
+                element={<ChatPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
           />
-          {/* not-done-yet */}
-          <Route path="dashboard" element={<StoreManagement />} />
-          <Route path="all-orders" element={<AllOrdersPage />} />
-          <Route path="pending-orders" element={<PendingOrdersPage />} />
-          <Route path="dispatched-orders" element={<DispatchedOrdersPage />} />
-          <Route path="cancel-orders" element={<CancelOrdersPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="products" element={<StoreProductsManagePage />} />
-          <Route path="campaigns" element={<StoreCampaignsPage />} />
-          <Route path="coupons" element={<StoreCouponsPage />} />
-          <Route path="reviews" element={<StoreReviewsManagePage />} />
+          <Route
+            path="dashboard"
+            element={
+              <PrivateRoute
+                element={<StoreManagement />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="all-orders"
+            element={
+              <PrivateRoute
+                element={<AllOrdersPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="pending-orders"
+            element={
+              <PrivateRoute
+                element={<PendingOrdersPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="dispatched-orders"
+            element={
+              <PrivateRoute
+                element={<DispatchedOrdersPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="cancel-orders"
+            element={
+              <PrivateRoute
+                element={<CancelOrdersPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
 
-          {/* not-done-yet */}
-          <Route path="revenue" element={<StoreRevenuePage />} />
-          {/* not-done-yet */}
-          <Route path="bank-account" element={<StoreBankAccountPage />} />
-          <Route path="shop-profile" element={<StoreProfilePage />} />
-          {/* not-done-yet */}
-          <Route path="shop-decoration" element={<StoreDecorationPage />} />
-          {/* not-done-yet */}
-          <Route path="shop-address" element={<StoreAddressPage />} />
-          <Route path="skeleton" element={<TableSkeleton />} />
+          <Route
+            path="products"
+            element={
+              <PrivateRoute
+                element={<StoreProductsManagePage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="campaigns"
+            element={
+              <PrivateRoute
+                element={<StoreCampaignsPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="coupons"
+            element={
+              <PrivateRoute
+                element={<StoreCouponsPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="reviews"
+            element={
+              <PrivateRoute
+                element={<StoreReviewsManagePage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="revenue"
+            element={
+              <PrivateRoute
+                element={<StoreRevenuePage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="bank-account"
+            element={
+              <PrivateRoute
+                element={<StoreBankAccountPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="shop-profile"
+            element={
+              <PrivateRoute
+                element={<StoreProfilePage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="shop-decoration"
+            element={
+              <PrivateRoute
+                element={<StoreDecorationPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="shop-address"
+            element={
+              <PrivateRoute
+                element={<StoreAddressPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="skeleton"
+            element={
+              <PrivateRoute
+                element={<TableSkeleton />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
         </Route>
+
         {/* Logistic provider */}
         <Route path="/delivery" element={<AdminLayoutPage />}>
           <Route path="all-deliveries" element={<AllDeliveriesPage />} />

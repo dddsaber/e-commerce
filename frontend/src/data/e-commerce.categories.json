@@ -252,4 +252,460 @@
     "$date": "2025-03-16T08:35:28.336Z"
   },
   "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e5a994494baafa4fd34"
+  },
+  "name": "Điện thoại di động",
+  "description": "Các loại điện thoại thông minh",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cad994494baafa4fd16"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:39:54.566Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:39:54.566Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e65994494baafa4fd36"
+  },
+  "name": "Phụ kiện điện tử",
+  "description": "Các loại phụ kiện đi kèm thiết bị điện tử",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cad994494baafa4fd16"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:05.793Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:05.793Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e6e994494baafa4fd38"
+  },
+  "name": "Quần áo nam",
+  "description": "Thời trang nam",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cbe994494baafa4fd18"
+  },
+  "commissionFee": 0.09,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:14.337Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:14.337Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e79994494baafa4fd3a"
+  },
+  "name": "Quần áo nữ",
+  "description": "Thời trang nữ",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cbe994494baafa4fd18"
+  },
+  "commissionFee": 0.09,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:25.160Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:25.160Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e81994494baafa4fd3c"
+  },
+  "name": "Nội thất phòng khách",
+  "description": "Đồ nội thất cho phòng khách",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cc6994494baafa4fd1a"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:33.296Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:33.296Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e8a994494baafa4fd3e"
+  },
+  "name": "Đồ trang trí",
+  "description": "Vật dụng trang trí nhà cửa",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cc6994494baafa4fd1a"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:42.284Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:42.284Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e93994494baafa4fd40"
+  },
+  "name": "Mỹ phẩm chăm sóc da",
+  "description": "Sản phẩm chăm sóc da mặt và body",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cd0994494baafa4fd1c"
+  },
+  "commissionFee": 0.095,
+  "createdAt": {
+    "$date": "2025-03-16T08:40:51.462Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:40:51.462Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68e9f994494baafa4fd42"
+  },
+  "name": "Dụng cụ tập thể thao",
+  "description": "Dụng cụ hỗ trợ tập luyện thể thao",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cd7994494baafa4fd1e"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:03.109Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:03.109Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ea7994494baafa4fd44"
+  },
+  "name": "Linh kiện xe máy",
+  "description": "Linh kiện thay thế và nâng cấp xe máy",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68ce5994494baafa4fd20"
+  },
+  "commissionFee": 0.05,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:11.587Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:11.587Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68eb0994494baafa4fd46"
+  },
+  "name": "Sách kỹ năng",
+  "description": "Sách hướng dẫn kỹ năng sống và làm việc",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cf3994494baafa4fd22"
+  },
+  "commissionFee": 0.03,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:20.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:20.958Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68eb1994494baafa4fd48"
+  },
+  "name": "Sách kỹ năng",
+  "description": "Sách hướng dẫn kỹ năng sống và làm việc",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cf3994494baafa4fd22"
+  },
+  "commissionFee": 0.03,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:21.151Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:21.151Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68eba994494baafa4fd4a"
+  },
+  "name": "Đồ chơi giáo dục",
+  "description": "Đồ chơi giúp phát triển tư duy cho trẻ",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cfc994494baafa4fd24"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:30.644Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:30.644Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ec3994494baafa4fd4c"
+  },
+  "name": "Thực phẩm đóng hộp",
+  "description": "Các loại thực phẩm bảo quản lâu",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68d04994494baafa4fd26"
+  },
+  "commissionFee": 0.02,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:39.404Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:39.404Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ecc994494baafa4fd4e"
+  },
+  "name": "Đồ dùng cho thú cưng",
+  "description": "Sản phẩm chăm sóc thú cưng",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68d10994494baafa4fd28"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:48.904Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:48.904Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ed7994494baafa4fd50"
+  },
+  "name": "Đồ sơ sinh",
+  "description": "Sản phẩm dành cho trẻ sơ sinh",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68d22994494baafa4fd2a"
+  },
+  "commissionFee": 0.08,
+  "createdAt": {
+    "$date": "2025-03-16T08:41:59.775Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:41:59.775Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68ee1994494baafa4fd52"
+  },
+  "name": "Đàn guitar",
+  "description": "Nhạc cụ dành cho người yêu thích guitar",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68d2e994494baafa4fd2c"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:42:09.303Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:42:09.303Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f25994494baafa4fd54"
+  },
+  "name": "Máy tính xách tay",
+  "description": "Laptop cho học tập và làm việc",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cad994494baafa4fd16"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:43:17.719Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:43:17.719Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f30994494baafa4fd56"
+  },
+  "name": "Máy ảnh kỹ thuật số",
+  "description": "Máy ảnh cho dân chuyên nghiệp và nghiệp dư",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cad994494baafa4fd16"
+  },
+  "commissionFee": 0.07,
+  "createdAt": {
+    "$date": "2025-03-16T08:43:28.049Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:43:28.049Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f38994494baafa4fd58"
+  },
+  "name": "Balo và túi xách",
+  "description": "Các loại balo, túi xách thời trang",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cbe994494baafa4fd18"
+  },
+  "commissionFee": 0.08,
+  "createdAt": {
+    "$date": "2025-03-16T08:43:36.563Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:43:36.563Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f41994494baafa4fd5a"
+  },
+  "name": "Dụng cụ nhà bếp",
+  "description": "Đồ dùng tiện ích cho nhà bếp",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cc6994494baafa4fd1a"
+  },
+  "commissionFee": 0.05,
+  "createdAt": {
+    "$date": "2025-03-16T08:43:45.133Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:43:45.133Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f48994494baafa4fd5c"
+  },
+  "name": "Thiết bị vệ sinh cá nhân",
+  "description": "Sản phẩm chăm sóc cá nhân hàng ngày",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cd0994494baafa4fd1c"
+  },
+  "commissionFee": 0.065,
+  "createdAt": {
+    "$date": "2025-03-16T08:43:52.639Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:43:52.639Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68f52994494baafa4fd5e"
+  },
+  "name": "Dụng cụ sửa chữa",
+  "description": "Các công cụ sửa chữa, lắp đặt",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cd7994494baafa4fd1e"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:44:02.602Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:44:02.602Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68fc1994494baafa4fd60"
+  },
+  "name": "Thiết bị chăm sóc tóc",
+  "description": "Máy sấy, máy uốn, dưỡng tóc",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cd0994494baafa4fd1c"
+  },
+  "commissionFee": 0.06,
+  "createdAt": {
+    "$date": "2025-03-16T08:45:53.400Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:45:53.400Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d68fd1994494baafa4fd62"
+  },
+  "name": "Đồ làm bánh",
+  "description": "Dụng cụ và nguyên liệu làm bánh",
+  "isDeleted": false,
+  "parentId": {
+    "$oid": "67d68cc6994494baafa4fd1a"
+  },
+  "commissionFee": 0.05,
+  "createdAt": {
+    "$date": "2025-03-16T08:46:09.390Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-16T08:46:09.390Z"
+  },
+  "__v": 0
 }]

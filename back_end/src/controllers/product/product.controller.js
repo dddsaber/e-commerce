@@ -7,6 +7,7 @@ const Category = require("../../models/Category.model");
 const Review = require("../../models/Review.model");
 const Inventory = require("../../models/Inventory.model");
 const { default: mongoose } = require("mongoose");
+const Store = require("../../models/Store.model");
 
 // ----------------------------------------------------------------
 // Create a new product
@@ -44,6 +45,17 @@ const createProduct = async (req, res) => {
   }
 
   try {
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return response(
+        res,
+        StatusCodes.NOT_FOUND,
+        false,
+        {},
+        "No store founded!"
+      );
+    }
+
     const newProduct = await Product.create({
       categoryId,
       storeId,
@@ -77,6 +89,9 @@ const createProduct = async (req, res) => {
         "Failed to create inventory for the product! Product creation rolled back."
       );
     }
+
+    store.statistics.totalProducts += 1;
+    await store.save();
 
     return response(
       res,
@@ -279,12 +294,39 @@ const getProducts = async (req, res) => {
     }
 
     // 🟢 Lọc theo categoryIds
+    // 🟢 Lọc theo categoryIds và cả parentId nằm trong categoryIds
+    // 🟢 Lọc theo categoryIds và cả parentId của category nằm trong categoryIds
     if (categoryIds && Array.isArray(categoryIds) && categoryIds.length > 0) {
       const categoryObjectIds = categoryIds
         .filter((id) => mongoose.Types.ObjectId.isValid(id))
         .map((id) => new mongoose.Types.ObjectId(id));
 
-      pipeline.push({ $match: { categoryId: { $in: categoryObjectIds } } });
+      pipeline.push(
+        {
+          // Join với collection categories để lấy thông tin parentId của category
+          $lookup: {
+            from: "categories", // Tên collection categories trong MongoDB
+            localField: "categoryId", // Trường categoryId của sản phẩm
+            foreignField: "_id", // Trường _id của category
+            as: "category_info", // Đặt alias cho kết quả join
+          },
+        },
+        {
+          // Lọc các sản phẩm theo categoryId hoặc category có parentId nằm trong categoryIds
+          $match: {
+            $or: [
+              { categoryId: { $in: categoryObjectIds } }, // Lọc theo categoryId
+              {
+                "category_info.parentId": { $in: categoryObjectIds }, // Lọc theo parentId của category
+              },
+            ],
+          },
+        },
+        {
+          // Unwind category_info để tách các kết quả từ $lookup
+          $unwind: "$category_info",
+        }
+      );
     }
 
     // 🟢 Lọc theo isActive
@@ -373,7 +415,38 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   const { productId } = req.params;
   try {
-    const product = await Product.findById(productId);
+    const [product] = await Product.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+      {
+        $lookup: {
+          from: "inventories",
+          localField: "_id",
+          foreignField: "productId",
+          as: "inventory",
+        },
+      },
+      {
+        $unwind: {
+          path: "$inventory",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "categoryId",
+        },
+      },
+      {
+        $unwind: {
+          path: "$categoryId",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ]);
+
     if (!product) {
       return response(
         res,
@@ -383,6 +456,10 @@ const getProductById = async (req, res) => {
         "Product not found!"
       );
     }
+
+    // Đổi tên từ categoryId -> category
+    product.category = product.categoryId;
+    delete product.categoryId;
 
     return response(
       res,

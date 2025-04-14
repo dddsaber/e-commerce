@@ -179,20 +179,23 @@ const DeliveryTable: React.FC<DeliveryProps> = ({
       record.orderId,
       STATUS_MAP.delivered.value
     );
-    const notification = await createNotification({
-      userId: response.userId!,
-      createdBy: user._id,
-      title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
-      message: `Đơn hàng ${record._id} đã được ${
-        STATUS_MAP[record.status as keyof typeof STATUS_MAP]
-      }`,
-      target: record._id!,
-      targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
-      image: response?.orderDetails[0].product?.image,
-    });
-    if (!notification) {
-      message.error("Tạo thông báo thất bại!");
+    if (response) {
+      const notification = await createNotification({
+        userId: response.userId!,
+        createdBy: user._id,
+        title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
+        message: `Đơn hàng ${record._id} đã được ${
+          STATUS_MAP[record.status as keyof typeof STATUS_MAP]
+        }`,
+        target: record._id!,
+        targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
+        image: response?.orderDetails[0].product?.image,
+      });
+      if (!notification) {
+        message.error("Tạo thông báo thất bại!");
+      }
     }
+
     setReload(!reload);
   };
 

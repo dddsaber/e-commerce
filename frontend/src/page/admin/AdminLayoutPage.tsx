@@ -21,7 +21,8 @@ import {
   ShopOutlined,
   TruckFilled,
 } from "@ant-design/icons";
-import { Button, Flex, Layout, Menu, Tag, Typography, theme } from "antd";
+import { Button, Flex, Image, Layout, Menu, Tag, theme, Grid } from "antd";
+const { useBreakpoint } = Grid;
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -47,16 +48,7 @@ type RootState = {
   };
 };
 
-const siderStyle: React.CSSProperties = {
-  overflowY: "auto",
-  maxHeight: "94vh",
-  position: "sticky",
-  insetInlineStart: 0,
-  top: 0,
-  bottom: 0,
-  scrollbarWidth: "thin",
-  scrollbarGutter: "stable",
-};
+import icon_img from "../../assets/icon.png";
 
 const AdminLayoutPage: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -65,6 +57,9 @@ const AdminLayoutPage: React.FC = () => {
   } = theme.useToken();
 
   const navigate = useNavigate();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
+
   const user = useSelector((state: RootState) => state.auth.user);
   const { role } = user || {};
   const location = useLocation();
@@ -170,7 +165,7 @@ const AdminLayoutPage: React.FC = () => {
             key: "chats",
             icon: <MessageOutlined />,
             label: "Tin nhắn",
-            link: "/chat",
+            link: "/store-manage/chat",
           },
           {
             key: "orders",
@@ -367,13 +362,23 @@ const AdminLayoutPage: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <Layout style={{ flexDirection: isMobile ? "column" : "row" }}>
       <Sider
         collapsible
         collapsed={collapsed}
         theme="dark"
         width={240}
-        style={siderStyle}
+        style={{
+          overflowY: "auto",
+          maxHeight: isMobile ? "auto" : "94vh",
+          position: isMobile ? "relative" : "sticky",
+
+          insetInlineStart: 0,
+          top: 0,
+          bottom: 0,
+          scrollbarWidth: "thin",
+          scrollbarGutter: "stable",
+        }}
         onCollapse={() => setCollapsed(!collapsed)}
       >
         <div
@@ -385,17 +390,17 @@ const AdminLayoutPage: React.FC = () => {
             flexDirection: "column",
           }}
         >
-          <Typography.Title
-            level={5}
+          <Image
+            src={icon_img}
             style={{
-              fontWeight: "bold",
-              textAlign: "center",
-              margin: 0,
-              color: "white",
+              height: "50px",
+              cursor: "pointer",
+              margin: "5px 0",
+              borderRadius: "25px",
             }}
-          >
-            E-CO
-          </Typography.Title>
+            preview={false}
+            onClick={() => navigate("/")}
+          />
         </div>
         <Flex
           justify="space-between"

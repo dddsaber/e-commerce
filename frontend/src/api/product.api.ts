@@ -7,7 +7,7 @@ import {
 } from "../type/product.type";
 const URL = "/product";
 
-// 🟢 Lấy danh sách người dùng
+// 🟢 Lấy danh sách sản phẩm
 export const getProducts = async (
   params: GetProductsRequest
 ): Promise<{ products: Product[]; totalProducts: number }> => {
@@ -15,6 +15,14 @@ export const getProducts = async (
     products: Product[];
     totalProducts: number;
   }>(`${URL}/get-products`, params);
+
+  return response.data;
+};
+
+export const getRecommendProducts = async (
+  userId: string
+): Promise<Product[]> => {
+  const response = await instance.post<Product[]>(`${URL}/recommend/${userId}`);
 
   return response.data;
 };

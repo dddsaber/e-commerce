@@ -1,5 +1,5 @@
 import { instance } from ".";
-import { GetReviewsRequest, Review } from "../type/review.type";
+import { GetReviewsRequest, Review, ReviewInput } from "../type/review.type";
 const URL = "/review";
 
 // 🟢 Lấy danh sách người dùng và tổng số đánh giá
@@ -15,8 +15,19 @@ export const getReviews = async (
 };
 
 // 🟢 Tạo mới báo cáo
-export const createReview = async (body: Review): Promise<Review> => {
+export const createReview = async (body: ReviewInput): Promise<Review> => {
   const response = await instance.post<Review>(`${URL}/create-review`, body);
+  return response.data;
+};
+
+export const updateReview = async (
+  id: string,
+  body: ReviewInput
+): Promise<Review> => {
+  const response = await instance.put<Review>(
+    `${URL}/${id}/update-review`,
+    body
+  );
   return response.data;
 };
 
@@ -28,6 +39,18 @@ export const updateReviewStatus = async (
   const response = await instance.put<Review>(
     `${URL}/${id}/update-review-status`,
     { status }
+  );
+
+  return response.data;
+};
+
+// 🟢 Kiem tra review ton tai
+export const checkReviewExistence = async (
+  userId: string,
+  productId: string
+): Promise<{ review: Review; hasReview: boolean }> => {
+  const response = await instance.get<{ review: Review; hasReview: boolean }>(
+    `${URL}/exist/${userId}/${productId}`
   );
 
   return response.data;

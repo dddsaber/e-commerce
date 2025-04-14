@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { getOrders } from "../../../api/order.api";
 import OrderCard from "../../../components/orders/OrderCard";
+import { Typography } from "antd";
 
 const MyOrdersPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -23,8 +24,9 @@ const MyOrdersPage: React.FC = () => {
   }, [user]);
   return (
     <>
+      <Typography.Text>Tổng số đơn hàng đã mua: {totalOrders}</Typography.Text>
       {orders?.map((order) => (
-        <OrderCard order={order} />
+        <OrderCard order={order} userId={user._id} />
       ))}
     </>
   );

@@ -3,7 +3,6 @@ import {
   Checkbox,
   Col,
   Divider,
-  Flex,
   Input,
   Rate,
   Row,
@@ -23,6 +22,7 @@ const { Title } = Typography;
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchKey = searchParams.get("searchKey") || "";
+  const categoryId = searchParams.get("categoryId"); // Lấy categoryId từ URL
 
   const [loading, setLoading] = useState(false);
   const [categoryData, setCategoryData] = useState<{
@@ -35,7 +35,7 @@ const SearchPage: React.FC = () => {
   const [limit, setLimit] = useState<number>(10);
   const [filter, setFilter] = useState<GetProductsRequest>({
     isActives: [true],
-    categoryIds: [],
+    categoryIds: categoryId ? [categoryId] : [],
     searchKey: searchKey,
   });
   const [productData, setProductData] = useState<{
@@ -46,23 +46,7 @@ const SearchPage: React.FC = () => {
     totalProducts: 0,
   });
 
-  useEffect(() => {
-    const categories =
-      searchParams.get("categories")?.split(",").filter(Boolean) || [];
-
-    const priceMin = parseFloat(searchParams.get("priceMin") || "");
-    const priceMax = parseFloat(searchParams.get("priceMax") || "");
-    const rating = parseFloat(searchParams.get("rating") || "");
-
-    setFilter((prevFilter) => ({
-      ...prevFilter,
-      categoryIds: categories,
-      priceMin: isNaN(priceMin) ? undefined : priceMin,
-      priceMax: isNaN(priceMax) ? undefined : priceMax,
-      rating: isNaN(rating) ? undefined : rating,
-    }));
-  }, []);
-
+  // Lấy sản phẩm khi filter thay đổi
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -73,6 +57,7 @@ const SearchPage: React.FC = () => {
     fetchProducts();
   }, [filter]);
 
+  // Lấy danh mục
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
@@ -83,13 +68,7 @@ const SearchPage: React.FC = () => {
     fetchCategories();
   }, [limit]);
 
-  const buildCategoryOptions = () => {
-    return categoryData.categories.map((category) => ({
-      label: category.name,
-      value: category._id,
-    }));
-  };
-
+  // Xử lý khi thay đổi danh mục
   const handleCategoryChange = (selectedCategories: string[]) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -101,6 +80,7 @@ const SearchPage: React.FC = () => {
     setSearchParams(newParams);
   };
 
+  // Xử lý khi thay đổi giá
   const handlePriceFilter = () => {
     const minPrice = parseFloat(
       (document.getElementById("minPrice") as HTMLInputElement).value
@@ -123,16 +103,19 @@ const SearchPage: React.FC = () => {
     setSearchParams(newParams);
   };
 
+  // Xử lý khi thay đổi rating
   const handleRatingFilter = (rating: number) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
       rating: rating,
     }));
+
     const newParams = new URLSearchParams(searchParams);
     newParams.set("rating", String(rating));
     setSearchParams(newParams);
   };
 
+  // Xóa tất cả bộ lọc
   const clearAllFilters = () => {
     setFilter({
       isActives: [true],
@@ -142,6 +125,13 @@ const SearchPage: React.FC = () => {
     setSearchParams({ searchKey });
     (document.getElementById("minPrice") as HTMLInputElement).value = "";
     (document.getElementById("maxPrice") as HTMLInputElement).value = "";
+  };
+
+  const buildCategoryOptions = () => {
+    return categoryData.categories.map((category) => ({
+      label: category.name,
+      value: category._id,
+    }));
   };
 
   return (
@@ -175,24 +165,19 @@ const SearchPage: React.FC = () => {
         <Divider />
         <div>
           <Title level={5}>Khoảng giá</Title>
-          <Flex style={{ justifyContent: "space-between" }}>
-            <Input
-              id="minPrice"
-              placeholder="TỪ"
-              style={{ width: "45%" }}
-              type="number"
-            />
-            <span style={{ verticalAlign: "middle" }}>
-              {" "}
-              &nbsp; &mdash; &nbsp;{" "}
-            </span>
-            <Input
-              id="maxPrice"
-              placeholder="ĐẾN"
-              style={{ width: "45%" }}
-              type="number"
-            />
-          </Flex>
+          <Input
+            id="minPrice"
+            placeholder="TỪ"
+            style={{ width: "45%" }}
+            type="number"
+          />
+          <span> &mdash; </span>
+          <Input
+            id="maxPrice"
+            placeholder="ĐẾN"
+            style={{ width: "45%" }}
+            type="number"
+          />
           <Button
             type="primary"
             style={{ marginTop: 10, width: "100%" }}

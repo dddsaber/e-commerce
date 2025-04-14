@@ -28,6 +28,7 @@ import { SpaceDiv } from "../../../components/chat/SpaceDiv";
 import { MessageList, MessageType } from "react-chat-elements";
 import ConversationListMemo from "../../../components/chat/ConversationListMemo";
 import { useLocation, useNavigate } from "react-router-dom";
+import { TYPE_USER } from "../../../utils/constant";
 
 const ChatPage: React.FC = () => {
   const location = useLocation();
@@ -198,7 +199,13 @@ const ChatPage: React.FC = () => {
               fontWeight: "bold",
               border: "none",
             }}
-            onClick={() => navigate("/")}
+            onClick={() => {
+              if (user.role === TYPE_USER.admin) {
+                navigate("/admin");
+              } else if (user.role === TYPE_USER.sales) {
+                navigate("/store-manage");
+              } else navigate("/");
+            }}
           >
             Trở lại
           </Button>

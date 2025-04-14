@@ -17,6 +17,13 @@ export interface Review {
   };
 }
 
+export interface ReviewInput {
+  userId: string;
+  productId: string;
+  content: string;
+  rating: number;
+}
+
 export interface GetReviewsRequest {
   skip?: number;
   limit?: number;

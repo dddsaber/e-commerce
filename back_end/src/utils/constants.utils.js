@@ -1,8 +1,9 @@
 const reportCategories = {
-  review: "Review",
-  product: "Product",
-  store: "Store",
-  user: "User",
+  REVIEW: "REVIEW",
+  PRODUCT: "PRODUCT",
+  USER: "USER",
+  STORE: "STORE",
+  ORDER: "ORDER",
 };
 
 const TYPE_USER = {

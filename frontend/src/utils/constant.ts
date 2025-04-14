@@ -126,4 +126,13 @@ export const REPORT_TYPE = {
   PRODUCT: "PRODUCT",
   USER: "USER",
   STORE: "STORE",
+  ORDER: "ORDER",
+};
+
+export const REPORT_TYPE_STR = {
+  REVIEW: "Bình luận",
+  PRODUCT: "Sản phẩm",
+  USER: "Người dùng",
+  STORE: "Cửa hàng",
+  ORDER: "Đơn hàng",
 };
