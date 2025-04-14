@@ -177,7 +177,7 @@ const CategoryList: React.FC = () => {
             >
               <Typography.Title
                 level={5}
-                style={{ textAlign: "center", marginBottom: esp, fontSize: 14 }}
+                style={{ textAlign: "center", marginBottom: 2, fontSize: 14 }}
               >
                 {cat.name}
               </Typography.Title>
