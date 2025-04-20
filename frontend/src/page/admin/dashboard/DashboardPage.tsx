@@ -1,6 +1,6 @@
 import React from "react";
 import CardWrapper from "../../../components/dashboard/CardWrapper";
-import { Breadcrumb, Col, Row } from "antd";
+import { Col, Row } from "antd";
 import LineChart from "../../../components/dashboard/LineChart";
 import BarChart from "../../../components/dashboard/BarChart";
 import LatestOrders from "../../../components/dashboard/LatestOrders";
@@ -9,15 +9,7 @@ import ReportOverview from "../../../components/dashboard/ReportOverview";
 
 const DashboardPage: React.FC = () => {
   return (
-    <div>
-      <Breadcrumb
-        items={[
-          {
-            href: "/admin",
-            title: "Trang chủ",
-          },
-        ]}
-      />
+    <div style={{ margin: "10px" }}>
       {/* Thông tin */}
       <CardWrapper />
 

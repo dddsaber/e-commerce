@@ -1,8 +1,8 @@
 import { Carousel, Col, Row } from "antd";
 import React from "react";
-import carousel1 from "../../assets/carousel1.jpg";
-import carousel2 from "../../assets/carousel2.jpg";
-import carousel4 from "../../assets/carousel4.jpg";
+import carousel1 from "/images/carousel1.jpg";
+import carousel2 from "/images/carousel2.jpg";
+import carousel4 from "/images/carousel4.jpg";
 
 const ImageCarousel: React.FC = () => {
   return (
@@ -54,4 +54,4 @@ const ImageCarousel: React.FC = () => {
   );
 };
 
-export default ImageCarousel;
+export default React.memo(ImageCarousel);

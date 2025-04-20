@@ -12,7 +12,6 @@ import {
   Flex,
   UploadFile,
   message,
-  Breadcrumb,
   Image,
 } from "antd";
 import { Store } from "../../../type/store.type";
@@ -99,18 +98,6 @@ const StoreProfilePge: React.FC = () => {
 
   return (
     <>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/shop-profile",
-            title: "Hồ sơ shop",
-          },
-        ]}
-      />
       <Card
         style={{
           position: "relative",
@@ -141,7 +128,7 @@ const StoreProfilePge: React.FC = () => {
         />
       </Card>
       {store?._id && !loading ? (
-        <Card>
+        <Card style={{ margin: 10 }}>
           <Title style={{ textAlign: "center" }} level={3}>
             Thông tin cửa hàng
           </Title>

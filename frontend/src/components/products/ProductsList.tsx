@@ -5,14 +5,23 @@ import { Card, Col, Row, Spin } from "antd";
 import ProductCard from "./ProductCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const ProductsList: React.FC = () => {
+interface ProductListProps {
+  storeId?: string;
+  title?: string;
+}
+
+const ProductsList: React.FC<ProductListProps> = ({ storeId, title }) => {
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const fetchProducts = async (page: number) => {
     const limit = 12;
-    const data = await getProducts({ limit, skip: (page - 1) * limit });
+    const data = await getProducts({
+      limit,
+      skip: (page - 1) * limit,
+      storeId: storeId ?? undefined,
+    });
     setProductsList((prev) => [...prev, ...data.products]);
     if (data.totalProducts < limit) setHasMore(false);
   };
@@ -24,8 +33,9 @@ const ProductsList: React.FC = () => {
   return (
     <>
       <Card
-        title="GỢI Ý HÔM NAY"
+        title={title ? title : "GỢI Ý HÔM NAY"}
         style={{
+          marginTop: 5,
           marginBottom: 12,
           backgroundColor: "transparent",
           boxShadow: "none",

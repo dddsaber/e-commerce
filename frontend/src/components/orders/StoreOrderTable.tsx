@@ -161,7 +161,7 @@ const StoreOrderTable: React.FC<OrderTableProps> = ({
         }`,
         target: response._id!,
         targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
-        image: selectedOrder?.orderDetails[0].product?.image,
+        image: response?.orderDetails[0].product?.image,
       });
       if (!notification) {
         message.error("Tạo thông báo thất bại!");

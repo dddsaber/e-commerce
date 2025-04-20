@@ -1,99 +1,256 @@
-import { Avatar, Button, Card, Col, Descriptions, Row, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Rate,
+  Row,
+  Typography,
+} from "antd";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Store } from "../../type/store.type";
-import { getStoreById } from "../../api/store.api";
+import {
+  checkFollow,
+  followStore,
+  getInfo,
+  getStoreById,
+} from "../../api/store.api";
 import { getSourceImage } from "../../utils/handle_image_func";
-import { MessageOutlined, PlusOutlined } from "@ant-design/icons";
-import ProductHero from "../../components/products/ProductHero";
+import {
+  MessageOutlined,
+  PlusOutlined,
+  HeartOutlined,
+  StarOutlined,
+  NumberOutlined,
+  UserAddOutlined,
+  ProductOutlined,
+  UsergroupAddOutlined,
+} from "@ant-design/icons";
+import { CustomProductList } from "../../type/custom_product_list.type";
+import { getCustomProductList } from "../../api/custom_product_list.api";
+import CustomList from "../../components/custom_product_list/CustomList";
+import { renderTimeChatMessage } from "../../utils/handle_format_func";
+import ProductsList from "../../components/products/ProductsList";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const StorePage: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [store, setStore] = useState<Store>();
-
+  const [customList, setCustomList] = useState<CustomProductList[]>([]);
+  const [follow, setFollow] = useState<boolean>(false);
+  const [reload, setReload] = useState<boolean>(false);
+  const [info, setInfo] = useState<{
+    totalProducts: number;
+    totalFollowed: number;
+  }>({
+    totalProducts: 0,
+    totalFollowed: 0,
+  });
   const { storeId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user._id || !storeId) return;
+    const check = async () => {
+      const follow = await checkFollow(storeId, user._id);
+      setFollow(follow ? (follow.isFollowed ? true : false) : false);
+    };
+    check();
+  }, [user, reload]);
 
   useEffect(() => {
     if (!storeId) return;
     const fetchData = async () => {
-      // Call API to get store data by id and update state with the returned data
       const storeData = await getStoreById(storeId);
       setStore(storeData);
+
+      const infoData = await getInfo(storeId);
+      setInfo(infoData);
+
+      const customLists = await getCustomProductList(storeId);
+      setCustomList(customLists);
     };
     fetchData();
-  }, [storeId]);
+  }, [storeId, reload]);
+
+  const following = async () => {
+    if (!storeId || !user._id) return;
+    await followStore(storeId, user._id, !follow);
+    setReload(!reload);
+  };
 
   return (
     <>
       <Card>
-        <Row gutter={[12, 12]}>
-          <Col span={8}>
-            <Row gutter={[10, 10]}>
-              <Col span={6}>
+        <Row gutter={[12, 12]} wrap>
+          {/* Bên trái: Cover + Logo + Info + Button */}
+          <Col
+            xs={24}
+            md={10}
+            style={{
+              backgroundImage: store?.backgroundImage
+                ? `url(${getSourceImage(store?.backgroundImage)})`
+                : "none",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "100%",
+              borderRadius: 10,
+              padding: 16,
+            }}
+          >
+            <Row gutter={[10, 10]} align="middle">
+              {/* Logo */}
+              <Col xs={6}>
                 <Avatar
                   src={getSourceImage(store?.logo || "")}
                   style={{ height: 80, width: 80 }}
                 />
               </Col>
-              <Col span={18}>
-                <Typography.Title level={3} style={{ margin: 0 }}>
+
+              {/* Tên và trạng thái */}
+              <Col xs={18}>
+                <Typography.Title
+                  level={4}
+                  style={{
+                    margin: 0,
+                    color: "black",
+                    textShadow: "1px 1px 2px black",
+                  }}
+                >
                   {store?.name}
                 </Typography.Title>
-                <Typography.Text style={{ color: "#808080" }}>
+                <Typography.Text style={{ color: "#f0f0f0" }}>
                   Online 3h trước
                 </Typography.Text>
               </Col>
+
+              {/* Buttons */}
               <Col span={24}>
-                <Button
-                  style={{
-                    height: 40,
-                    width: "40%",
-                    margin: "10px 10px 10px 0",
-                    color: "red",
-                    border: "1px solid red",
-                  }}
-                >
-                  <PlusOutlined /> Theo doi
-                </Button>
-                <Button
-                  style={{
-                    height: 40,
-                    width: "40%",
-                    margin: "10px",
-                    color: "red",
-                    border: "1px solid red",
-                  }}
-                >
-                  <MessageOutlined /> Tin nhan
-                </Button>
+                <Row gutter={[10, 10]} wrap>
+                  <Col xs={12}>
+                    <Button
+                      block
+                      style={{
+                        height: 40,
+                        color: follow ? "white" : "red",
+                        backgroundColor: follow ? "red" : "white",
+                        border: follow ? "1px solid white" : "1px solid red",
+                      }}
+                      onClick={following}
+                      icon={follow ? <HeartOutlined /> : <PlusOutlined />}
+                    >
+                      {follow ? "Đã theo dõi" : "Theo dõi"}
+                    </Button>
+                  </Col>
+                  <Col xs={12}>
+                    <Button
+                      block
+                      style={{
+                        height: 40,
+                        color: "red",
+                        border: "1px solid red",
+                      }}
+                      onClick={() => {
+                        navigate("/chat", {
+                          state: { userId: store?.userId },
+                        });
+                      }}
+                      icon={<MessageOutlined />}
+                    >
+                      Tin nhắn
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Col>
-          <Col span={16}>
+
+          {/* Bên phải: Thống kê */}
+          <Col xs={24} md={14}>
             <Descriptions
               size="middle"
+              layout="vertical"
+              column={{ xs: 1, sm: 2 }}
               styles={{
-                label: { fontSize: "20px" },
-                content: { fontSize: "18px" },
+                label: { fontSize: "16px", color: "black" },
+                content: { fontSize: "16px", color: "red" },
               }}
-              column={2}
             >
-              <Descriptions.Item label="Đánh Giá"> 5,3k</Descriptions.Item>
-              <Descriptions.Item label="Tỉ Lệ Phản Hồi">98%</Descriptions.Item>
-              <Descriptions.Item label="Tham Gia">
-                4 năm trước
+              <Descriptions.Item
+                label={
+                  <>
+                    <StarOutlined style={{ marginRight: 5 }} />
+                    Đánh Giá
+                  </>
+                }
+              >
+                {store?.statistics?.rating}
+                <Rate
+                  value={store?.statistics?.rating}
+                  style={{ marginLeft: 5 }}
+                  allowHalf
+                />
               </Descriptions.Item>
-              <Descriptions.Item label="Sản Phẩm">40</Descriptions.Item>
-              <Descriptions.Item label="Thời Gian Phản Hồi">
-                trong vài giờ
+
+              <Descriptions.Item
+                label={
+                  <>
+                    <NumberOutlined style={{ marginRight: 5 }} />
+                    Số lượng đánh giá
+                  </>
+                }
+              >
+                {store?.statistics?.numberOfRatings}
               </Descriptions.Item>
-              <Descriptions.Item label="Người Theo Dõi">30k</Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <>
+                    <UserAddOutlined style={{ marginRight: 5 }} />
+                    Tham gia
+                  </>
+                }
+              >
+                {renderTimeChatMessage(store?.createdAt?.toString())}
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <>
+                    <ProductOutlined style={{ marginRight: 5 }} />
+                    Sản phẩm
+                  </>
+                }
+              >
+                {info.totalProducts}
+              </Descriptions.Item>
+
+              <Descriptions.Item
+                label={
+                  <>
+                    <UsergroupAddOutlined style={{ marginRight: 5 }} />
+                    Người theo dõi
+                  </>
+                }
+              >
+                {info.totalFollowed}
+              </Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
       </Card>
-      <ProductHero category="Goi y hom nay" />
-      <ProductHero category="Uu dai khung" />
-      <ProductHero category="San pham ban chay" />
+
+      {customList.map((item) => (
+        <CustomList customlist={item} key={item._id} />
+      ))}
+      <ProductsList
+        key={store?._id}
+        storeId={storeId}
+        title="Sản phẩm sẵn có"
+      />
     </>
   );
 };

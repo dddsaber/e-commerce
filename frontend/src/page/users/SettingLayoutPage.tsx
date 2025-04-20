@@ -47,11 +47,6 @@ const SettingLayoutPage = () => {
             label: "Địa chỉ",
             link: "/account/manage-address",
           },
-          {
-            key: "bank",
-            label: "Ngân hàng",
-            link: "/account/bank",
-          },
         ],
       },
       {

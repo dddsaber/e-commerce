@@ -15,7 +15,7 @@ const StoreRevenueChart: React.FC<StoreRevenueChartProps> = ({ data }) => {
   const processedData = data.map((store) => ({
     name: store.name,
     revenue:
-      store.total -
+      store.totalProducts -
       store.totalCommission -
       store.totalTransaction -
       store.totalService,
@@ -100,7 +100,10 @@ const StoreRevenueChart: React.FC<StoreRevenueChartProps> = ({ data }) => {
   };
 
   //Du lieu phan tich
-  const totalOrdersRevenue = data.reduce((prev, cur) => prev + cur.total, 0);
+  const totalOrdersRevenue = data.reduce(
+    (prev, cur) => prev + cur.totalProducts,
+    0
+  );
   const totalCommissionRevenue = data.reduce(
     (prev, cur) => prev + cur.totalCommission,
     0

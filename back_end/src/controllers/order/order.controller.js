@@ -544,7 +544,7 @@ const getOrders = async (req, res) => {
     pipeline.push({
       $sort: sortBy
         ? { [sortBy.field]: sortBy.order === "asc" ? 1 : -1 }
-        : { createdAt: -1 },
+        : { updatedAt: -1 },
     });
 
     // Pagination

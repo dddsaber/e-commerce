@@ -163,7 +163,7 @@ const AddressComponent: React.FC<AddressComponentProps> = ({
   return loading ? (
     <AddressSkeleton />
   ) : (
-    <div>
+    <div style={{ width: 800 }}>
       <Flex justify="space-between">
         <label>Tỉnh/Thành Phố:</label>
         <Select

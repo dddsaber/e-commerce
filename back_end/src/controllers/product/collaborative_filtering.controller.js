@@ -35,7 +35,7 @@ function cosineSimilarity(setA, setB) {
 // Controller: Gợi ý sản phẩm
 const recommendProducts = async (req, res) => {
   const currentUserId = req.params.userId;
-  const topN = 10;
+  const topN = 12;
 
   try {
     const userHistory = await getUserPurchaseHistory();

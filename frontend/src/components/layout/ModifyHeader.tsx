@@ -11,7 +11,11 @@ import {
 } from "antd";
 import {
   BellOutlined,
+  LogoutOutlined,
   MessageOutlined,
+  OrderedListOutlined,
+  ProfileFilled,
+  ShopFilled,
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -68,22 +72,26 @@ const ModifyHeader: React.FC = () => {
   const userMenuItems: MenuProps["items"] = [
     {
       key: "profile",
+      icon: <ProfileFilled />,
       label: "Hồ sơ",
       onClick: () => navigate("/account/profile"),
     },
     {
       key: "my-orders",
+      icon: <OrderedListOutlined />,
       label: "Đơn mua",
       onClick: () => navigate("/account/my-orders"),
     },
     {
       key: "store",
+      icon: <ShopFilled />,
       label: "Kênh người bán",
       onClick: () => navigate(`${storeLink}`),
     },
     {
       key: "logout",
-      label: "Log Out",
+      icon: <LogoutOutlined />,
+      label: "Đăng xuất",
       onClick: () => navigate("/logout"),
     },
   ];
@@ -91,7 +99,6 @@ const ModifyHeader: React.FC = () => {
     const menu = notifications.map((item) => ({
       key: `notification-${item._id}`,
       label: <NotificationCardM item={item} />,
-      onClick: () => navigate(`${item.linkTo}`),
     }));
     menu.push({
       key: "view-all-notifications",
@@ -102,7 +109,6 @@ const ModifyHeader: React.FC = () => {
           <p style={{ marginTop: 10 }}>Xem tất cả thông báo</p>
         </div>
       ),
-      onClick: () => navigate("/account/notifications"),
     });
     return menu;
   }, [notifications]);
@@ -190,147 +196,156 @@ const ModifyHeader: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        <Image
-          src={icon_img}
-          style={{ height: "60px", cursor: "pointer", margin: "0 10px" }}
-          preview={false}
-          onClick={() => navigate("/")}
-        />
-        <Space style={{ width: "20%" }} />
-
-        <ModifySearch />
         <Flex
           justify="space-between"
-          align="center"
-          style={{ backgroundColor: "white" }}
+          style={{ width: "60%", alignItems: "center" }}
         >
-          <Flex>
-            <Dropdown menu={{ items: cartMenuBar }} trigger={["hover"]}>
-              <Button
-                type="text"
-                onClick={() => navigate("/cart")}
-                style={{ color: "black" }}
-              >
-                <Badge
-                  count={
-                    <span style={{ fontSize: 15 }}>
-                      {cart?.items?.reduce(
-                        (total, item) => total + (item.products?.length || 0),
-                        0
-                      )}
-                    </span>
-                  }
-                  offset={[0, 5]}
-                  style={{
-                    color: "white",
-                    background: "red",
-                    borderRadius: "10px",
-                    width: "15px",
-                    height: "15px",
-                  }}
-                >
-                  <ShoppingCartOutlined
-                    style={{ fontSize: 30, color: "black" }}
-                  />
-                </Badge>
-              </Button>
-            </Dropdown>
-
-            <Dropdown
-              menu={{
-                items: notificationMenuBar,
-                style: {
-                  maxHeight: "500px",
-                  overflowY: "auto",
-                  padding: 0,
-                  margin: 0,
-                },
-              }}
-              trigger={["hover"]}
-            >
-              <Button
-                type="text"
-                style={{ color: "black" }}
-                onClick={() => navigate("/account/notifications")}
-              >
-                <Badge
-                  count={
-                    <span style={{ fontSize: 15 }}>
-                      {totalUnreadNotifications}
-                    </span>
-                  }
-                  offset={[0, 5]}
-                  style={{
-                    color: "white",
-                    background: "red",
-                    borderRadius: "10px",
-                    width: "15px",
-                    height: "15px",
-                  }}
-                >
-                  <BellOutlined style={{ fontSize: 30, color: "black" }} />
-                </Badge>
-              </Button>
-            </Dropdown>
-
-            <Button
-              onClick={() => {
-                if (user.role === TYPE_USER.admin) {
-                  navigate("/admin/chat");
-                } else if (user.role === TYPE_USER.sales) {
-                  navigate("/store-manage/chat");
-                } else navigate("/chat");
-              }}
-              style={{ color: "black", border: "none" }}
-            >
-              {" "}
-              <Badge
-                offset={[0, 5]}
-                style={{
-                  color: "white",
-                  background: "red",
-                  borderRadius: "10px",
-                  width: "15px",
-                  height: "15px",
-                }}
-              >
-                <MessageOutlined style={{ fontSize: 30, color: "black" }} />
-              </Badge>
-            </Button>
-
-            <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
-              <Button
-                type="text"
-                style={{
-                  marginRight: 0,
-                  marginLeft: 10,
-                  fontWeight: "bold",
-                }}
-                icon={
-                  user?.avatar ? (
-                    <img
-                      style={{
-                        borderRadius: "50%",
-                        position: "absolute",
-                        left: -8,
-                        top: 0,
-                        height: 30,
-                        width: 30,
-                        objectFit: "cover",
-                        marginRight: 2,
-                      }}
-                      src={getSourceImage(user.avatar)}
-                    />
-                  ) : (
-                    <UserOutlined />
-                  )
-                }
-              >
-                <span>{user ? user.username : ""}</span>
-              </Button>
-            </Dropdown>
-          </Flex>
+          <Image
+            src={icon_img}
+            style={{ height: "60px", cursor: "pointer", margin: "0 10px" }}
+            preview={false}
+            onClick={() => navigate("/")}
+          />
+          <Space style={{ width: "20%" }} />
+          <ModifySearch />
         </Flex>
+
+        {user._id ? (
+          <Flex
+            justify="space-between"
+            align="center"
+            style={{ backgroundColor: "white" }}
+          >
+            <Flex>
+              <Dropdown menu={{ items: cartMenuBar }} trigger={["hover"]}>
+                <Button
+                  type="text"
+                  onClick={() => navigate("/cart")}
+                  style={{ color: "black" }}
+                >
+                  <Badge
+                    count={
+                      <span style={{ fontSize: 15 }}>
+                        {cart?.items?.reduce(
+                          (total, item) => total + (item.products?.length || 0),
+                          0
+                        )}
+                      </span>
+                    }
+                    offset={[0, 5]}
+                    style={{
+                      color: "white",
+                      background: "red",
+                      borderRadius: "10px",
+                      width: "15px",
+                      height: "15px",
+                    }}
+                  >
+                    <ShoppingCartOutlined
+                      style={{ fontSize: 30, color: "black" }}
+                    />
+                  </Badge>
+                </Button>
+              </Dropdown>
+
+              <Dropdown
+                menu={{
+                  items: notificationMenuBar,
+                  style: {
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                    padding: 0,
+                    margin: 0,
+                  },
+                }}
+                trigger={["hover"]}
+              >
+                <Button
+                  type="text"
+                  style={{ color: "black" }}
+                  onClick={() => navigate("/account/notifications")}
+                >
+                  <Badge
+                    count={
+                      <span style={{ fontSize: 15 }}>
+                        {totalUnreadNotifications}
+                      </span>
+                    }
+                    offset={[0, 5]}
+                    style={{
+                      color: "white",
+                      background: "red",
+                      borderRadius: "10px",
+                      width: "15px",
+                      height: "15px",
+                    }}
+                  >
+                    <BellOutlined style={{ fontSize: 30, color: "black" }} />
+                  </Badge>
+                </Button>
+              </Dropdown>
+
+              <Button
+                onClick={() => {
+                  if (user.role === TYPE_USER.admin) {
+                    navigate("/admin/chat");
+                  } else if (user.role === TYPE_USER.sales) {
+                    navigate("/store-manage/chat");
+                  } else navigate("/chat");
+                }}
+                style={{ color: "black", border: "none" }}
+              >
+                {" "}
+                <Badge
+                  offset={[0, 5]}
+                  style={{
+                    color: "white",
+                    background: "red",
+                    borderRadius: "10px",
+                    width: "15px",
+                    height: "15px",
+                  }}
+                >
+                  <MessageOutlined style={{ fontSize: 30, color: "black" }} />
+                </Badge>
+              </Button>
+
+              <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
+                <Button
+                  type="text"
+                  style={{
+                    marginRight: 0,
+                    marginLeft: 10,
+                    fontWeight: "bold",
+                  }}
+                  icon={
+                    user?.avatar ? (
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                          position: "absolute",
+                          left: -8,
+                          top: 0,
+                          height: 30,
+                          width: 30,
+                          objectFit: "cover",
+                          marginRight: 2,
+                        }}
+                        src={getSourceImage(user.avatar)}
+                      />
+                    ) : (
+                      <UserOutlined />
+                    )
+                  }
+                >
+                  <span>{user ? user.username : ""}</span>
+                </Button>
+              </Dropdown>
+            </Flex>
+          </Flex>
+        ) : (
+          <></>
+        )}
       </Header>
     </>
   );

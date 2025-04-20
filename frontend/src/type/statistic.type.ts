@@ -9,7 +9,7 @@ export interface StoreRevenue {
   _id: string;
   name: string;
   logo: string;
-  total: number;
+  totalProducts: number;
   coupon: number;
   shippingFee: number;
   totalCommission: number;

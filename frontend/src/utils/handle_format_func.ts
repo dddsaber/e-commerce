@@ -38,14 +38,6 @@ export const getToday = () => {
   return dayjs().format(FORMAT_DATE);
 };
 
-export const formatedDate = (
-  date: string | Date,
-  format = FORMAT_DATE,
-  formatStr = FORMAT_DATE
-) => {
-  return dayjs(date, format).format(formatStr);
-};
-
 export const formatedTime = (
   date: string | Date,
   format = FORMAT_TIME,
@@ -70,14 +62,35 @@ export const LINK_TYPE = {
   ORDER: "order",
 };
 
-export const renderTimeChatMessage = (date: string) => {
+export const formatedDate = (
+  date: string | Date,
+  format = FORMAT_DATE,
+  formatStr = FORMAT_DATE
+) => {
+  return dayjs(date, format).format(formatStr);
+};
+
+export const renderTimeChatMessage = (date?: string) => {
+  if (!date) {
+    return "";
+  }
   const now = dayjs();
   const dateMessage = dayjs(date);
-  const diff = now.diff(dateMessage, "minute");
+  const diffMinutes = now.diff(dateMessage, "minute");
+  const diffHours = now.diff(dateMessage, "hour");
+  const diffDays = now.diff(dateMessage, "day");
+  const diffWeeks = now.diff(dateMessage, "week");
+  const diffMonths = now.diff(dateMessage, "month");
+  const diffYears = now.diff(dateMessage, "year");
 
-  if (diff === 0) return `${now.diff(dateMessage, "second")} giây trước`;
-  if (diff < 60) return `${diff} phút trước`;
-  if (diff < 24 * 60) return `${Math.floor(diff / 60)} giờ trước`;
-  if (diff < 7 * 24 * 60) return `${Math.floor(diff / (24 * 60))} ngày trước`;
+  if (diffMinutes < 1) return `${now.diff(dateMessage, "second")} giây trước`;
+  if (diffMinutes < 60) return `${diffMinutes} phút trước`;
+  if (diffHours < 24) return `${diffHours} giờ trước`;
+  if (diffDays < 7) return `${diffDays} ngày trước`;
+  if (diffWeeks < 4) return `${diffWeeks} tuần trước`;
+  if (diffMonths < 12) return `${diffMonths} tháng trước`;
+  if (diffYears < 10) return `${diffYears} năm trước`;
+
+  // Nếu lâu hơn thì định dạng đầy đủ
   return formatedDate(date, FORMAT_FULL_TIME);
 };

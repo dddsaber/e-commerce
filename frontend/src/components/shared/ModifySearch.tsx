@@ -14,7 +14,7 @@ interface ProductOption {
 
 const ModifySearch = () => {
   const [options, setOptions] = useState<ProductOption[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>(""); // Bind input value to state
   const navigate = useNavigate();
 
   const fetchOptions = async (value: string) => {
@@ -55,13 +55,15 @@ const ModifySearch = () => {
   const debouncedSearch = useCallback(debounce(fetchOptions, 500), []);
 
   const handleSearch = (value: string) => {
-    setInputValue(value);
+    setInputValue(value); // Update input value state
     debouncedSearch(value);
   };
 
   const handleSelect = (value: string) => {
     const selectedItem = options.find((option) => option.value === value);
     if (selectedItem?.link) {
+      setInputValue(""); // Reset input value after selecting a product
+      setOptions([]); // Clear options
       navigate(selectedItem.link);
     }
   };
@@ -80,6 +82,8 @@ const ModifySearch = () => {
   const navigateToSearchPage = () => {
     if (inputValue.trim()) {
       navigate(`/search?searchKey=${encodeURIComponent(inputValue.trim())}`);
+      setInputValue(""); // Clear input value after navigating
+      setOptions([]); // Clear options after navigating
     }
   };
 
@@ -92,7 +96,7 @@ const ModifySearch = () => {
   return (
     <AutoComplete
       style={{
-        width: "50%",
+        width: "75%",
         borderRadius: "30px",
         backgroundColor: "#f3f3f367",
       }}
@@ -100,6 +104,7 @@ const ModifySearch = () => {
       onSearch={handleSearch}
       onSelect={handleSelect}
       placeholder="Tìm kiếm sản phẩm"
+      value={inputValue} // Bind value to input state
       dropdownStyle={{
         maxHeight: 300,
         overflowY: "auto",
@@ -109,6 +114,8 @@ const ModifySearch = () => {
         suffix={<SearchOutlined onClick={handleSearchClick} />}
         onPressEnter={handleSearchClick}
         onKeyDown={handleKeyDown}
+        value={inputValue} // Bind value to input state
+        onChange={(e) => setInputValue(e.target.value)} // Update input state on change
       />
     </AutoComplete>
   );

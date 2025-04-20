@@ -46,6 +46,8 @@ const conversationRouter = require("./src/routes/conversation.routes");
 const warehouseRouter = require("./src/routes/warehouse.routes");
 const deliveryRouter = require("./src/routes/delivery.routes");
 const permissionRouter = require("./src/routes/permission.routes");
+const financeRouter = require("./src/routes/finance.routes");
+const customProductListRouter = require("./src/routes/custom_product_list.routes");
 const askWithGemini = require("./src/controllers/chat-bot/chatBot.controller");
 app.use("/auth", authRouter);
 
@@ -86,6 +88,10 @@ app.use("/delivery", deliveryRouter);
 app.use("/changedata", changeDataRouter);
 
 app.use("/permission", permissionRouter);
+
+app.use("/finance", financeRouter);
+
+app.use("/custom-product-list", customProductListRouter);
 
 app.use("/file", fileRouter);
 

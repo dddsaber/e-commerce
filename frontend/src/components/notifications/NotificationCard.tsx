@@ -5,6 +5,7 @@ import { formatDate } from "../../utils/handle_format_func";
 import "./NotificationCard.css";
 import { readNotification } from "../../api/notification.api";
 import { getSourceImage } from "../../utils/handle_image_func";
+import { useNavigate } from "react-router-dom";
 
 interface NotificationCardProps {
   notification: Notification;
@@ -13,6 +14,7 @@ interface NotificationCardProps {
 const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
 }) => {
+  const navigate = useNavigate();
   const [isRead, setIsRead] = useState(notification.isRead);
 
   const handleRead = async () => {
@@ -21,6 +23,13 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       const data = await readNotification(notification._id);
       if (!data) setIsRead(false); // Nếu API lỗi, rollback lại trạng thái
     }
+    navigate(
+      `/${
+        notification.targetModel === "Order"
+          ? "account/" + notification.targetModel.toLocaleLowerCase()
+          : notification.targetModel
+      }/${notification.target}`
+    );
   };
 
   return (

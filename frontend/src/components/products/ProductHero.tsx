@@ -1,41 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Product } from "../../type/product.type";
-import { Col, Flex, Row, Typography } from "antd";
+import { Col, Row } from "antd";
 import ProductCard from "./ProductCard";
-import { getProducts } from "../../api/product.api";
 
 interface ProductHeroProps {
-  category: string;
+  products: Product[];
 }
 
-const ProductHero: React.FC<ProductHeroProps> = ({ category }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const data = await getProducts({ limit: 6 });
-      setProducts(data.products);
-    };
-    fetchProducts();
-  }, [category]);
+const ProductHero: React.FC<ProductHeroProps> = ({ products }) => {
   return (
-    <>
-      <Flex style={{ flexWrap: "wrap", justifyContent: "space-between" }}>
-        <Typography.Title level={4} style={{ textTransform: "uppercase" }}>
-          {category}
-        </Typography.Title>
-        <Typography.Title level={4} style={{ color: "red" }}>
-          Xem tat ca &gt;
-        </Typography.Title>
-      </Flex>
-      <Row gutter={[12, 12]}>
-        {products.map((product) => (
-          <Col span={4} key={product._id}>
-            <ProductCard key={product._id} product={product} />
-          </Col>
-        ))}
-      </Row>
-    </>
+    <Row gutter={[12, 12]}>
+      {products.map((product) => (
+        <Col
+          key={product._id}
+          xs={24} // 1 cột trên màn hình nhỏ
+          sm={12} // 2 cột trên màn hình nhỏ hơn 768px
+          md={8} // 3 cột
+          lg={6} // 4 cột
+          xl={4} // 6 cột
+        >
+          <ProductCard product={product} />
+        </Col>
+      ))}
+    </Row>
   );
 };
 

@@ -311,28 +311,14 @@ const getNotificationsByUserId = async (req, res) => {
     const notifications = await Notification.find({
       userId: userId,
       isDeleted: false,
-    })
-      .limit(5)
-      .sort({ createdAt: -1 })
-      .populate({
-        path: "createdBy",
-        select: "avatar", // lấy avatar thôi
-      });
-
-    // Gán image = createdBy.avatar
-    const notificationsWithImage = notifications.map((noti) => {
-      return {
-        ...noti.toObject(),
-        image: noti.createdBy?.avatar || null,
-      };
-    });
+    }).sort({ createdAt: -1 });
 
     return response(
       res,
       StatusCodes.OK,
       true,
       {
-        notifications: notificationsWithImage,
+        notifications: notifications,
         totalUnreadNotifications: totalUnreadNotifications,
       },
       "User's Notifications retrieved successfully"

@@ -31,7 +31,7 @@ const ChatBot: React.FC = () => {
 
       setMessages((prev) => [
         ...prev,
-        { from: "bot", content: `🤖 ${sanitizedContent}` },
+        { from: "bot", content: `${sanitizedContent}` },
       ]);
     } catch (error) {
       setMessages((prev) => [
@@ -100,9 +100,26 @@ const ChatBot: React.FC = () => {
                   marginBottom: 6,
                 }}
               >
+                {msg.from === "bot" && (
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      backgroundColor: "#d1e3ff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 18,
+                      marginRight: 6,
+                    }}
+                  >
+                    ☁️
+                  </div>
+                )}
                 <div
                   style={{
-                    maxWidth: "80%",
+                    maxWidth: "70%",
                     background: msg.from === "user" ? "#007bff" : "#f1f1f1",
                     color: msg.from === "user" ? "#fff" : "#000",
                     padding: "8px 12px",

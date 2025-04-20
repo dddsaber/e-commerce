@@ -237,7 +237,7 @@ const AdminLayoutPage: React.FC = () => {
                 key: "chat",
                 icon: <MessageOutlined />,
                 label: "Tin nhắn",
-                link: "/chat",
+                link: "/store-manage/chat",
               },
             ],
           },
@@ -362,106 +362,142 @@ const AdminLayoutPage: React.FC = () => {
   };
 
   return (
-    <Layout style={{ flexDirection: isMobile ? "column" : "row" }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        theme="dark"
-        width={240}
-        style={{
-          overflowY: "auto",
-          maxHeight: isMobile ? "auto" : "94vh",
-          position: isMobile ? "relative" : "sticky",
-
-          insetInlineStart: 0,
-          top: 0,
-          bottom: 0,
-          scrollbarWidth: "thin",
-          scrollbarGutter: "stable",
-        }}
-        onCollapse={() => setCollapsed(!collapsed)}
-      >
-        <div
+    <Layout style={{ flex: 1, flexDirection: "row" }}>
+      {!isMobile ? (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          theme="dark"
+          width={240}
           style={{
-            height: 64,
+            overflowY: "auto",
+            maxHeight: isMobile ? "auto" : "94vh",
+            position: isMobile ? "relative" : "sticky",
+
+            insetInlineStart: 0,
+            top: 0,
+            bottom: 0,
+            scrollbarWidth: "thin",
+            scrollbarGutter: "stable",
+          }}
+          onCollapse={() => setCollapsed(!collapsed)}
+        >
+          <div
+            style={{
+              height: 64,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Image
+              src={icon_img}
+              style={{
+                height: "50px",
+                cursor: "pointer",
+                margin: "5px 0",
+                borderRadius: "25px",
+              }}
+              preview={false}
+              onClick={() => navigate("/")}
+            />
+          </div>
+          <Flex
+            justify="space-between"
+            align="center"
+            style={{ flexDirection: "column", marginBottom: 15 }}
+          >
+            <Flex
+              style={{ marginRight: 20, flexDirection: "column" }}
+              align="center"
+              gap={10}
+            >
+              {/* <Clock collapsed={collapsed} /> */}
+              <Button
+                type="text"
+                style={{ paddingLeft: 30, color: "white" }}
+                onClick={() => navigate("/account/profile")}
+                icon={
+                  user.avatar ? (
+                    <img
+                      style={{
+                        borderRadius: "50%",
+                        height: 25,
+                        width: 25,
+                        objectFit: "cover",
+                      }}
+                      src={getSourceImage(user.avatar)}
+                    />
+                  ) : (
+                    <UserOutlined />
+                  )
+                }
+              >
+                {collapsed ? "" : user.username || user.phone}
+              </Button>
+              {!collapsed && (
+                <Tag color={colorOfType[user.role]}>
+                  {TYPE_USER_STR[user.role]}
+                </Tag>
+              )}
+            </Flex>
+          </Flex>
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={selectedMenu}
+            items={menuSidebars.map((item) => ({
+              key: item.key,
+              icon: item.icon,
+              label: item.label,
+              link: item.link,
+              children: item.children?.map((subItem) => ({
+                key: subItem.key,
+                icon: subItem.icon,
+                label: subItem.label,
+                link: subItem.link,
+              })),
+            }))}
+            onClick={onClickMenu}
+          />
+        </Sider>
+      ) : (
+        <Layout.Header
+          style={{
+            background: "#001529",
+            padding: "0 16px",
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "row",
             alignItems: "center",
-            flexDirection: "column",
+            justifyContent: "space-between",
           }}
         >
           <Image
             src={icon_img}
-            style={{
-              height: "50px",
-              cursor: "pointer",
-              margin: "5px 0",
-              borderRadius: "25px",
-            }}
             preview={false}
+            height={40}
+            style={{ cursor: "pointer" }}
             onClick={() => navigate("/")}
           />
-        </div>
-        <Flex
-          justify="space-between"
-          align="center"
-          style={{ flexDirection: "column", marginBottom: 15 }}
-        >
-          <Flex
-            style={{ marginRight: 20, flexDirection: "column" }}
-            align="center"
-            gap={10}
-          >
-            {/* <Clock collapsed={collapsed} /> */}
-            <Button
-              type="text"
-              style={{ paddingLeft: 30, color: "white" }}
-              onClick={() => navigate("/account/profile")}
-              icon={
-                user.avatar ? (
-                  <img
-                    style={{
-                      borderRadius: "50%",
-                      height: 25,
-                      width: 25,
-                      objectFit: "cover",
-                    }}
-                    src={getSourceImage(user.avatar)}
-                  />
-                ) : (
-                  <UserOutlined />
-                )
-              }
-            >
-              {collapsed ? "" : user.username || user.phone}
-            </Button>
-            {!collapsed && (
-              <Tag color={colorOfType[user.role]}>
-                {TYPE_USER_STR[user.role]}
-              </Tag>
-            )}
-          </Flex>
-        </Flex>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={selectedMenu}
-          items={menuSidebars.map((item) => ({
-            key: item.key,
-            icon: item.icon,
-            label: item.label,
-            link: item.link,
-            children: item.children?.map((subItem) => ({
-              key: subItem.key,
-              icon: subItem.icon,
-              label: subItem.label,
-              link: subItem.link,
-            })),
-          }))}
-          onClick={onClickMenu}
-        />
-      </Sider>
-
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={selectedMenu}
+            items={menuSidebars.map((item) => ({
+              key: item.key,
+              icon: item.icon,
+              label: item.label,
+              children: item.children?.map((subItem) => ({
+                key: subItem.key,
+                icon: subItem.icon,
+                label: subItem.label,
+              })),
+            }))}
+            onClick={onClickMenu}
+          />
+        </Layout.Header>
+      )}
       <Content
         style={{
           margin: 0,

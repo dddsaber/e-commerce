@@ -151,11 +151,12 @@ const DeliveryTable: React.FC<DeliveryProps> = ({
         STATUS_MAP.shipped.value
       );
       await updateTimeStamp(record._id, warehouseId!);
+      console.log(response);
       const notification = await createNotification({
         userId: response.userId!,
         createdBy: user._id,
         title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
-        message: `Đơn hàng ${response._id} đã được cập nhật sang trạng thái${
+        message: `Đơn hàng ${response._id} đã được cập nhật sang trạng thái ${
           STATUS_MAP[response.status as keyof typeof STATUS_MAP].label
         }`,
         target: response._id!,
@@ -184,8 +185,8 @@ const DeliveryTable: React.FC<DeliveryProps> = ({
         userId: response.userId!,
         createdBy: user._id,
         title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
-        message: `Đơn hàng ${record._id} đã được ${
-          STATUS_MAP[record.status as keyof typeof STATUS_MAP]
+        message: `Đơn hàng ${response._id} đã được ${
+          STATUS_MAP[response.status as keyof typeof STATUS_MAP].label
         }`,
         target: record._id!,
         targetModel: NOTIFICATION_TARGET_MODEL.ORDER,

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Address, Store } from "../../../type/store.type";
 import { getStoreByUserId, updateStoreAddress } from "../../../api/store.api";
-import { Breadcrumb, Button, Card, Flex, message } from "antd";
+import { Button, Card, Flex, message } from "antd";
 import AddressSkeleton from "../../../components/address/AddressSkeleton";
 import AddressComponent from "../../../components/address/AddressComponent";
 
@@ -49,24 +49,17 @@ const StoreAddressPage: React.FC = () => {
   };
   return (
     <>
-      <Breadcrumb
-        items={[
-          {
-            href: "/store-manage/dashboard",
-            title: "Bảng điều khiển",
-          },
-          {
-            href: "/store-manage/shop-address",
-            title: "Địa chỉ shop",
-          },
-        ]}
-      />
       <Card
         title="Đổi địa chỉ giao hàng"
         styles={{
           title: {
             textAlign: "center",
+            margin: "20px auto",
+            width: 800,
           },
+        }}
+        style={{
+          margin: "20px 100px",
         }}
       >
         {!store && loading ? (
@@ -83,6 +76,8 @@ const StoreAddressPage: React.FC = () => {
             textAlign: "center",
             justifyContent: "center",
             marginTop: 20,
+            marginRight: 10,
+            marginLeft: 10,
           }}
         >
           {isModify ? (

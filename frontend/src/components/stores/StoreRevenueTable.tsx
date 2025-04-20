@@ -206,9 +206,9 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       align: "left" as const,
     },
     {
-      title: "Tổng giá trị đơn hàng",
-      dataIndex: "total",
-      key: "total",
+      title: "Tổng tiền hàng",
+      dataIndex: "totalProducts",
+      key: "totalProducts",
       sorter: true,
       width: 150,
       align: "right" as const,
@@ -219,13 +219,57 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       ),
     },
     {
+      title: "Tổng tiền giảm",
+      dataIndex: "coupon",
+      key: "coupon",
+      sorter: true,
+      width: 150,
+      align: "right" as const,
+      render: (total: number) => (
+        <span style={{ fontWeight: "bold" }}>
+          - {total.toLocaleString("vi-VN")} đ
+        </span>
+      ),
+    },
+    {
+      title: "Tổng tiền ship",
+      dataIndex: "shippingFee",
+      key: "shippingFee",
+      sorter: true,
+      width: 150,
+      align: "right" as const,
+      render: (total: number) => (
+        <span style={{ fontWeight: "bold" }}>
+          {total.toLocaleString("vi-VN")} đ
+        </span>
+      ),
+    },
+    {
+      title: "Tổng giá trị đơn hàng",
+      sorter: true,
+      width: 150,
+      align: "right" as const,
+      render: (record: StoreRevenue) => (
+        <span style={{ fontWeight: "bold" }}>
+          {(
+            record.totalProducts -
+            record.coupon +
+            record.shippingFee
+          ).toLocaleString("vi-VN")}{" "}
+          đ
+        </span>
+      ),
+    },
+    {
       title: "Phí thanh toán",
       dataIndex: "totalTransaction",
       key: "totalTransaction",
       sorter: true,
       width: 150,
       align: "right" as const,
-      render: (total: number) => <span>{total.toLocaleString("vi-VN")} đ</span>,
+      render: (total: number) => (
+        <span>-{total.toLocaleString("vi-VN")} đ</span>
+      ),
     },
     {
       title: "Phí cố định",
@@ -234,7 +278,9 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       sorter: true,
       width: 150,
       align: "right" as const,
-      render: (total: number) => <span>{total.toLocaleString("vi-VN")} đ</span>,
+      render: (total: number) => (
+        <span>-{total.toLocaleString("vi-VN")} đ</span>
+      ),
     },
     {
       title: "Phí dịch vụ",
@@ -243,7 +289,9 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       sorter: true,
       width: 150,
       align: "right" as const,
-      render: (total: number) => <span>{total.toLocaleString("vi-VN")} đ</span>,
+      render: (total: number) => (
+        <span>-{total.toLocaleString("vi-VN")} đ</span>
+      ),
     },
     {
       title: "Tổng phí giao dịch",
@@ -253,6 +301,7 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       align: "right" as const,
       render: (record: StoreRevenue) => (
         <span style={{ fontWeight: "bold" }}>
+          -
           {(
             record.totalTransaction +
             record.totalCommission +
@@ -271,7 +320,9 @@ const StoreRevenueTable: React.FC<StoreRevenueProps> = ({
       render: (record: StoreRevenue) => (
         <span style={{ fontWeight: "bold" }}>
           {(
-            record.total -
+            record.totalProducts -
+            record.coupon +
+            record.shippingFee -
             (record.totalTransaction +
               record.totalCommission +
               record.totalService)

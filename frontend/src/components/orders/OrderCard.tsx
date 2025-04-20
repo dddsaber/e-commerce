@@ -97,66 +97,65 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
       state: { userId: order.store?.userId }, // Truyền userId qua state
     });
   };
+
   return (
     <Card
       title={
         <>
-          <Row gutter={[12, 12]}>
-            <Col span={3}>
+          <Row
+            gutter={[12, 12]}
+            align="middle"
+            justify="space-between"
+            wrap
+            style={{ marginTop: 5 }}
+          >
+            <Col xs={24} sm={12} md={6}>
               <ShopFilled /> <span>&nbsp;{order.store?.name}</span>
             </Col>
-            <Col span={2}>
+
+            <Col xs={12} sm={6} md={3}>
               <Button
+                block
+                size="middle"
                 style={{
-                  height: 30,
-                  width: "100%",
                   backgroundColor: "#ee4d2d",
                   color: "#fff",
                   fontWeight: 500,
                 }}
                 onClick={handleNavigate}
               >
-                <MessageOutlined />
-                Chat
+                <MessageOutlined /> Chat
               </Button>
             </Col>
-            <Col span={3}>
+
+            <Col xs={12} sm={6} md={3}>
               <Button
-                style={{
-                  height: 30,
-                  width: "100%",
-                }}
+                block
+                size="middle"
                 onClick={() => navigate(`/store/${order.store?._id}`)}
               >
-                <ShopOutlined style={{ height: 30, fontWeight: 500 }} /> Xem
-                Shop
+                <ShopOutlined /> Xem Shop
               </Button>
             </Col>
-            <Col span={6}></Col>
-            <Col span={4}></Col>
 
-            <Col
-              span={5}
-              style={{
-                textAlign: "right",
-                textTransform: "uppercase",
-              }}
-            >
+            <Col xs={24} sm={12} md={8} style={{ textAlign: "right" }}>
               <Typography.Title
                 level={5}
                 style={{
+                  margin: 0,
                   color:
                     STATUS_MAP[order.status as keyof typeof STATUS_MAP]?.color,
+                  textTransform: "uppercase",
                 }}
               >
                 {STATUS_MAP[order.status as keyof typeof STATUS_MAP]?.label ||
                   "Không xác định"}
               </Typography.Title>
             </Col>
-            <Col span={1} style={{ textAlign: "right" }}>
+
+            <Col xs={0} sm={0} md={1} style={{ textAlign: "right" }}>
               <Tooltip
                 title={`Cập nhật mới nhất:\n ${formatDate(order.updatedAt)}`}
-                style={{ color: "#ee4d2d" }}
               >
                 <QuestionCircleOutlined
                   style={{ cursor: "pointer", color: "#ee4d2d" }}
@@ -194,13 +193,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
           {(order.total || 0).toLocaleString("vi-VN")} đ
         </span>
       </div>
-      <Row gutter={[16, 16]} style={{ marginTop: "40px" }}>
-        <Col span={12}></Col>
-        <Col span={4}>
+      <Row gutter={[16, 16]} style={{ marginTop: "40px" }} justify="end" wrap>
+        <Col xs={24} sm={12} md={4}>
           <Button
+            block
             style={{
               height: 40,
-              width: "100%",
               backgroundColor: "#ee4d2d",
               color: "#fff",
               fontWeight: 500,
@@ -210,20 +208,18 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
             Đánh giá
           </Button>
         </Col>
-        <Col span={4}>
-          <Button style={{ height: 40, width: "100%", fontWeight: 500 }}>
-            Mua lại
-          </Button>
-        </Col>
-        <Col span={4}>
+
+        <Col xs={24} sm={12} md={4}>
           <Button
-            style={{ height: 40, width: "100%", fontWeight: 500 }}
+            block
+            style={{ height: 40, fontWeight: 500 }}
             onClick={handleNavigate}
           >
             Liên hệ người bán
           </Button>
         </Col>
       </Row>
+
       <ReviewModalMulti
         isVisible={reviewVisible}
         products={order.orderDetails}

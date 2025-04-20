@@ -17,10 +17,10 @@ import ReviewList from "../../../components/reviews/ReviewList";
 import ProductDisplayCard from "../../../components/products/ProductDisplayCard";
 import StoreDisplayCard from "../../../components/products/StoreDisplayCard";
 import TopProductList from "../../../components/products/TopProductList";
-import ProductsList from "../../../components/products/ProductsList";
 import { addCartItem } from "../../../api/cart.api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+import RecommendProduct from "../../../components/products/RecommendProduct";
 
 const ProductDetailPage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -58,7 +58,7 @@ const ProductDetailPage: React.FC = () => {
             title: "Trang chủ",
           },
           {
-            href: "/search",
+            href: `/search?categories=${product?.category._id}`,
             title: `${product?.category.name}`,
           },
           {
@@ -141,7 +141,7 @@ const ProductDetailPage: React.FC = () => {
             </Row>
             <ReviewList productId={productId} />
           </Card>
-          <ProductsList />
+          <RecommendProduct />
         </Col>
         <Col span={4}>
           <TopProductList />

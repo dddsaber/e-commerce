@@ -22,7 +22,7 @@ export const getProducts = async (
 export const getRecommendProducts = async (
   userId: string
 ): Promise<Product[]> => {
-  const response = await instance.post<Product[]>(`${URL}/recommend/${userId}`);
+  const response = await instance.get<Product[]>(`${URL}/recommend/${userId}`);
 
   return response.data;
 };

@@ -7,7 +7,7 @@ const modelProduct = require("../../models/Product.model");
 
 async function askQuestion(question) {
   try {
-    const products = await modelProduct.find({});
+    const products = await modelProduct.find({}, "name price image _id");
 
     const productHTML = products
       .map(

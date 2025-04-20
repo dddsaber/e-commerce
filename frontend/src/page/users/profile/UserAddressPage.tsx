@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Address } from "../../../type/user.type";
 import AddressComponent from "../../../components/address/AddressComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store";
 import { Button, Card, Flex, message } from "antd";
 import { updateUserAddress } from "../../../api/user.api";
+import { reloginAuth } from "../../../redux/slices/authSlice";
 const UserAddressPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const user = useSelector((state: RootState) => state.auth.user);
   const [address, setAddress] = useState<Address>(user.address || {});
   const [isModify, setIsModify] = useState<boolean>(false);
@@ -23,6 +26,10 @@ const UserAddressPage = () => {
     if (response) {
       message.success("Địa chỉ đã được cập nhật thành công!");
       setIsModify(false);
+    }
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      dispatch(reloginAuth({ refreshToken }));
     }
   };
 

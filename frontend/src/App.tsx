@@ -1,10 +1,16 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import UsersManagePage from "./page/admin/user_management/UsersManagePage";
 import AdminLayoutPage from "./page/admin/AdminLayoutPage";
 import LoginPage from "./page/auth/LoginPage";
 import { logoutAuth, reloginAuth } from "./redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { AppDispatch, RootState } from "./redux/store";
 import DashboardPage from "./page/admin/dashboard/DashboardPage";
 import StoresManagePage from "./page/admin/store_management/StoresManagePage";
@@ -56,6 +62,9 @@ import AwaitPickupDeliveries from "./page/logistic_providers/AwaitPickupDeliveri
 import OnTransitDeliveries from "./page/logistic_providers/OnTransitDeliveries";
 import FailedDeliveries from "./page/logistic_providers/FailedDeliveries";
 import OrderDetailsPage from "./page/users/orders/OrderDetailsPage";
+import { Spin } from "antd";
+import LoadingPage from "./page/users/LoadingPage";
+import UserFinancePage from "./page/users/profile/UserFinancePage";
 interface PrivateRouteProps {
   element: ReactElement;
   requiredPermission?: string[];
@@ -101,7 +110,8 @@ const LogoutPage: React.FC<LogoutPageProps> = ({ userId }) => {
 function App() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const userId = useSelector((state: RootState) => state.auth?.user?._id);
 
   useEffect(() => {
@@ -127,8 +137,35 @@ function App() {
       }
     }
   }, [dispatch, navigate, userId]);
+
+  useEffect(() => {
+    // Mỗi khi location thay đổi, cho loading true một lúc
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 300); // 300ms, có thể chỉnh
+
+    return () => clearTimeout(timeout);
+  }, [location]);
+
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "white",
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spin size="large" tip="Đang tải trang..." />
+        </div>
+      )}
+
       <Routes>
         <Route path="/admin" element={<AdminLayoutPage />}>
           <Route
@@ -230,6 +267,12 @@ function App() {
         {/* Users  */}
         <Route path="/" element={<LayoutPage />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/regist-store" element={<RegistStore />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/logout" element={<LogoutPage userId={userId} />} />
+          <Route path="/unauthorized" element={<UnAuthorizedPage />} />
+          <Route path="/not-found" element={<NotFoundPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
           {/* not-done-yet */}
@@ -242,18 +285,17 @@ function App() {
           <Route path="/test" element={<SettingLayoutPage />} />
           <Route path="/account" element={<SettingLayoutPage />}>
             <Route path="order/:orderId" element={<OrderDetailsPage />} />
-
-            {/* not-done-yet */}
             <Route path="profile" element={<UserProfilePage />} />
-            {/* not-done-yet */}
+
             <Route path="notifications" element={<NotificationsPage />} />
             {/* not-done-yet */}
             <Route path="security" element={<SettingLayoutPage />} />
-            {/* not-done-yet */}
             <Route path="manage-address" element={<UserAddressPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
             <Route path="change-password" element={<ChangePasswordPage />} />
+            <Route path="finance" element={<UserFinancePage />} />
           </Route>
+          <Route path="loading" element={<LoadingPage />} />
         </Route>
 
         {/* Sales  */}
@@ -419,12 +461,6 @@ function App() {
           <Route path="failed-deliveries" element={<FailedDeliveries />} />
         </Route>
         <Route path="/chat" element={<ChatPage />} />
-        <Route path="/regist-store" element={<RegistStore />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/logout" element={<LogoutPage userId={userId} />} />
-        <Route path="/unauthorized" element={<UnAuthorizedPage />} />
-        <Route path="/not-found" element={<NotFoundPage />} />
       </Routes>
     </>
   );

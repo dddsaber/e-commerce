@@ -1,14 +1,37 @@
-import { Button, Card, DatePicker, Form, Input, message, Select } from "antd";
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Row,
+  Select,
+  UploadFile,
+} from "antd";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store";
 import dayjs from "dayjs";
 import { updateUser } from "../../../api/user.api";
+import UploadAvatar from "../../../components/shared/UploadAvatar";
+import { TYPE_IMAGE } from "../../../utils/constant";
+import { reloginAuth } from "../../../redux/slices/authSlice";
 
 const UserProfilePage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  useEffect(() => {
+    const url = user?.avatar;
+    if (url) setImageUrl(url);
+    else setImageUrl("");
+  }, [form, user]);
   // Khi user thay đổi, cập nhật giá trị form
   useEffect(() => {
     if (user) {
@@ -26,15 +49,26 @@ const UserProfilePage = () => {
 
   const updateProfile = async () => {
     try {
+      setLoading(true);
       if (!user) {
         message.error("Bạn phải đăng nhập để cập nhật hồ sơ!");
         return;
       }
       const values = await form.validateFields();
+      if (imageUrl) {
+        values.avatar = imageUrl;
+        setImageUrl("");
+      }
       const updated_user = await updateUser({ _id: user._id, ...values });
 
       if (updated_user) {
         message.success(`Cập nhật hồ sơ thành công!`);
+      }
+
+      setLoading(false);
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (refreshToken) {
+        dispatch(reloginAuth({ refreshToken }));
       }
     } catch (error) {
       console.error("Validate Failed:", error);
@@ -45,10 +79,33 @@ const UserProfilePage = () => {
     <Card
       title="Cập nhật hồ sơ"
       styles={{
-        title: { textAlign: "center" },
+        title: {
+          textAlign: "center",
+        },
       }}
     >
-      <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
+      <Row justify="center" style={{ marginBottom: 20 }}>
+        <Col>
+          <div style={{ textAlign: "center" }}>
+            <UploadAvatar
+              fileList={fileList}
+              setFileList={setFileList}
+              imageUrl={imageUrl}
+              setImageUrl={setImageUrl}
+              loading={loading}
+              key={"upload_product_file"}
+              typeFile={TYPE_IMAGE.user}
+            />
+          </div>
+        </Col>
+      </Row>
+
+      <Form
+        form={form}
+        labelCol={{ xs: { span: 24 }, md: { span: 6 } }}
+        wrapperCol={{ xs: { span: 24 }, md: { span: 14 } }}
+        layout="horizontal"
+      >
         {/* Tên đăng nhập */}
         <Form.Item
           name="username"
@@ -109,10 +166,19 @@ const UserProfilePage = () => {
         <Form.Item name="description" label="Mô tả">
           <Input.TextArea rows={3} />
         </Form.Item>
-
-        {/* Nút lưu */}
-        <Form.Item style={{ textAlign: "center", alignItems: "center" }}>
-          <Button type="primary" onClick={updateProfile}>
+        <Form.Item
+          wrapperCol={{
+            xs: { span: 24 },
+            md: { span: 14, offset: 6 },
+          }}
+          style={{ textAlign: "center" }}
+        >
+          <Button
+            type="primary"
+            onClick={updateProfile}
+            loading={loading}
+            style={{ minWidth: 120 }}
+          >
             Lưu
           </Button>
         </Form.Item>

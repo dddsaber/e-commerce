@@ -251,17 +251,19 @@ const CartPage: React.FC = () => {
         <>
           <Card
             title={
-              <Row align="middle">
+              <Row align="middle" gutter={[8, 8]} wrap>
+                {/* Avatar hoặc logo */}
                 <Col
-                  span={1}
+                  xs={4}
+                  sm={2}
+                  md={1}
                   style={{
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     cursor: "pointer",
                   }}
-                ></Col>
-                <Col span={1}>
+                >
                   <Avatar
                     style={{
                       width: 35,
@@ -270,18 +272,32 @@ const CartPage: React.FC = () => {
                     }}
                     src={getSourceImage(store.logo)}
                     alt={store.storeName || ""}
+                    onClick={() => navigate(`/store/${store.storeId}`)}
                   />
                 </Col>
+
+                {/* Tên cửa hàng */}
                 <Col
-                  span={22}
+                  xs={20}
+                  sm={22}
+                  md={23}
                   style={{
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
                     cursor: "pointer",
                   }}
+                  onClick={() => navigate(`/store/${store.storeId}`)}
                 >
-                  <Typography.Title level={5} style={{ margin: 0 }}>
+                  <Typography.Title
+                    level={5}
+                    style={{
+                      margin: 0,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
                     {store.storeName}
                   </Typography.Title>
                 </Col>
@@ -295,6 +311,7 @@ const CartPage: React.FC = () => {
               columns={columns(store.storeId)}
               rowKey="productId"
               pagination={false}
+              scroll={{ x: "100%" }} // 👈 giúp Table responsive nếu có nhiều cột
             />
           </Card>
         </>

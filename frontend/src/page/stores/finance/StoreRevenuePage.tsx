@@ -98,6 +98,30 @@ const StoreRevenuePage: React.FC = () => {
     fetchStats();
   }, [store?._id]);
 
+  const calculateOrderRevenue = (order: Order) => {
+    const totalProduct = order.orderDetails.reduce(
+      (prev, cur) =>
+        prev + cur.price * cur.quantity * (1 - (cur?.discount || 0)),
+      0
+    );
+
+    const couponValue = order.coupon
+      ? order.coupon.type === "fixed"
+        ? order.coupon.value || 0
+        : (order.coupon.value || 0) *
+          order.orderDetails.reduce(
+            (prev, cur) =>
+              prev + cur.price * cur.quantity * (1 - (cur?.discount || 0)),
+            0
+          )
+      : 0;
+
+    const totalFee =
+      order.fees.commission + order.fees.transaction + order.fees.service;
+
+    return totalProduct - couponValue - totalFee;
+  };
+
   const columns = [
     {
       title: "STT",
@@ -115,7 +139,7 @@ const StoreRevenuePage: React.FC = () => {
       render: (orderDetails: OrderDetails[]) => orderDetails.length || 0,
     },
     {
-      title: "Tổng tiền sản phẩm",
+      title: "Tiền hàng",
       ellipsis: true,
       align: "center" as const,
       render: (record: Order) => (
@@ -130,13 +154,6 @@ const StoreRevenuePage: React.FC = () => {
           đ
         </span>
       ),
-    },
-    {
-      title: "Phí vận chuyển",
-      dataIndex: "shippingFee",
-      key: "shippingFee",
-      ellipsis: true,
-      align: "center" as const,
     },
     {
       title: "Giảm giá",
@@ -159,20 +176,6 @@ const StoreRevenuePage: React.FC = () => {
                 )
             : 0}{" "}
           đ
-        </span>
-      ),
-    },
-    {
-      title: "Tổng tiền",
-      dataIndex: "total",
-      key: "total",
-      sorter: true,
-      width: 120,
-      ellipsis: true,
-      align: "center" as const,
-      render: (total: number) => (
-        <span style={{ fontWeight: "bold" }}>
-          {total.toLocaleString("vi-VN")} đ
         </span>
       ),
     },
@@ -201,13 +204,7 @@ const StoreRevenuePage: React.FC = () => {
       align: "center" as const,
       render: (record: Order) => (
         <span style={{ fontWeight: "bold" }}>
-          {(
-            (record.total ?? 0) -
-            (record.fees.commission +
-              record.fees.transaction +
-              record.fees.service)
-          ).toLocaleString("vi-VN")}{" "}
-          đ
+          {calculateOrderRevenue(record).toLocaleString("vi-VN")} đ
         </span>
       ),
     },
@@ -242,7 +239,7 @@ const StoreRevenuePage: React.FC = () => {
 
   return (
     <>
-      <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
+      <Row gutter={[16, 16]} style={{ margin: "10px 20px" }}>
         <Col span={24}>
           <Card
             title="Phân tích doanh thu"
@@ -323,15 +320,7 @@ const StoreRevenuePage: React.FC = () => {
           >
             <strong>
               {orders
-                .reduce(
-                  (prev, cur) =>
-                    prev +
-                    ((cur?.total ?? 0) -
-                      cur.fees.commission -
-                      cur.fees.transaction -
-                      cur.fees.service),
-                  0
-                )
+                .reduce((prev, cur) => prev + calculateOrderRevenue(cur), 0)
                 .toLocaleString("vi-VN")}{" "}
               VNĐ
             </strong>

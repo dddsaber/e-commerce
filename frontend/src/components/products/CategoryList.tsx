@@ -1,22 +1,22 @@
 import React from "react";
 import { Card, Col, Row, Typography } from "antd";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import imgElectric from "../../assets/electric.jpg";
-import imgCloths from "../../assets/cloths.png";
-import imgHouse from "../../assets/house.jpg";
-import imgMyPham from "../../assets/mypham.png";
-import imgSport from "../../assets/sport.jpg";
-import imgCar from "../../assets/car.jpg";
-import imgBook from "../../assets/book.jpg";
-import imgMom from "../../assets/mom.jpg";
-import imgToy from "../../assets/toy.jpg";
-import imgHealth from "../../assets/health.jpg";
-import imgFood from "../../assets/food.jpg";
-import imgDrink from "../../assets/drink.jpg";
-import imgPet from "../../assets/pet.jpg";
-import imgTravel from "../../assets/travel.jpg";
-import imgOffice from "../../assets/office.jpg";
-import imgTools from "../../assets/tools.jpg";
+import imgElectric from "/images/electric.jpg";
+import imgCloths from "/images/cloths.png";
+import imgHouse from "/images/house.jpg";
+import imgMyPham from "/images/mypham.png";
+import imgSport from "/images/sport.jpg";
+import imgCar from "/images/car.jpg";
+import imgBook from "/images/book.jpg";
+import imgMom from "/images/mom.jpg";
+import imgToy from "/images/toy.jpg";
+import imgHealth from "/images/health.jpg";
+import imgFood from "/images/food.jpg";
+import imgDrink from "/images/drink.jpg";
+import imgPet from "/images/pet.jpg";
+import imgTravel from "/images/travel.jpg";
+import imgOffice from "/images/office.jpg";
+import imgTools from "/images/tools.jpg";
 
 const categorydisplays = [
   {
@@ -192,4 +192,4 @@ const CategoryList: React.FC = () => {
   );
 };
 
-export default CategoryList;
+export default React.memo(CategoryList);

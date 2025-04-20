@@ -17,6 +17,7 @@ import { getSourceImage } from "../../utils/handle_image_func";
 import { PlusOutlined } from "@ant-design/icons";
 import ReportModal from "../reports/ReportModal";
 import { REPORT_TYPE } from "../../utils/constant";
+import { useNavigate } from "react-router-dom";
 
 interface ProductDisplayCardProps {
   product: Product;
@@ -27,6 +28,7 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
   product,
   addCart,
 }) => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState<number>(1);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -167,9 +169,6 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
                 <Descriptions.Item label="Loại sản phẩm">
                   {product?.category?.name ?? "Chưa phân loại"}
                 </Descriptions.Item>
-                <Descriptions.Item label="Vận chuyển">
-                  Nhận vận chuyển từ hôm nay{" "}
-                </Descriptions.Item>
                 <Descriptions.Item label="Kích cỡ">
                   {product?.size || ""}
                 </Descriptions.Item>
@@ -217,7 +216,7 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
               </Descriptions>
             </Flex>
             {/* Nút hành động (ở dưới cùng) */}
-            <Flex style={{ marginTop: 40, marginBottom: 10 }}>
+            <Flex style={{ marginTop: 10, marginBottom: 10 }}>
               <Button
                 style={{
                   height: 65,
@@ -242,6 +241,10 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
                   backgroundColor: "red",
                   border: "1px solid white",
                   borderRadius: 5,
+                }}
+                onClick={() => {
+                  addCart(product!, quantity);
+                  navigate("/cart");
                 }}
               >
                 Mua Ngay

@@ -111,3 +111,33 @@ export const getStoreByUserId = async (userId: string): Promise<Store> => {
 
   return response.data;
 };
+
+// Follow store
+export const followStore = async (
+  storeId: string,
+  userId: string,
+  isFollowed: boolean
+) => {
+  const response = await instance.post(`${URL}/follow/update-follow`, {
+    storeId,
+    userId,
+    isFollowed,
+  });
+  return response.data;
+};
+
+// Follow store
+export const checkFollow = async (storeId: string, userId: string) => {
+  const response = await instance.get(`${URL}/follow/${storeId}/${userId}`);
+  return response.data;
+};
+
+export const getInfo = async (
+  storeId: string
+): Promise<{ totalProducts: number; totalFollowed: number }> => {
+  const response = await instance.get<{
+    totalProducts: number;
+    totalFollowed: number;
+  }>(`${URL}/${storeId}/store-info`);
+  return response.data;
+};

@@ -83,7 +83,9 @@ const getTotalAndFeesByStore = async (req, res) => {
     const results = await Order.aggregate([
       {
         $match: {
-          storeId: storeId ? storeId : { $ne: null },
+          storeId: storeId
+            ? new mongoose.Types.ObjectId(storeId)
+            : { $ne: null },
           ...(settleds ? { settled: { $in: settleds } } : {}),
         },
       },
@@ -96,17 +98,14 @@ const getTotalAndFeesByStore = async (req, res) => {
         },
       },
       { $unwind: "$storeInfo" },
-
-      // Lọc theo searchKey và trạng thái cửa hàng (isActive)
       {
         $match: {
           "storeInfo.name": { $regex: searchKey ?? "", $options: "i" },
           ...(Array.isArray(isActives) && isActives.length > 0
             ? { "storeInfo.isActive": { $in: isActives } }
-            : {}), // Lọc theo danh sách trạng thái
+            : {}),
         },
       },
-
       {
         $lookup: {
           from: "coupons",
@@ -121,42 +120,69 @@ const getTotalAndFeesByStore = async (req, res) => {
           preserveNullAndEmptyArrays: true,
         },
       },
-
+      {
+        $lookup: {
+          from: "deliveries",
+          localField: "_id",
+          foreignField: "orderId",
+          as: "deliveryInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$deliveryInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          realTotal: {
+            $sum: {
+              $map: {
+                input: "$orderDetails",
+                as: "detail",
+                in: {
+                  $multiply: [
+                    "$$detail.quantity",
+                    "$$detail.price",
+                    { $subtract: [1, { $ifNull: ["$$detail.discount", 0] }] },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
       {
         $group: {
           _id: "$storeId",
           name: { $first: "$storeInfo.name" },
           logo: { $first: "$storeInfo.logo" },
           isActive: { $first: "$storeInfo.isActive" },
-          total: { $sum: "$total" },
+          totalProducts: { $sum: "$realTotal" },
           coupon: {
             $sum: {
               $cond: {
-                if: { $eq: ["$couponInfo.type", "flat"] },
+                if: { $eq: ["$couponInfo.type", "fixed"] },
                 then: "$couponInfo.value",
-                else: { $multiply: ["$couponInfo.value", "$total"] },
+                else: { $multiply: ["$couponInfo.value", "$realTotal"] },
               },
             },
           },
-          shippingFee: { $sum: "$shippingFee" },
+          shippingFee: { $sum: "$deliveryInfo.shippingFee" },
           totalCommission: { $sum: "$fees.commission" },
           totalTransaction: { $sum: "$fees.transaction" },
           totalService: { $sum: "$fees.service" },
         },
       },
-
-      {
-        $sort: { [sortBy]: -1 },
-      },
-
+      { $sort: { [sortBy]: -1 } },
       { $skip: parseInt(skip) },
       { $limit: parseInt(limit) },
-
       {
         $project: {
           name: 1,
           logo: 1,
-          total: 1,
+          totalProducts: 1,
           coupon: 1,
           shippingFee: 1,
           totalCommission: 1,
@@ -207,12 +233,44 @@ const getRevenueChartData = async (req, res) => {
     const revenueData = await Order.aggregate([
       { $match: matchCondition }, // Lọc theo storeId
       {
+        $unwind: "$orderDetails", // Giải nở orderDetails để tính tổng giá trị sản phẩm
+      },
+      {
         $group: {
           _id: groupFormat,
-          revenue: { $sum: "$total" },
+          revenue: {
+            $sum: {
+              $multiply: [
+                "$orderDetails.quantity",
+                {
+                  $subtract: [
+                    "$orderDetails.price",
+                    { $ifNull: ["$orderDetails.discount", 0] },
+                  ],
+                },
+              ],
+            },
+          },
           totalCommission: { $sum: "$fees.commission" },
           totalTransaction: { $sum: "$fees.transaction" },
           totalService: { $sum: "$fees.service" },
+          totalCoupon: { $sum: "$orderDetails.discount" }, // Nếu coupon được áp dụng cho từng sản phẩm
+        },
+      },
+      {
+        $project: {
+          revenue: 1,
+          totalCommission: 1,
+          totalTransaction: 1,
+          totalService: 1,
+          totalCoupon: 1,
+          // Tính doanh thu cuối cùng = doanh thu sản phẩm - phí - coupon
+          netRevenue: {
+            $subtract: [
+              { $subtract: ["$revenue", "$totalCommission"] },
+              { $add: ["$totalTransaction", "$totalService", "$totalCoupon"] },
+            ],
+          },
         },
       },
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.quarter": 1 } },
@@ -230,6 +288,8 @@ const getRevenueChartData = async (req, res) => {
       totalCommission: item.totalCommission,
       totalTransaction: item.totalTransaction,
       totalService: item.totalService,
+      totalCoupon: item.totalCoupon,
+      netRevenue: item.netRevenue, // Doanh thu sau khi trừ phí và coupon
     }));
 
     return response(
@@ -261,19 +321,35 @@ const getStoreRevenueStats = async (req, res) => {
 
     const storeObjectId = new mongoose.Types.ObjectId(storeId);
 
-    // 1. Tính tổng doanh thu
+    // 1. Tính tổng doanh thu sản phẩm (không tính phí và coupon)
     const totalRevenueResult = await Order.aggregate([
       { $match: { storeId: storeObjectId } },
+      { $unwind: "$orderDetails" },
       {
         $group: {
           _id: null,
-          totalRevenue: { $sum: "$total" },
+          revenue: {
+            $sum: {
+              $multiply: [
+                "$orderDetails.quantity",
+                {
+                  $subtract: [
+                    "$orderDetails.price",
+                    { $ifNull: ["$orderDetails.discount", 0] },
+                  ],
+                },
+              ],
+            },
+          },
+          totalCoupon: { $sum: "$orderDetails.discount" }, // Tổng giá trị coupon
         },
       },
     ]);
 
     const totalRevenue =
-      totalRevenueResult.length > 0 ? totalRevenueResult[0].totalRevenue : 0;
+      totalRevenueResult.length > 0 ? totalRevenueResult[0].revenue : 0;
+    const totalCoupon =
+      totalRevenueResult.length > 0 ? totalRevenueResult[0].totalCoupon : 0;
 
     // 2. Đếm số tháng có doanh thu
     const distinctMonths = await Order.aggregate([
@@ -295,12 +371,17 @@ const getStoreRevenueStats = async (req, res) => {
     // 3. Tính doanh thu trung bình theo tháng
     const averageMonthlyRevenue = totalRevenue / totalMonths;
 
+    // Tính doanh thu sau khi trừ phí và coupon
+    const netRevenue = totalRevenue - totalCoupon;
+
     return response(
       res,
       StatusCodes.OK,
       true,
       {
         totalRevenue,
+        totalCoupon,
+        netRevenue,
         averageMonthlyRevenue,
       },
       "Store revenue statistics retrieved successfully"

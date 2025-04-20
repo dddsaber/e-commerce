@@ -1,158 +1,68 @@
-.loader-container {
+.center {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.loader-container:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: transparent;
-  z-index: -1;
-  transition: top 1.2s linear 3.1s;
-}
-.loader-container:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: transparent;
-  z-index: -1;
-  transition: bottom 1.2s linear 3.1s;
-}
-.loader-container.done:before {
-  top: -50%;
-}
-.loader-container.done:after {
-  bottom: -50%;
+.loader {
+  color: green;
+  font-size: 50px;
+  font-weight: 900;
+  text-indent: -9999em;
+  overflow: hidden;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  transform: translateZ(0);
+  animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
 }
 
-.progress {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  transform-origin: center;
-}
-.progress .progress__item {
-  text-align: center;
-  width: 120px;
-  height: 120px;
-  line-height: 120px;
-  border: 3px solid #2ec079;
-  border-radius: 50%;
-}
-.progress .progress__item:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  margin-top: -3px;
-  margin-left: 0px;
-  width: 60px;
-  height: 60px;
-  border-top: solid 15px #2ec079;
-  border-right: solid 15px #2ec079;
-  border-top-right-radius: 100%;
-  transform-origin: left bottom;
-  -webkit-animation: spin 3s linear infinite;
-}
-.progress.float .progress__item:before {
-  border-top-width: 2px;
-  margin-top: 0px;
-  height: 50px;
-}
-.progress.float.shadow:before {
-  border-top-width: 2px;
-  margin-top: -41px;
-  height: 50px;
-}
-.progress.shadow:before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -43px 0 0 12px;
-  width: 60px;
-  height: 60px;
-  border-top: solid 10px #959595;
-  border-right: solid 10px #959595;
-  border-top-right-radius: 100%;
-  z-index: -1;
-  transform-origin: left bottom;
-  -webkit-animation: spin 3s linear infinite;
-}
-.progress.shadow:after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120px;
-  height: 120px;
-  color: #959595;
-  text-align: center;
-  line-height: 120px;
-  border: 2px solid #959595;
-  border-radius: 50%;
-  margin: -40px 0 0 -50px;
-  z-index: -1;
-  transform-origin: center;
-}
-.progress.done .progress__item {
-  opacity: 0;
-  -webkit-animation: done 3.1s;
-  transition: opacity 0.3s linear 3.1s;
-}
-.progress.done .progress__item:before {
-  display: none;
-}
-.progress.done:before {
-  display: none;
-}
-.progress.done:after {
-  opacity: 0;
-  -webkit-animation: done 3.1s;
-  transition: opacity 0.15s linear 3.1s;
-}
-
-@-webkit-keyframes done {
-  10% {
-    transform: scale(1.2);
+@keyframes mltShdSpin {
+  0% {
+    box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+      0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+  }
+  5%,
+  95% {
+    box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+      0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+  }
+  10%,
+  59% {
+    box-shadow: 0 -0.83em 0 -0.4em, -0.087em -0.825em 0 -0.42em,
+      -0.173em -0.812em 0 -0.44em, -0.256em -0.789em 0 -0.46em,
+      -0.297em -0.775em 0 -0.477em;
   }
   20% {
-    transform: scale(0.9);
+    box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+      -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em,
+      -0.749em -0.34em 0 -0.477em;
   }
-  30% {
-    transform: scale(1.07);
-  }
-  40% {
-    transform: scale(0.93);
-  }
-  50% {
-    transform: scale(1.04);
-  }
-  60% {
-    transform: scale(0.97);
-  }
-  80% {
-    transform: scale(1.01);
-  }
-  90% {
-    transform: scale(0.99);
+  38% {
+    box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+      -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em,
+      -0.82em -0.09em 0 -0.477em;
   }
   100% {
-    transform: scale(1);
+    box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+      0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
   }
 }
-@-webkit-keyframes spin {
+
+@keyframes round {
+  0% {
+    transform: rotate(0deg);
+  }
   100% {
-    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }

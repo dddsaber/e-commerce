@@ -1,11 +1,7 @@
 // frontend/types/store.ts
 export interface Statistics {
-  totalProducts: number;
-  monthlyRevenue: number;
   rating: number;
   numberOfRatings: number;
-  totalRevenue: number;
-  visited: number;
 }
 
 export interface Address {
