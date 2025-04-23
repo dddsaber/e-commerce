@@ -22,8 +22,8 @@ const { Title } = Typography;
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchKey = searchParams.get("searchKey") || "";
-  const categoryId = searchParams.get("categoryId"); // Lấy categoryId từ URL
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const [categoryData, setCategoryData] = useState<{
     categories: Category[];
@@ -35,7 +35,7 @@ const SearchPage: React.FC = () => {
   const [limit, setLimit] = useState<number>(10);
   const [filter, setFilter] = useState<GetProductsRequest>({
     isActives: [true],
-    categoryIds: categoryId ? [categoryId] : [],
+    categoryIds: [],
     searchKey: searchKey,
   });
   const [productData, setProductData] = useState<{
@@ -46,7 +46,24 @@ const SearchPage: React.FC = () => {
     totalProducts: 0,
   });
 
-  // Lấy sản phẩm khi filter thay đổi
+  useEffect(() => {
+    const categoriesFromParams =
+      searchParams.get("categories")?.split(",") || [];
+    const searchKeyFromParams = searchParams.get("searchKey") || "";
+    const priceMin = searchParams.get("priceMin");
+    const priceMax = searchParams.get("priceMax");
+    const rating = searchParams.get("rating");
+
+    setFilter({
+      isActives: [true],
+      searchKey: searchKeyFromParams,
+      categoryIds: categoriesFromParams,
+      priceMin: priceMin ? parseFloat(priceMin) : undefined,
+      priceMax: priceMax ? parseFloat(priceMax) : undefined,
+      rating: rating ? parseInt(rating) : undefined,
+    });
+  }, [searchParams]);
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -57,7 +74,6 @@ const SearchPage: React.FC = () => {
     fetchProducts();
   }, [filter]);
 
-  // Lấy danh mục
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
@@ -68,7 +84,6 @@ const SearchPage: React.FC = () => {
     fetchCategories();
   }, [limit]);
 
-  // Xử lý khi thay đổi danh mục
   const handleCategoryChange = (selectedCategories: string[]) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -76,11 +91,14 @@ const SearchPage: React.FC = () => {
     }));
 
     const newParams = new URLSearchParams(searchParams);
-    newParams.set("categories", selectedCategories.join(","));
+    if (selectedCategories.length > 0) {
+      newParams.set("categories", selectedCategories.join(","));
+    } else {
+      newParams.delete("categories");
+    }
     setSearchParams(newParams);
   };
 
-  // Xử lý khi thay đổi giá
   const handlePriceFilter = () => {
     const minPrice = parseFloat(
       (document.getElementById("minPrice") as HTMLInputElement).value
@@ -103,7 +121,6 @@ const SearchPage: React.FC = () => {
     setSearchParams(newParams);
   };
 
-  // Xử lý khi thay đổi rating
   const handleRatingFilter = (rating: number) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -115,7 +132,6 @@ const SearchPage: React.FC = () => {
     setSearchParams(newParams);
   };
 
-  // Xóa tất cả bộ lọc
   const clearAllFilters = () => {
     setFilter({
       isActives: [true],

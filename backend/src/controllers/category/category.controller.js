@@ -291,7 +291,6 @@ const getCategoryById = async (req, res) => {
 const getSelectCategories = async (req, res) => {
   try {
     const categories = await Category.find({
-      parentId: { $ne: null },
       isDeleted: false,
     });
 

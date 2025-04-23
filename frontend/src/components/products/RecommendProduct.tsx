@@ -52,18 +52,22 @@ const RecommendProduct: React.FC<ProductListProps> = () => {
       </Card>
 
       <Row gutter={[12, 12]}>
-        {RecommendProduct.map((product) => (
-          <Col
-            key={product._id}
-            xs={24} // 1 sản phẩm / dòng trên màn hình nhỏ (<576px)
-            sm={12} // 2 sản phẩm / dòng (≥576px)
-            md={8} // 3 sản phẩm / dòng (≥768px)
-            lg={6} // 4 sản phẩm / dòng (≥992px)
-            xl={6} // 6 sản phẩm / dòng (≥1200px)
-          >
-            <ProductCard product={product} />
-          </Col>
-        ))}
+        {RecommendProduct ? (
+          RecommendProduct.map((product) => (
+            <Col
+              key={product._id}
+              xs={24} // 1 sản phẩm / dòng trên màn hình nhỏ (<576px)
+              sm={12} // 2 sản phẩm / dòng (≥576px)
+              md={8} // 3 sản phẩm / dòng (≥768px)
+              lg={6} // 4 sản phẩm / dòng (≥992px)
+              xl={6} // 6 sản phẩm / dòng (≥1200px)
+            >
+              <ProductCard product={product} />
+            </Col>
+          ))
+        ) : (
+          <></>
+        )}
       </Row>
     </>
   );

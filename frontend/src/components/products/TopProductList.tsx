@@ -12,7 +12,7 @@ const TopProductList: React.FC<TopProductListProps> = ({ storeId }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       const data = await getProducts({
-        limit: 6,
+        limit: 4,
         isActive: true,
         storeId: storeId ?? undefined,
       });

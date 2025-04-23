@@ -122,7 +122,7 @@ const CategoryList: React.FC = () => {
 
   const handleCategoryClick = (categoryId: string) => {
     // Redirect to SearchPage with categoryId as a query parameter
-    navigate(`/search?categoryId=${categoryId}`);
+    navigate(`/search?categories=${categoryId}`);
   };
 
   return (
