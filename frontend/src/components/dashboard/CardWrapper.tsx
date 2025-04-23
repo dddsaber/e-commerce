@@ -16,7 +16,6 @@ export default function CardWrapper(): JSX.Element {
     async function fetchData() {
       const data = await getCardWrapperInfo();
       setCardWrapperInfo(data);
-      console.log(data);
     }
     fetchData();
   }, []);
@@ -148,7 +147,9 @@ export default function CardWrapper(): JSX.Element {
               <Col span={8}>
                 <Statistic
                   title="Revenue"
-                  value={`$${cardWrapperInfo?.totalRevenue}`}
+                  value={`${cardWrapperInfo?.totalRevenue.toLocaleString(
+                    "vi-VN"
+                  )}đ`}
                 />
               </Col>
             </Row>

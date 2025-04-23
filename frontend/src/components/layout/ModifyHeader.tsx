@@ -52,7 +52,7 @@ const ModifyHeader: React.FC = () => {
         const storeData = await getStoreByUserId(userId);
         setStore(storeData);
         if (store?.isActive || storeData?.isActive) {
-          setStoreLink("/store-manage/dashboard");
+          setStoreLink("/store-manage");
         }
       };
       fetchStore();

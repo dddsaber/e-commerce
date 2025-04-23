@@ -209,10 +209,26 @@ const updateCustomProductListStatus = async (req, res) => {
   }
 };
 
+const deleteCustomProductList = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleteCustom = await CustomProductList.findByIdAndDelete(id);
+    return response(
+      res,
+      StatusCodes.OK,
+      true,
+      deleteCustom,
+      "Delete successful"
+    );
+  } catch (error) {
+    return handleError(res, error);
+  }
+};
 module.exports = {
   createCustomProductList,
   getCustomProductLists,
   updateCustomProductListOrder,
   updateCustomProductListStatus,
   updateCustomProductList,
+  deleteCustomProductList,
 };

@@ -17,8 +17,9 @@ import { getSourceImage } from "../../utils/handle_image_func";
 
 interface ReviewListProps {
   productId?: string;
+  rating?: number;
 }
-const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
+const ReviewList: React.FC<ReviewListProps> = ({ productId, rating }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [totalReviews, setTotalReviews] = useState<number>(0);
   const [current, setCurrent] = useState<number>(1);
@@ -27,6 +28,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
     const fetchData = async () => {
       const data = await getReviews({
         productId: productId,
+        ratings: rating ? [rating] : [],
         skip: (current - 1) * limit,
         limit: limit,
       });
@@ -39,7 +41,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
       console.log(data);
     };
     fetchData();
-  }, [productId, current]);
+  }, [productId, current, rating]);
   const handlePageChange = (page: number) => {
     setCurrent(page); // Cập nhật trang hiện tại
   };

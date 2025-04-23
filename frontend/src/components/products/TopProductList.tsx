@@ -3,13 +3,19 @@ import ProductCard from "./ProductCard";
 import { Product } from "../../type/product.type";
 import { getProducts } from "../../api/product.api";
 import { Flex } from "antd";
-
-const TopProductList: React.FC = () => {
+interface TopProductListProps {
+  storeId?: string;
+}
+const TopProductList: React.FC<TopProductListProps> = ({ storeId }) => {
   const [productsList, setProductsList] = useState<Product[]>();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const data = await getProducts({ limit: 6 });
+      const data = await getProducts({
+        limit: 6,
+        isActive: true,
+        storeId: storeId ?? undefined,
+      });
       setProductsList(data.products);
     };
     fetchProducts();

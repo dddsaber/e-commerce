@@ -513,6 +513,10 @@ const getOrders = async (req, res) => {
     }
 
     // Filter by IDs and fields
+    if (searchKey)
+      pipeline.push({
+        $match: { _id: new mongoose.Types.ObjectId(storeId) },
+      });
     if (userId)
       pipeline.push({
         $match: { userId: new mongoose.Types.ObjectId(userId) },
@@ -621,7 +625,49 @@ const getOrderById = async (req, res) => {
       "Order retrieved successfully"
     );
   } catch (error) {
-    return handleError(res, error.message);
+    return handleError(res, error);
+  }
+};
+
+// ----------------------------------------------------------------
+// Get Order status count
+// ----------------------------------------------------------------
+const getOrderStatusCounts = async (req, res) => {
+  const { storeId } = req.params;
+  console.log(storeId);
+  if (!storeId) {
+    return response(res, StatusCodes.BAD_REQUEST, false, {}, "Missing storeId");
+  }
+
+  try {
+    const result = await Order.aggregate([
+      {
+        $match: {
+          storeId: new mongoose.Types.ObjectId(storeId),
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const statusCounts = result.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    return response(
+      res,
+      StatusCodes.OK,
+      true,
+      statusCounts,
+      "Fetch order status count successfully"
+    );
+  } catch (error) {
+    return handleError(res, error);
   }
 };
 
@@ -634,4 +680,5 @@ module.exports = {
   updateOrderStatus,
   cancelOrder,
   getOrders,
+  getOrderStatusCounts,
 };

@@ -3,7 +3,6 @@ import { Button, Flex, Form, Input, Typography, Grid } from "antd";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../api/auth.api";
-import bg from "../../assets/bookbg.jpg";
 
 const ResetPasswordPage = () => {
   const { userId } = useParams();
@@ -11,7 +10,7 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const { xs, sm, md } = Grid.useBreakpoint();
 
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string>();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -22,12 +21,14 @@ const ResetPasswordPage = () => {
   }, [location.search]);
 
   const onFinish = async (values: { password: string; confirm: string }) => {
-    const requestData = {
-      ...values,
-      token,
-      userId,
-    };
-    const response = await resetPassword(requestData);
+    if (!token || !userId) {
+      return;
+    }
+    const response = await resetPassword({
+      userId: userId,
+      password: values.password,
+      token: token,
+    });
     if (response.status) {
       alert("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
       navigate("/login", { replace: true });
@@ -44,10 +45,6 @@ const ResetPasswordPage = () => {
       align="center"
       style={{
         width: "100%",
-        minHeight: "100vh",
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
         padding: 16,
       }}
     >

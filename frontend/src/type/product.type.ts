@@ -28,6 +28,7 @@ export interface GetProductsRequest {
   rating?: number;
   categoryIds?: string[];
   isActives?: boolean[];
+  isActive?: boolean;
 }
 
 export interface Product {

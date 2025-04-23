@@ -94,3 +94,56 @@ export const renderTimeChatMessage = (date?: string) => {
   // Nếu lâu hơn thì định dạng đầy đủ
   return formatedDate(date, FORMAT_FULL_TIME);
 };
+
+interface OrderStatusCounts {
+  [key: string]: number;
+}
+
+const statusMap = {
+  completed: "Đã hoàn thành",
+  pending: "Chờ xử lý",
+  confirmed: "Đã xác nhận",
+  shipped: "Đang giao",
+  delivered: "Đã giao",
+  cancelled: "Đã hủy",
+};
+
+const colors = [
+  "#36A2EB", // blue
+  "#FFCE56", // yellow
+  "#4BC0C0", // teal
+  "#9966FF", // purple
+  "#FF9F40", // orange
+  "#FF6384", // red
+];
+
+const hoverColors = [
+  "#2980b9",
+  "#f1c40f",
+  "#16a085",
+  "#8e44ad",
+  "#e67e22",
+  "#e74c3c",
+];
+
+export const convertChartData = (data: OrderStatusCounts) => {
+  const statuses = Object.keys(statusMap);
+
+  const labels = statuses.map(
+    (key) => statusMap[key as keyof typeof statusMap]
+  );
+  const values = statuses.map((key) => data[key] || 0);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Số lượng đơn hàng",
+        data: values,
+        backgroundColor: colors,
+        hoverBackgroundColor: hoverColors,
+        borderWidth: 1,
+      },
+    ],
+  };
+};

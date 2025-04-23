@@ -455,13 +455,25 @@ const getReviews = async (req, res) => {
         },
       });
     }
-
     if (storeId) {
-      pipeline.push({
-        $match: {
-          storeId: new mongoose.Types.ObjectId(storeId), // Chuyển string thành ObjectId
+      pipeline.push(
+        {
+          $lookup: {
+            from: "products", // Tên collection của product
+            localField: "productId",
+            foreignField: "_id",
+            as: "product",
+          },
         },
-      });
+        {
+          $unwind: "$product", // Giải nén mảng product
+        },
+        {
+          $match: {
+            "product.storeId": new mongoose.Types.ObjectId(storeId),
+          },
+        }
+      );
     }
 
     // Đếm tổng số reviews phù hợp

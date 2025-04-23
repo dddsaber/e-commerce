@@ -6,6 +6,7 @@ import {
   Col,
   Image,
   message,
+  Modal,
   Row,
   Table,
   Tooltip,
@@ -22,15 +23,26 @@ import { STATUS_MAP } from "../../utils/constant";
 import { formatDate } from "../../utils/handle_format_func";
 import { useNavigate } from "react-router-dom";
 import ReviewModalMulti from "../reviews/ReviewModelMulti";
+import { cancelOrder, updateOrderStatus } from "../../api/order.api";
+import TextArea from "antd/es/input/TextArea";
 
 interface OrderCardProps {
   order: Order;
   userId: string;
+  reload: boolean;
+  setReload: (value: boolean) => void;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
+const OrderCard: React.FC<OrderCardProps> = ({
+  order,
+  userId,
+  reload,
+  setReload,
+}) => {
   const navigate = useNavigate();
-  const [reviewVisible, setReviewVisible] = useState(false);
+  const [reviewVisible, setReviewVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [note, setNote] = useState<string>("");
   const columns = [
     {
       title: "Image",
@@ -88,14 +100,47 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
       },
     },
   ];
+
   const handleNavigate = () => {
     if (!order) {
-      message.error(`Store not found!`);
+      message.error(`Không tìm thấy đơn hàng!`);
       return;
     }
     navigate("/chat", {
       state: { userId: order.store?.userId }, // Truyền userId qua state
     });
+  };
+
+  const handleCancel = async () => {
+    if (!order._id) {
+      message.error(`Không tìm thấy đơn hàng!`);
+      return;
+    }
+    try {
+      await cancelOrder(order._id, note);
+      setModalVisible(false);
+      message.success("Thành công hủy đơn");
+      setReload(!reload);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      message.error(error);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!order._id) {
+      message.error(`Không tìm thấy đơn hàng!`);
+      return;
+    }
+    try {
+      await updateOrderStatus(order._id, STATUS_MAP.completed.value);
+      setModalVisible(false);
+      message.success("Thành công xác nhận đơn");
+      setReload(!reload);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      message.error(error);
+    }
   };
 
   return (
@@ -179,7 +224,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
           showHeader={false}
         />
       </div>
-
       {/* Hiển thị tổng tiền */}
       <div
         style={{
@@ -194,21 +238,43 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
         </span>
       </div>
       <Row gutter={[16, 16]} style={{ marginTop: "40px" }} justify="end" wrap>
-        <Col xs={24} sm={12} md={4}>
-          <Button
-            block
-            style={{
-              height: 40,
-              backgroundColor: "#ee4d2d",
-              color: "#fff",
-              fontWeight: 500,
-            }}
-            onClick={() => setReviewVisible(true)}
-          >
-            Đánh giá
-          </Button>
-        </Col>
+        {/* Xác nhận (khi đã giao hàng) */}
+        {order.status === STATUS_MAP.delivered.value && (
+          <Col xs={24} sm={12} md={4}>
+            <Button
+              block
+              style={{
+                height: 40,
+                backgroundColor: "#52c41a",
+                color: "#fff",
+                fontWeight: 500,
+              }}
+              onClick={() => handleComplete()}
+            >
+              Đã nhận
+            </Button>
+          </Col>
+        )}
 
+        {/* Đánh giá (khi đã hoàn tất) */}
+        {order.status === STATUS_MAP.completed.value && (
+          <Col xs={24} sm={12} md={4}>
+            <Button
+              block
+              style={{
+                height: 40,
+                backgroundColor: "#1890ff",
+                color: "#fff",
+                fontWeight: 500,
+              }}
+              onClick={() => setReviewVisible(true)}
+            >
+              Đánh giá
+            </Button>
+          </Col>
+        )}
+
+        {/* Liên hệ người bán (luôn có) */}
         <Col xs={24} sm={12} md={4}>
           <Button
             block
@@ -218,8 +284,35 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, userId }) => {
             Liên hệ người bán
           </Button>
         </Col>
+
+        {/* Hủy đơn (chỉ khi chưa xử lý) */}
+        {order.status === STATUS_MAP.pending.value && (
+          <Col xs={24} sm={12} md={4}>
+            <Button
+              block
+              style={{
+                height: 40,
+                backgroundColor: "#ff4d4f",
+                color: "#fff",
+                fontWeight: 500,
+              }}
+              onClick={() => setModalVisible(true)}
+            >
+              Hủy đơn
+            </Button>
+          </Col>
+        )}
       </Row>
 
+      <Modal
+        title="Lý do hủy đơn"
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        width={500}
+        onOk={() => handleCancel()}
+      >
+        <TextArea value={note} onChange={(e) => setNote(e.target.value)} />
+      </Modal>
       <ReviewModalMulti
         isVisible={reviewVisible}
         products={order.orderDetails}

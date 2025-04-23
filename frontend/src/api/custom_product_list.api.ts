@@ -59,3 +59,8 @@ export const updateCustomProductList = async (
   );
   return response.data;
 };
+
+export const deleteCustomProductList = async (id: string) => {
+  const response = await instance.delete(`${URL}/delete/${id}`);
+  return response.data;
+};

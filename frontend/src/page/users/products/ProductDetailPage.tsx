@@ -69,15 +69,16 @@ const ProductDetailPage: React.FC = () => {
       />
       <ProductDisplayCard product={product!} addCart={addCart} />
       <StoreDisplayCard storeId={product?.storeId || ""} />
-      <Row gutter={[20, 20]}>
-        <Col span={20}>
+      <Row gutter={[20, 20]} wrap>
+        {/* Phần chính */}
+        <Col xs={24} lg={20}>
+          {/* Mô tả sản phẩm */}
           <Card>
             <Typography.Title
               level={3}
               style={{
                 backgroundColor: "#f7f7f7",
                 padding: "15px 20px 30px",
-                alignItems: "center",
                 borderRadius: "10px",
                 margin: "50px 0 0",
                 textTransform: "uppercase",
@@ -87,6 +88,8 @@ const ProductDetailPage: React.FC = () => {
             </Typography.Title>
             <Typography.Text>{product?.description}</Typography.Text>
           </Card>
+
+          {/* Đánh giá sản phẩm */}
           <Card
             title="ĐÁNH GIÁ SẢN PHẨM"
             style={{ margin: "20px 0", width: "100%" }}
@@ -101,33 +104,35 @@ const ProductDetailPage: React.FC = () => {
               style={{
                 backgroundColor: "#ffe3e3",
                 padding: "15px 20px 30px",
-                alignItems: "center",
                 borderRadius: "5px",
               }}
+              wrap
             >
-              <Col span={5}>
-                <Typography.Text
-                  strong
-                  style={{
-                    fontSize: 26,
-                    color: "red",
-                    textAlign: "center",
-                    marginLeft: 20,
-                    marginBottom: 15,
-                  }}
-                >
-                  <span style={{ fontSize: 36 }}>{product?.rating}</span> / 5
-                </Typography.Text>
-                <Rate value={product?.rating} allowHalf />
+              {/* Bên trái: Rating tổng */}
+              <Col xs={24} md={6}>
+                <div style={{ textAlign: "center", marginBottom: 10 }}>
+                  <Typography.Text
+                    strong
+                    style={{
+                      fontSize: 26,
+                      color: "red",
+                    }}
+                  >
+                    <span style={{ fontSize: 36 }}>{product?.rating}</span> / 5
+                  </Typography.Text>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <Rate value={product?.rating} allowHalf disabled />
+                </div>
               </Col>
-              <Col
-                span={19}
-                style={{ justifyContent: "center", display: "flex" }}
-              >
+
+              {/* Bên phải: Bộ lọc sao */}
+              <Col xs={24} md={18} style={{ textAlign: "center" }}>
                 <Radio.Group
                   value={rating}
                   onChange={handleRatingChange}
                   size="large"
+                  style={{ flexWrap: "wrap" }}
                 >
                   <Radio.Button value="all">Tất cả</Radio.Button>
                   <Radio.Button value="0">0 Sao</Radio.Button>
@@ -139,12 +144,17 @@ const ProductDetailPage: React.FC = () => {
                 </Radio.Group>
               </Col>
             </Row>
-            <ReviewList productId={productId} />
+
+            <ReviewList productId={productId} rating={parseInt(rating)} />
           </Card>
+
+          {/* Gợi ý sản phẩm */}
           <RecommendProduct />
         </Col>
-        <Col span={4}>
-          <TopProductList />
+
+        {/* Sản phẩm nổi bật */}
+        <Col xs={0} lg={4}>
+          <TopProductList storeId={product?.storeId} />
         </Col>
       </Row>
     </>

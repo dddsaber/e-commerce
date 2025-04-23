@@ -85,3 +85,21 @@ export const loginGithub = async (): Promise<AxiosResponse<authUser>> => {
     throw error;
   }
 };
+
+export const forgotPassword = async (body: { email: string }) => {
+  const response = await instance.post(`${URL}/forgot-password`, body);
+  return response;
+};
+
+export const resetPassword = async (body: {
+  userId: string;
+  token: string;
+  password: string;
+}) => {
+  const response = await instance.post(
+    `${URL}/change-password-on-confirm`,
+    body
+  );
+
+  return response;
+};

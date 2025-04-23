@@ -34,23 +34,28 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
 
   return (
     <>
-      <Row gutter={[24, 24]}>
-        <Col span={8}>
+      <Row gutter={[24, 24]} wrap>
+        {/* Ảnh sản phẩm */}
+        <Col xs={24} md={10}>
           <Image
             src={getSourceImage(product?.image || "")}
-            style={{ width: "100%" }}
+            style={{
+              width: "100%",
+              borderRadius: 8,
+              objectFit: "cover",
+            }}
           />
           <Row
             gutter={[8, 8]}
             style={{ justifyContent: "start", margin: "10px 0" }}
           >
-            {product?.sideImages!.slice(0, 3).map((img, index) => (
+            {product?.sideImages?.slice(0, 3).map((img, index) => (
               <Col key={index}>
                 <Image
                   width={80}
                   height={80}
-                  src={getSourceImage(product.sideImages![index])}
-                  style={{ border: "1px solid grey", borderRadius: "2px" }}
+                  src={getSourceImage(img)}
+                  style={{ border: "1px solid #ddd", borderRadius: 5 }}
                 />
               </Col>
             ))}
@@ -61,209 +66,182 @@ const ProductDisplayCard: React.FC<ProductDisplayCardProps> = ({
                   icon={<PlusOutlined />}
                   style={{
                     width: 80,
-                    height: 100,
+                    height: 80,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  {product?.sideImages?.length || 0 - 6}
+                  +{(product?.sideImages?.length ?? 0) - 3}
                 </Button>
               </Col>
             )}
           </Row>
         </Col>
-        <Col
-          span={16}
-          style={{
-            paddingLeft: "50px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Card>
-            {/* Phần nội dung sản phẩm */}
-            <div style={{ flex: 1 }}>
-              <Typography.Title
-                level={2}
-                style={{ margin: "0", textAlign: "center" }}
-              >
-                {product?.name}
-              </Typography.Title>
 
-              <Flex
-                style={{
-                  justifyContent: "space-between",
-                  fontSize: "18px",
-                  margin: "10px 0",
-                }}
-                gap={10}
-              >
-                <Flex gap={24}>
-                  <span
-                    style={{ fontWeight: "bold", textDecoration: "underline" }}
-                  >
-                    {product?.rating}
-                  </span>
-                  <Rate value={product?.rating} />
-                  <span>{product?.numberOfRatings || 0} Đánh giá</span>
-                  <span>{product?.inventory?.soldQuantity ?? 0} Đã bán</span>
-                </Flex>
-                <Button
-                  type="text"
-                  size="large"
-                  onClick={() => setIsVisible(true)}
-                >
-                  Báo cáo
-                </Button>
-              </Flex>
+        {/* Nội dung sản phẩm */}
+        <Col xs={24} md={14}>
+          <Card style={{ borderRadius: 10 }}>
+            <Typography.Title
+              level={2}
+              style={{ marginBottom: 10, textAlign: "center" }}
+            >
+              {product?.name}
+            </Typography.Title>
 
-              <Flex
-                style={{
-                  backgroundColor: "#f7f7f7",
-                  padding: "15px 20px 50px",
-                  alignItems: "center",
-                  borderRadius: "5px",
-                  margin: "15px 0",
-                }}
-                gap={10}
-              >
-                <Typography.Title level={1} style={{ color: "red", margin: 0 }}>
-                  {(
-                    (product?.price ?? 0) *
-                    (1 - (product?.discount ?? 0))
-                  ).toLocaleString("vi-VN")}{" "}
-                  đ
-                </Typography.Title>
-                <Typography.Title
-                  level={2}
-                  style={{
-                    textDecoration: "line-through",
-                    color: "gray",
-                    margin: 0,
-                  }}
-                >
-                  {product?.price.toLocaleString("vi-VN")} đ
-                </Typography.Title>
-                <span
-                  style={{
-                    color: "red",
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    backgroundColor: "#f4b3b3",
-                  }}
-                >
-                  -{(product?.discount || 0) * 100}%
-                </span>
+            {/* Đánh giá + báo cáo */}
+            <Flex
+              wrap="wrap"
+              justify="space-between"
+              style={{ marginBottom: 16 }}
+            >
+              <Flex gap={16} align="center" wrap="wrap">
+                <Typography.Text strong underline>
+                  {product?.rating}
+                </Typography.Text>
+                <Rate value={product?.rating} disabled />
+                <Typography.Text>
+                  {product?.numberOfRatings || 0} đánh giá
+                </Typography.Text>
+                <Typography.Text>
+                  {product?.inventory?.soldQuantity ?? 0} đã bán
+                </Typography.Text>
               </Flex>
-            </div>
-            <Flex style={{ marginTop: 20 }}>
-              <Descriptions
-                column={1}
-                style={{ margin: "10px 0" }}
-                styles={{
-                  label: { fontSize: "20px" },
-                  content: { fontSize: "18px" },
-                }}
-              >
-                <Descriptions.Item label="Loại sản phẩm">
-                  {product?.category?.name ?? "Chưa phân loại"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Kích cỡ">
-                  {product?.size || ""}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Số lượng"
-                  style={{ margin: "30px 0" }}
-                >
-                  <Flex
-                    align="center"
-                    style={{ border: "1px solid #ddd", borderRadius: 5 }}
-                  >
-                    <Button
-                      type="text"
-                      style={{ width: 30, height: 30, fontSize: 30 }}
-                    >
-                      -
-                    </Button>
-                    <Input
-                      value={quantity}
-                      onChange={(e) => setQuantity(parseInt(e.target.value))}
-                      readOnly
-                      style={{
-                        width: 50,
-                        textAlign: "center",
-                        border: "none",
-                        fontSize: 20,
-                        fontWeight: "bold",
-                      }}
-                    />
-                    <Button
-                      type="text"
-                      style={{ width: 30, height: 30, fontSize: 25 }}
-                    >
-                      +
-                    </Button>
-                  </Flex>
-                  <Flex>
-                    <Typography.Text
-                      style={{ marginLeft: 10, marginBottom: 20 }}
-                    >
-                      ({product?.inventory?.quantity} sản phẩm có sẵn)
-                    </Typography.Text>
-                  </Flex>
-                </Descriptions.Item>
-              </Descriptions>
+              <Button type="text" onClick={() => setIsVisible(true)}>
+                Báo cáo
+              </Button>
             </Flex>
-            {/* Nút hành động (ở dưới cùng) */}
-            <Flex style={{ marginTop: 10, marginBottom: 10 }}>
-              <Button
+
+            {/* Giá */}
+            <Flex
+              wrap="wrap"
+              align="center"
+              style={{
+                background: "#fff1f0",
+                padding: 20,
+                borderRadius: 8,
+                marginBottom: 20,
+              }}
+              gap={16}
+            >
+              <Typography.Title level={1} style={{ color: "red", margin: 0 }}>
+                {(
+                  (product?.price ?? 0) *
+                  (1 - (product?.discount ?? 0))
+                ).toLocaleString("vi-VN")}{" "}
+                đ
+              </Typography.Title>
+              <Typography.Text delete style={{ fontSize: 20, color: "#999" }}>
+                {product?.price?.toLocaleString("vi-VN")} đ
+              </Typography.Text>
+              <Typography.Text
                 style={{
-                  height: 65,
-                  width: 250,
-                  fontSize: 18,
+                  backgroundColor: "#ffa39e",
+                  padding: "4px 10px",
+                  borderRadius: 4,
+                  color: "#a8071a",
+                  fontWeight: "bold",
+                }}
+              >
+                -{(product?.discount || 0) * 100}%
+              </Typography.Text>
+            </Flex>
+
+            {/* Mô tả sản phẩm */}
+            <Descriptions
+              size="small"
+              column={{ xs: 1, sm: 1, md: 1, xxl: 1, lg: 1, xl: 1 }}
+              style={{ marginBottom: 20 }}
+            >
+              <Descriptions.Item label="Loại sản phẩm">
+                {product?.category?.name ?? "Chưa phân loại"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Kích cỡ">
+                {product?.size || "Không có"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Số lượng">
+                <Flex gap={8} align="center">
+                  <Button
+                    onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </Button>
+                  <Input
+                    value={quantity}
+                    readOnly
+                    style={{
+                      width: 60,
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  />
+                  <Button
+                    onClick={() =>
+                      quantity < (product?.inventory?.quantity ?? 0) &&
+                      setQuantity(quantity + 1)
+                    }
+                  >
+                    +
+                  </Button>
+                  <Typography.Text type="secondary" style={{ marginLeft: 8 }}>
+                    ({product?.inventory?.quantity ?? 0} sản phẩm có sẵn)
+                  </Typography.Text>
+                </Flex>
+              </Descriptions.Item>
+            </Descriptions>
+
+            {/* Nút hành động */}
+            <Flex
+              wrap="wrap"
+              justify="start"
+              gap={16}
+              style={{ marginTop: 20 }}
+            >
+              <Button
+                size="large"
+                style={{
+                  minWidth: 180,
                   color: "red",
                   backgroundColor: "white",
                   border: "1px solid red",
                   borderRadius: 5,
                 }}
-                onClick={() => addCart(product!, quantity)}
+                onClick={() => addCart(product, quantity)}
               >
-                Thêm Vào Giỏ Hàng
+                Thêm vào giỏ hàng
               </Button>
               <Button
+                size="large"
                 style={{
-                  height: 65,
-                  width: 250,
-                  fontSize: 18,
-                  marginLeft: 10,
+                  minWidth: 180,
                   color: "white",
                   backgroundColor: "red",
                   border: "1px solid white",
                   borderRadius: 5,
                 }}
                 onClick={() => {
-                  addCart(product!, quantity);
+                  addCart(product, quantity);
                   navigate("/cart");
                 }}
               >
-                Mua Ngay
+                Mua ngay
               </Button>
             </Flex>
           </Card>
         </Col>
+
+        {/* Modal báo cáo */}
+        {product && (
+          <ReportModal
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            reportCategory={REPORT_TYPE.PRODUCT}
+            reportedId={product._id}
+            reportItemName={product.name}
+          />
+        )}
       </Row>
-      {product ? (
-        <ReportModal
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-          reportCategory={REPORT_TYPE.PRODUCT}
-          reportedId={product?._id}
-          reportItemName={product?.name}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 };

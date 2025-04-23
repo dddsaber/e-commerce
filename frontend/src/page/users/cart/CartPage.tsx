@@ -157,11 +157,25 @@ const CartPage: React.FC = () => {
         </div>
       ),
     },
-
     {
       title: "Giá",
-      dataIndex: "price",
-      render: (price: number) => <span>{price.toLocaleString()} đ</span>,
+      render: (_: unknown, record: CartItem) =>
+        record.discount ? (
+          <>
+            <span style={{ textDecoration: "line-through" }}>
+              {record.price.toLocaleString("vi-VN")} đ
+            </span>
+            &nbsp;
+            <span style={{ color: "red" }}>
+              {(record.price * (1 - (record.discount ?? 0))).toLocaleString(
+                "vi-VN"
+              )}{" "}
+              đ
+            </span>
+          </>
+        ) : (
+          <span>{record.price}</span>
+        ),
     },
     {
       title: "Số lượng",
@@ -186,7 +200,7 @@ const CartPage: React.FC = () => {
             record.price *
             record.quantity *
             (1 - (record.discount ?? 0))
-          ).toLocaleString()}{" "}
+          ).toLocaleString("vi-VN")}{" "}
           đ
         </span>
       ),
@@ -233,7 +247,7 @@ const CartPage: React.FC = () => {
           </Col>
           <Col span={6}>
             <Typography.Text strong>
-              Tổng tiền: {totalPrice.toLocaleString()} đ
+              Tổng tiền: {totalPrice.toLocaleString("vi-VN")} đ
             </Typography.Text>
           </Col>
           <Col span={6}>

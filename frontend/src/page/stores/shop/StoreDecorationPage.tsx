@@ -19,6 +19,7 @@ import {
   updateCustomProductListStatus,
   updateCustomProductListOrder,
   updateCustomProductList,
+  deleteCustomProductList,
 } from "../../../api/custom_product_list.api";
 import { useSelector } from "react-redux";
 import { ReactSortable } from "react-sortablejs";
@@ -31,7 +32,7 @@ import { CustomProductList } from "../../../type/custom_product_list.type";
 import UploadImage from "../../../components/shared/UploadImage";
 import { TYPE_IMAGE } from "../../../utils/constant";
 import { getSourceImage } from "../../../utils/handle_image_func";
-import { EditFilled } from "@ant-design/icons";
+import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import ProductHero from "../../../components/products/ProductHero";
 import { useNavigate } from "react-router-dom";
 
@@ -49,6 +50,7 @@ const StoreDecorationPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedItem, setSelectedItem] = useState<CustomProductList>();
   const [showImage, setShowImage] = useState<boolean>(true);
+  const [reload, setReload] = useState<boolean>(false);
 
   const fetchData = async () => {
     if (!user._id) return;
@@ -74,7 +76,7 @@ const StoreDecorationPage: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user, reload]);
 
   const handleCreate = async () => {
     form
@@ -94,17 +96,24 @@ const StoreDecorationPage: React.FC = () => {
             await updateCustomProductList(selectedItem._id, values);
             message.success("Cập nhật thành công!");
           } else {
-            await createCustomProductList({
+            const newList = await createCustomProductList({
               ...values,
               storeId: store._id,
-              order: lists.length,
+              order: 0,
             });
+            // Cập nhật thứ tự: đẩy danh sách mới lên đầu
+            const updatedOrder = [
+              newList._id,
+              ...lists.map((item) => item._id),
+            ];
+            await updateCustomProductListOrder(store._id, updatedOrder);
+
             message.success("Tạo thành công!");
           }
 
           setIsVisible(false);
           form.resetFields();
-          fetchData();
+          setReload(!reload);
         } catch (err) {
           message.error("Không thể tạo danh sách" + err);
         }
@@ -118,7 +127,7 @@ const StoreDecorationPage: React.FC = () => {
     try {
       await updateCustomProductListStatus(id, status);
       message.success("Cập nhật trạng thái thành công");
-      fetchData();
+      setReload(!reload);
     } catch {
       message.error("Lỗi cập nhật trạng thái");
     }
@@ -158,6 +167,10 @@ const StoreDecorationPage: React.FC = () => {
       image: list.image,
       productIds: list.products.map((product) => product._id),
     });
+  };
+  const handleDelete = async (list: CustomProductList) => {
+    await deleteCustomProductList(list._id);
+    setReload(!reload);
   };
   const closeDrawer = () => {
     setIsVisible(false);
@@ -238,9 +251,9 @@ const StoreDecorationPage: React.FC = () => {
                 title={<span className="text-lg font-medium">{item.name}</span>}
                 styles={{
                   body: {
-                    padding: 16,
+                    padding: 0,
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    margin: "5px 0",
+                    margin: "0",
                   },
                 }}
                 extra={
@@ -256,17 +269,28 @@ const StoreDecorationPage: React.FC = () => {
                       icon={<EditFilled />}
                       type="link"
                       onClick={() => handleEdit(item)}
+                      style={{ color: "green" }}
+                    />
+                    <Button
+                      icon={<DeleteFilled />}
+                      type="link"
+                      onClick={() => handleDelete(item)}
+                      style={{ color: "red" }}
                     />
                   </>
                 }
+              ></Card>
+              <Flex
+                style={{
+                  justifyContent: "center",
+                  flexBasis: 1,
+                  flexDirection: "column",
+                }}
               >
-                <p className="text-gray-600">{item.description}</p>
-              </Card>
-              <div className="space-y-2">
                 {showImage && item.image && (
                   <Image
                     style={{
-                      maxWidth: "100%",
+                      width: "100%",
                       borderRadius: 8,
                       margin: "5px 0",
                     }}
@@ -276,7 +300,7 @@ const StoreDecorationPage: React.FC = () => {
                 )}
 
                 <ProductHero products={products} key={item._id} />
-              </div>
+              </Flex>
             </div>
           ))}
         </ReactSortable>

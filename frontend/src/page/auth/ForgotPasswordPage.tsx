@@ -2,7 +2,6 @@ import { UserOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input, Typography, Grid } from "antd";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../../api/auth.api";
-import bg from "../../assets/bookbg.jpg";
 
 const ForgotPasswordPage = () => {
   const { xs, sm, md } = Grid.useBreakpoint();
@@ -24,10 +23,6 @@ const ForgotPasswordPage = () => {
       align="center"
       style={{
         width: "100%",
-        minHeight: "100vh",
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
         padding: 16,
       }}
     >

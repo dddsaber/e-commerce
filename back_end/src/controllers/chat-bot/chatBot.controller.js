@@ -31,14 +31,16 @@ async function askQuestion(question) {
       .join("");
 
     const prompt = `
-Bạn là một trợ lý bán hàng chuyên nghiệp.
-Dưới đây là danh sách sản phẩm hiện có trong cửa hàng (hiển thị theo dạng HTML):
-${productHTML}
-
-Câu hỏi của khách hàng: "${question}"
-Nếu câu hỏi không liên quan đến sản phẩm, hãy trả lời một cách tự nhiên và thân thiện.
-Nếu câu hỏi có liên quan tới sản phẩm, vui lòng phản hồi một cách chuyên nghiệp, khéo léo và kết hợp các sản phẩm trong danh sách ở định dạng HTML để dễ đọc hơn.
-    `;
+      Bạn là một trợ lý bán hàng chuyên nghiệp.
+      
+      Câu hỏi của khách hàng: "${question}"
+      
+      Nếu câu hỏi không liên quan đến sản phẩm, hãy trả lời một cách tự nhiên và thân thiện, không cần hiển thị danh sách sản phẩm.
+      Nếu câu hỏi có liên quan tới sản phẩm, vui lòng phản hồi một cách chuyên nghiệp và khéo léo. Kèm theo đó, hiển thị các sản phẩm liên quan từ danh sách dưới đây theo định dạng HTML để dễ đọc hơn.
+      
+      Danh sách sản phẩm hiện có trong cửa hàng (hiển thị theo dạng HTML):
+      ${productHTML}
+      `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

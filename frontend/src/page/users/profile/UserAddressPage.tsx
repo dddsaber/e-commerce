@@ -41,10 +41,18 @@ const UserAddressPage = () => {
         isModify={isModify}
       />
       <Flex justify="center" style={{ marginTop: 20 }}>
-        <Button type="primary" onClick={() => setIsModify(!isModify)}>
+        <Button
+          type={isModify ? "default" : "primary"}
+          onClick={() => setIsModify(!isModify)}
+        >
           Chỉnh sửa
         </Button>
-        {isModify && <Button onClick={changeAddress}>Lưu</Button>}
+        &nbsp;
+        {isModify && (
+          <Button type="primary" onClick={changeAddress}>
+            Lưu
+          </Button>
+        )}
       </Flex>
     </Card>
   );

@@ -13,6 +13,11 @@ const {
 } = require("../controllers/store/store.controller");
 
 const {
+  createPayout,
+  getPayouts,
+} = require("../controllers/payout/payout.controller");
+
+const {
   updateFollow,
   checkFollow,
 } = require("../controllers/follow/follow.controller");
@@ -51,5 +56,9 @@ router.get("/:storeId/store-info", getStoreInfomation);
 router.post("/get-stores", getStores);
 
 router.post("/follow/update-follow", updateFollow);
+
+router.get("/:storeId/create-payout", createPayout);
+
+router.post("/get-payouts", getPayouts);
 
 module.exports = router;

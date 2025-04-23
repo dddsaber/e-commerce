@@ -21,6 +21,7 @@ const ProductsList: React.FC<ProductListProps> = ({ storeId, title }) => {
       limit,
       skip: (page - 1) * limit,
       storeId: storeId ?? undefined,
+      isActive: true,
     });
     setProductsList((prev) => [...prev, ...data.products]);
     if (data.totalProducts < limit) setHasMore(false);

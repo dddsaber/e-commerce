@@ -6,9 +6,11 @@ const {
   getCartByUserId,
 } = require("../controllers/cart/cart.controller");
 
+const logUserRequest = require("../controllers/user_request/user_request.controller");
+
 const router = Router();
 
-router.post("/:userId/add-cart-item", addCartItem);
+router.post("/:userId/add-cart-item", logUserRequest, addCartItem);
 
 router.post("/:userId/remove-cart-item", removeCartItem);
 

@@ -1,4 +1,5 @@
 import { instance } from "."; // Giả sử instance đã được cấu hình trước đó
+import { GetPayoutsRequest, Payout } from "../type/payout.type";
 import {
   Store,
   GetStoresRequest,
@@ -139,5 +140,20 @@ export const getInfo = async (
     totalProducts: number;
     totalFollowed: number;
   }>(`${URL}/${storeId}/store-info`);
+  return response.data;
+};
+
+export const createPayout = async (storeId: string) => {
+  const response = await instance.get(`${URL}/${storeId}/create-payout`);
+  return response.data;
+};
+
+export const getPayouts = async (
+  params: GetPayoutsRequest
+): Promise<{ payouts: Payout[]; totalPayouts: number }> => {
+  const response = await instance.post<{
+    payouts: Payout[];
+    totalPayouts: number;
+  }>(`${URL}/get-payouts`, params);
   return response.data;
 };

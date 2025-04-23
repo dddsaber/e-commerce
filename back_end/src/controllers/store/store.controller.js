@@ -7,6 +7,7 @@ const { createFinancialInformation } = require("../finance/finance.controller");
 const {
   findNearestWarehouse,
 } = require("../warehouse/delivery_calculate.controller");
+const mongoose = require("mongoose");
 
 // ----------------------------------------------------------------
 // Register a store
@@ -525,6 +526,7 @@ const getStores = async (req, res) => {
       pipeline.push({
         $match: {
           $or: [
+            { _id: { $regex: searchKey, $options: "i" } },
             { name: { $regex: searchKey, $options: "i" } }, // Tìm trong store.name
             { description: { $regex: searchKey, $options: "i" } }, // Tìm trong store.description
             { email: { $regex: searchKey, $options: "i" } }, // Tìm trong store.email

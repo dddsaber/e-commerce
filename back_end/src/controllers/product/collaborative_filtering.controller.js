@@ -41,7 +41,7 @@ const recommendProducts = async (req, res) => {
     const userHistory = await getUserPurchaseHistory();
 
     if (!userHistory[currentUserId]) {
-      return response(res, StatusCodes.NOT_FOUND, true, {}, "");
+      return response(res, StatusCodes.OK, true, {}, "");
     }
 
     const similarities = [];

@@ -38,10 +38,19 @@ const DELIVERY_STATUS = {
   FAILED: "failed",
 };
 
+const BOOK_SHOP_EMAIL = "nhbl.loc@gmail.com";
+const BOOK_SHOP_PASSWORD = "weiz mncc yalx rist";
+
+// URL den form o frontend
+const confirmationUrl = `http://localhost:5173/change-password`;
+
 module.exports = {
   reportCategories,
   TYPE_USER,
   TYPE_IMAGE,
   ORDER_STATUS,
   DELIVERY_STATUS,
+  confirmationUrl,
+  BOOK_SHOP_EMAIL,
+  BOOK_SHOP_PASSWORD,
 };

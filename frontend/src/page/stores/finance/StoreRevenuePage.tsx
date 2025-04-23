@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Table, Select, Button, Tag } from "antd";
+import { Row, Col, Card, Table, Select, Button, Tag, message } from "antd";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -13,7 +13,7 @@ import { CheckCircleFilled } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Store } from "../../../type/store.type";
-import { getStoreByUserId } from "../../../api/store.api";
+import { createPayout, getStoreByUserId } from "../../../api/store.api";
 import { STATUS_MAP, TYPE_USER } from "../../../utils/constant";
 import { useNavigate } from "react-router-dom";
 import { RevenueDataChart } from "../../../type/statistic.type";
@@ -43,6 +43,7 @@ const StoreRevenuePage: React.FC = () => {
     totalRevenue: 0,
     averageMonthlyRevenue: 0,
   });
+  const [reload, setReload] = useState<boolean>(false);
   useEffect(() => {
     if (!user._id) return;
     if (user.role !== TYPE_USER.sales) navigate("/");
@@ -60,14 +61,14 @@ const StoreRevenuePage: React.FC = () => {
       if (!store?._id) return;
       try {
         const data = await getRevenueChartData(revenueFilter, store._id);
-        console.log(data);
+
         setRevenueDataChart(data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchRevenueDataChart();
-  }, [store?._id, revenueFilter]);
+  }, [store?._id, revenueFilter, reload]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -84,7 +85,7 @@ const StoreRevenuePage: React.FC = () => {
       }
     };
     fetchOrders();
-  }, [store?._id]);
+  }, [store?._id, reload]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -96,7 +97,17 @@ const StoreRevenuePage: React.FC = () => {
       });
     };
     fetchStats();
-  }, [store?._id]);
+  }, [store?._id, reload]);
+
+  const handlePayout = async () => {
+    if (!store?._id) {
+      message.error("Không tìm thấy cửa hàng!");
+      return;
+    }
+    await createPayout(store._id);
+    message.success("Thành công kết toán!");
+    setReload(!reload);
+  };
 
   const calculateOrderRevenue = (order: Order) => {
     const totalProduct = order.orderDetails.reduce(
@@ -328,6 +339,7 @@ const StoreRevenuePage: React.FC = () => {
             <Button
               style={{ marginTop: 15 }}
               icon={<CheckCircleFilled style={{ color: "green" }} />}
+              onClick={() => handlePayout()}
             >
               Kết toán ngay
             </Button>

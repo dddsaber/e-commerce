@@ -13,6 +13,13 @@ const {
 const { handleError } = require("../../utils/error.utils");
 const { compare } = require("bcrypt");
 const Role = require("../../models/Role.model");
+const {
+  confirmationUrl,
+  BOOK_SHOP_EMAIL,
+  BOOK_SHOP_PASSWORD,
+} = require("../../utils/constants.utils");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 // ----------------------------------------------------------------
 // User registers a new account
@@ -363,9 +370,131 @@ const reAuth = async (req, res) => {
 const renewAccessToken = async (req, res) => {};
 
 // ----------------------------------------------------------------
-// User changes their password
+// Send mail with the link direct to change password
 // ----------------------------------------------------------------
-const changePassword = async (req, res) => {};
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return response(
+        res,
+        StatusCodes.NOT_FOUND,
+        false,
+        { success: false },
+        "User not found"
+      );
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenExpiry = Date.now() + 3600000;
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpiry = tokenExpiry;
+    await user.save();
+
+    // URL navigate to the FORM from FRONTEND
+    const ConfirmURL = `${confirmationUrl}/${user._id}?token=${token}`;
+
+    // Tạo đối tượng transporter với thông tin về email server
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: BOOK_SHOP_EMAIL,
+        pass: BOOK_SHOP_PASSWORD,
+      },
+    });
+
+    // Cấu hình email
+    let mailOptions = {
+      from: BOOK_SHOP_EMAIL, // Email người gửi
+      to: email, // Email người nhận
+      subject: "Password reset from Shopfinity", // Tiêu đ�� của email
+      html: `<div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <h2 style="color: #333;">Xác nhận tài khoản của bạn</h2>
+      <p>Chào mừng bạn đến với Shopfinity!</p>
+      <p>Vui lòng nhấn vào nút bên dưới để xác nhận tài khoản của bạn:</p>
+      <a href="${ConfirmURL}" style="
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 20px;
+        color: white;
+        background-color: #28a745;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      ">Xác nhận tài khoản</a>
+      <p>Nếu bạn không tạo tài khoản này, vui lòng bỏ qua email này.</p>
+    </div>
+  `,
+    };
+
+    // Gửi email
+    await transporter.sendMail(mailOptions);
+
+    return response(
+      res,
+      StatusCodes.OK,
+      true,
+      { userId: user._id },
+      "Send Mail successfully"
+    );
+  } catch (error) {
+    return response(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      false,
+      {},
+      error.message
+    );
+  }
+};
+
+// ----------------------------------------------------------------
+// Confirm Password
+// ----------------------------------------------------------------
+const changePasswordOnConfirm = async (req, res) => {
+  const { userId, token, password } = req.body;
+  try {
+    const user = await User.findById(userId);
+    if (
+      !user ||
+      user.resetPasswordToken !== token ||
+      user.resetPasswordExpiry < Date.now()
+    ) {
+      return response(
+        res,
+        StatusCodes.NOT_FOUND,
+        false,
+        {},
+        "Invalid or exprired token"
+      );
+    }
+
+    const hashedPassword = await securePassword(password);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiry = undefined;
+    await user.save();
+
+    return response(
+      res,
+      StatusCodes.OK,
+      true,
+      { user },
+      "Password changed successfully"
+    );
+  } catch (error) {
+    return response(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      false,
+      {},
+      error.message
+    );
+  }
+};
 
 module.exports = {
   register,
@@ -374,5 +503,6 @@ module.exports = {
   logout,
   reAuth,
   renewAccessToken,
-  changePassword,
+  changePasswordOnConfirm,
+  forgotPassword,
 };

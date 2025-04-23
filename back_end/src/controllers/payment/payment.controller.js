@@ -191,12 +191,12 @@ const updatePaymentStatus = async (req, res) => {
 // Get payments
 // ----------------------------------------------------------------
 const getPayments = async (req, res) => {
-  const { isDeleted } = req.body;
+  const { isDeleted = false } = req.body;
 
   try {
     const filters = {};
     if (isDeleted !== undefined) {
-      filters.push({ isDeleted: isDeleted });
+      filters.isDeleted = isDeleted;
     }
 
     const totalPayments = await Payment.countDocuments(filters);

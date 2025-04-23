@@ -11,8 +11,8 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Store } from "../../type/store.type";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
 import {
   getStoreByUserId,
   storeInfoRegistration,
@@ -20,6 +20,7 @@ import {
   storeIdentityRegistration,
 } from "../../api/store.api";
 import { getUserById } from "../../api/user.api";
+import { reloginAuth } from "../../redux/slices/authSlice";
 
 const Step1: React.FC<{
   onNext: () => void;
@@ -331,6 +332,8 @@ const Step4: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   );
 };
 const MultiStepForm: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const user = useSelector((state: RootState) => state.auth.user);
   const [current, setCurrent] = useState(0);
   const [store, setStore] = useState<Store>();
@@ -351,6 +354,10 @@ const MultiStepForm: React.FC = () => {
   const nextStep = () => setCurrent(current + 1);
   const prevStep = () => setCurrent(current - 1);
   const handleFinish = () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      dispatch(reloginAuth({ refreshToken }));
+    }
     message.success("Hoàn tất đăng ký!");
     navigate("/");
   };

@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { verify } = require("jsonwebtoken");
-const { User } = require("../models/User.model");
+const User = require("../models/User.model");
 const { response } = require("../utils/response.utils");
 const { TYPE_USER } = require("../utils/constants.utils");
 
@@ -29,6 +29,7 @@ const verifyAccessToken = async (token) => {
   }
   try {
     const payload = verify(token, process.env.JWT_ACCESS_SECRET);
+    console.log(payload);
     const user = await User.findById(payload._id);
     if (user) {
       return user;

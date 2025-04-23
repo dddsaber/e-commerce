@@ -12,6 +12,7 @@ const MyOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>();
   const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,14 +24,19 @@ const MyOrdersPage: React.FC = () => {
       setLoading(false);
     };
     fetchData();
-  }, [user]);
+  }, [user, reload]);
   return !loading ? (
     <>
       <p style={{ textAlign: "right" }}>
         Tổng số đơn hàng đã mua: {totalOrders}
       </p>
       {orders?.map((order) => (
-        <OrderCard order={order} userId={user._id} />
+        <OrderCard
+          order={order}
+          userId={user._id}
+          reload={reload}
+          setReload={setReload}
+        />
       ))}
     </>
   ) : (

@@ -7,6 +7,7 @@ const {
   updateCustomProductListOrder,
   updateCustomProductListStatus,
   updateCustomProductList,
+  deleteCustomProductList,
 } = require("../controllers/custom_product_list/custom_product_list.controller");
 
 router.post("/create-custom-product-list", createCustomProductList);
@@ -21,5 +22,7 @@ router.put(
 );
 
 router.put("/update-custom-product-list-info/:id", updateCustomProductList);
+
+router.delete("/delete/:id", deleteCustomProductList);
 
 module.exports = router;

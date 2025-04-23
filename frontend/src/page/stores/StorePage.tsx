@@ -35,6 +35,8 @@ import { renderTimeChatMessage } from "../../utils/handle_format_func";
 import ProductsList from "../../components/products/ProductsList";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import ReportModal from "../../components/reports/ReportModal";
+import { REPORT_TYPE } from "../../utils/constant";
 
 const StorePage: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -42,6 +44,7 @@ const StorePage: React.FC = () => {
   const [customList, setCustomList] = useState<CustomProductList[]>([]);
   const [follow, setFollow] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   const [info, setInfo] = useState<{
     totalProducts: number;
     totalFollowed: number;
@@ -169,7 +172,10 @@ const StorePage: React.FC = () => {
           </Col>
 
           {/* Bên phải: Thống kê */}
-          <Col xs={24} md={14}>
+          <Col xs={24} md={14} style={{ textAlign: "right" }}>
+            <Button type="text" onClick={() => setIsVisible(true)}>
+              Báo cáo
+            </Button>
             <Descriptions
               size="middle"
               layout="vertical"
@@ -251,6 +257,16 @@ const StorePage: React.FC = () => {
         storeId={storeId}
         title="Sản phẩm sẵn có"
       />
+      {/* Modal báo cáo */}
+      {store && (
+        <ReportModal
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+          reportCategory={REPORT_TYPE.STORE}
+          reportedId={store._id}
+          reportItemName={store.name}
+        />
+      )}
     </>
   );
 };

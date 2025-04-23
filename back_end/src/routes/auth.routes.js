@@ -7,7 +7,8 @@ const {
   logout,
   reAuth,
   renewAccessToken,
-  changePassword,
+  forgotPassword,
+  changePasswordOnConfirm,
 } = require("../controllers/auth/auth.controller");
 const authValidation = require("../controllers/auth/auth.validation");
 const { loginWithGoogle } = require("../controllers/auth/oauth2.controller");
@@ -65,6 +66,8 @@ router.post("/reauth", reAuth);
 
 router.post("/renew-access-token", renewAccessToken);
 
-router.post("/change-password", changePassword);
+router.post("/forgot-password", forgotPassword);
+
+router.post("/change-password-on-confirm", changePasswordOnConfirm);
 
 module.exports = router;

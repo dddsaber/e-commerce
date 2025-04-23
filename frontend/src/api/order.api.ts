@@ -47,7 +47,27 @@ export const cancelOrder = async (
 
 // Get order details
 export const getOrderById = async (id: string): Promise<Order> => {
-  console.log(id);
   const response = await instance.get<Order>(`${URL}/${id}/order`);
+  return response.data;
+};
+
+export const getOrderStatusCount = async (
+  id: string
+): Promise<{
+  pending: number;
+  confirmed: number;
+  shipped: number;
+  delivered: number;
+  completed: number;
+  cancelled: number;
+}> => {
+  const response = await instance.get<{
+    pending: number;
+    confirmed: number;
+    shipped: number;
+    delivered: number;
+    completed: number;
+    cancelled: number;
+  }>(`${URL}/${id}/get-order-status-count`);
   return response.data;
 };

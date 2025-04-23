@@ -173,6 +173,7 @@ const updateProduct = async (req, res) => {
 // ----------------------------------------------------------------
 const getProducts = async (req, res) => {
   const {
+    _id,
     searchKey,
     limit,
     skip,
@@ -185,8 +186,8 @@ const getProducts = async (req, res) => {
     rating,
     categoryIds,
     isActives,
+    isActive,
   } = req.body;
-  console.log(req.body);
   try {
     const pipeline = [];
 
@@ -260,6 +261,7 @@ const getProducts = async (req, res) => {
       pipeline.push({
         $match: {
           $or: [
+            { _id: { $regex: searchKey, $options: "i" } },
             { name: { $regex: searchKey, $options: "i" } },
             { description: { $regex: searchKey, $options: "i" } },
             { "category.name": { $regex: searchKey, $options: "i" } },
@@ -334,10 +336,14 @@ const getProducts = async (req, res) => {
       pipeline.push({ $match: { isActive: { $in: isActives } } });
     }
 
+    // 🟢 Lọc theo isActive
+    if (typeof isActive === "boolean") {
+      pipeline.push({ $match: { isActive: isActive } });
+    }
+
     // 🟢 Lọc theo rating (VD: rating = 3 -> lấy từ 3.0 đến 3.9)
     if (rating && typeof rating === "number") {
       const ratingFloor = Math.floor(rating);
-      console.log(ratingFloor);
       pipeline.push({
         $match: { rating: { $gte: ratingFloor, $lt: ratingFloor + 1 } },
       });

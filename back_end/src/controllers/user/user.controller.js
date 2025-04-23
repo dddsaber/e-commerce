@@ -7,6 +7,7 @@ const {
 } = require("../../utils/securePassword.utils");
 const { StatusCodes } = require("http-status-codes");
 const { handleError } = require("../../utils/error.utils");
+const mongoose = require("mongoose");
 
 // ----------------------------------------------------------------
 // Create a new User
@@ -160,20 +161,43 @@ const getUserById = async (req, res) => {
 // Get Users
 // ----------------------------------------------------------------
 const getUsers = async (req, res) => {
-  const { skip, limit, isActive, role, searchKey, sortBy, roles, isActives } =
-    req.body;
+  const {
+    skip,
+    limit,
+    isActive,
+    role,
+    searchKey,
+    sortBy,
+    roles,
+    isActives,
+    _id,
+  } = req.body;
   try {
     const filters = {};
 
     if (searchKey) {
-      filters.$or = [
-        { username: { $regex: searchKey, $options: "i" } },
-        { name: { $regex: searchKey, $options: "i" } },
-        { email: { $regex: searchKey, $options: "i" } },
-        { phone: { $regex: searchKey, $options: "i" } },
-        { provider: { $regex: searchKey, $options: "i" } },
-      ];
+      // Nếu là ObjectId hợp lệ thì tìm theo _id
+      if (mongoose.Types.ObjectId.isValid(searchKey)) {
+        filters.$or = [
+          { _id: new mongoose.Types.ObjectId(searchKey) },
+          { username: { $regex: searchKey, $options: "i" } },
+          { name: { $regex: searchKey, $options: "i" } },
+          { email: { $regex: searchKey, $options: "i" } },
+          { phone: { $regex: searchKey, $options: "i" } },
+          { provider: { $regex: searchKey, $options: "i" } },
+        ];
+      } else {
+        // Nếu không phải ObjectId thì tìm theo các trường text
+        filters.$or = [
+          { username: { $regex: searchKey, $options: "i" } },
+          { name: { $regex: searchKey, $options: "i" } },
+          { email: { $regex: searchKey, $options: "i" } },
+          { phone: { $regex: searchKey, $options: "i" } },
+          { provider: { $regex: searchKey, $options: "i" } },
+        ];
+      }
     }
+
     if (isActive !== undefined) {
       filters.isActive = isActive;
     }

@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "latest",
     "@antv/g2plot": "^2.4.32",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.7",
     "antd": "^5.24.0",

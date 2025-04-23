@@ -38,7 +38,7 @@ const NotificationCardM: React.FC<NotificationCardProps> = ({ item }) => {
         cursor: "pointer",
       }}
       className="change-color-hover"
-      onClick={() => handleRead}
+      onClick={() => handleRead()}
     >
       <Col span={4}>
         <Image

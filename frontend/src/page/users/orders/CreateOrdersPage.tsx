@@ -24,6 +24,7 @@ import LoadingModal from "../../../components/layout/LoadingModal";
 import { getDeliveryDetails } from "../../../api/delivery.api";
 import { Coupon } from "../../../type/coupon.type";
 import { getValidCoupons } from "../../../api/coupon.api";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 interface paymentOptions {
   value?: string;
@@ -46,7 +47,7 @@ const CreateOrdersPage = () => {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [payments, setPayments] = useState<paymentOptions[]>();
-  const [selectedPayment, setSelectedPayment] = useState<paymentOptions>();
+  const [selectedPayment, setSelectedPayment] = useState<string>();
   const [deliveryDetails, setDeliveryDetails] = useState<
     Record<string, DeliveryDetails>
   >({});
@@ -263,6 +264,14 @@ const CreateOrdersPage = () => {
     );
   };
 
+  const calculateTotal = () => {
+    let total = 0;
+    for (const order of selectedProducts) {
+      total += calculateFinalPrice(order);
+    }
+    return total;
+  };
+
   return (
     <>
       <LoadingModal isModalOpen={loading} setIsModalOpen={setLoading} />
@@ -438,9 +447,43 @@ const CreateOrdersPage = () => {
               options={payments}
               value={selectedPayment}
               style={{ width: "100%", margin: "10px 0" }}
-              onChange={(value) => setSelectedPayment(value)}
+              onChange={(value) => {
+                setSelectedPayment(value);
+              }}
             />
-            <Button onClick={handleSubmit}>Tạo đơn hàng</Button>
+            {selectedPayment === "67b1e6ae843e3411c02b2a54" ? (
+              <PayPalButtons
+                style={{ layout: "vertical" }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    intent: "CAPTURE", // ✅ THÊM intent
+                    purchase_units: [
+                      {
+                        amount: {
+                          currency_code: "USD",
+                          value: (calculateTotal() / 26000).toFixed(2),
+                        },
+                      },
+                    ],
+                  });
+                }}
+                onApprove={async (data, actions) => {
+                  if (!actions.order)
+                    return Promise.reject("Order actions not available");
+
+                  const details = await actions.order.capture();
+                  alert(
+                    `Thanh toán thành công cho ${details?.payer?.name?.given_name}`
+                  );
+                  handleSubmit();
+                }}
+                onError={(err) => {
+                  console.error("Lỗi thanh toán:", err);
+                }}
+              />
+            ) : (
+              <Button onClick={handleSubmit}>Tạo đơn hàng</Button>
+            )}
           </Card>
         </Col>
       </Row>

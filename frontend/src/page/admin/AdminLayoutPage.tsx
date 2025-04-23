@@ -20,6 +20,7 @@ import {
   ShopFilled,
   ShopOutlined,
   TruckFilled,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { Button, Flex, Image, Layout, Menu, Tag, theme, Grid } from "antd";
 const { useBreakpoint } = Grid;
@@ -159,7 +160,7 @@ const AdminLayoutPage: React.FC = () => {
             key: "dashboard",
             icon: <DashboardOutlined />,
             label: "Thống kê",
-            link: "/store-manage/dashboard",
+            link: "/store-manage",
           },
           {
             key: "chats",
@@ -234,7 +235,7 @@ const AdminLayoutPage: React.FC = () => {
                 link: "/store-manage/reviews",
               },
               {
-                key: "chat",
+                key: "store-chat",
                 icon: <MessageOutlined />,
                 label: "Tin nhắn",
                 link: "/store-manage/chat",
@@ -258,6 +259,12 @@ const AdminLayoutPage: React.FC = () => {
                 icon: <BankOutlined />,
                 label: "Tài khoản ngân hàng",
                 link: "/store-manage/bank-account",
+              },
+              {
+                key: "payoutHistory",
+                icon: <HistoryOutlined />,
+                label: "Lịch sử kết toán",
+                link: "/store-manage/payout-history",
               },
             ],
           },

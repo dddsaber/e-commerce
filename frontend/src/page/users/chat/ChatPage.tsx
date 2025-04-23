@@ -35,6 +35,7 @@ const ChatPage: React.FC = () => {
   const userId = location.state?.userId || null;
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
+
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
   const [inputMessage, setInputMessage] = useState<string>("");
@@ -45,6 +46,17 @@ const ChatPage: React.FC = () => {
   const [isReloadConversationList, setIsReloadConversationList] =
     useState<boolean>(false);
   const refChat = useRef(null);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     socket.connect();
@@ -60,14 +72,10 @@ const ChatPage: React.FC = () => {
     }
 
     function onMessage(newMessage: Chat) {
-      console.log(newMessage);
-      const { sendBy } = newMessage;
-      if (selectedConversation?._id !== newMessage.conversationId) {
-        return;
-      }
+      if (selectedConversation?._id !== newMessage.conversationId) return;
 
-      newMessage.position = sendBy._id === user._id ? "right" : "left";
-      console.log(newMessage);
+      newMessage.position =
+        newMessage.sendBy._id === user._id ? "right" : "left";
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
 
@@ -104,39 +112,32 @@ const ChatPage: React.FC = () => {
     const containerChat = document.querySelector(
       ".message-list-custom .rce-mlist"
     );
-
     const timeOut = setTimeout(() => {
       containerChat?.scrollTo({
         top: containerChat.scrollHeight,
         behavior: "smooth",
       });
     }, 100);
-
     return () => clearTimeout(timeOut);
   }, [messages]);
 
   const handleSendMessage = () => {
-    try {
-      if (!selectedConversation?._id) {
-        message.error("Please select a conversation!");
-        return;
-      }
-      const data = {
-        sendTo: participant?._id,
-        sendBy: user._id,
-        text: inputMessage,
-        type: "text",
-        conversationId: selectedConversation?._id,
-      };
-
-      socket.emit(TYPE_SOCKET.message, {
-        roomId: selectedConversation._id,
-        message: data,
-      });
-      setInputMessage("");
-    } catch (error) {
-      console.log("Error sending message:", error);
+    if (!selectedConversation?._id) {
+      message.error("Please select a conversation!");
+      return;
     }
+    const data = {
+      sendTo: participant?._id,
+      sendBy: user._id,
+      text: inputMessage,
+      type: "text",
+      conversationId: selectedConversation._id,
+    };
+    socket.emit(TYPE_SOCKET.message, {
+      roomId: selectedConversation._id,
+      message: data,
+    });
+    setInputMessage("");
   };
 
   const handleJoinConversation = useCallback(
@@ -146,142 +147,141 @@ const ChatPage: React.FC = () => {
       }
       setInputMessage("");
       setSelectedConversation(conversation);
-
       setParticipant(
         conversation.participants.find((item) => item._id !== user._id)
       );
-
       const chats = await getChatsByConversationId(conversation._id);
       setMessages(chats);
+      if (isMobile) setIsChatOpen(true);
     },
-    [user._id]
+    [user._id, isMobile]
   );
 
   const renderMessages = useMemo(() => {
-    const photoLeft = getSourceImage(participant?.avatar || "");
     const nameLeft = participant?.name || "Người dùng website";
-
     return messages.map((message) => {
-      const { sendBy } = message;
-      const position: string = sendBy._id === user._id ? "right" : "left";
-
+      const position: string =
+        message.sendBy._id === user._id ? "right" : "left";
       const isRight = position === "right";
-      console.log(isRight);
       return {
         type: "text",
         id: message._id,
         position: position,
         text: message.text,
-        title: isRight ? sendBy.name : nameLeft,
+        title: isRight ? message.sendBy.name : nameLeft,
         focus: false,
-        date: new Date(message.updatedAt),
-        avatar: isRight ? undefined : photoLeft,
       } as MessageType;
     });
-  }, [messages, participant?.name, participant?.avatar, user._id]);
+  }, [messages, participant?.name, user._id]);
 
   return (
     <Card
       styles={{ body: { padding: 0, overflow: "hidden" } }}
-      style={{
-        overflow: "hidden",
-      }}
+      style={{ overflow: "hidden" }}
     >
       <Row gutter={[4, 4]}>
-        <Col span={6} style={{}}>
-          <Button
-            icon={<ArrowLeftOutlined />}
-            style={{
-              marginLeft: 10,
-              backgroundColor: "#fff",
-              color: "#000",
-              borderRadius: 5,
-              fontWeight: "bold",
-              border: "none",
-            }}
-            onClick={() => {
-              if (user.role === TYPE_USER.admin) {
-                navigate("/admin");
-              } else if (user.role === TYPE_USER.sales) {
-                navigate("/store-manage");
-              } else navigate("/");
-            }}
+        {(!isMobile || !isChatOpen) && (
+          <Col span={isMobile ? 24 : 6}>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              style={{
+                margin: 10,
+                backgroundColor: "#fff",
+                color: "#000",
+                borderRadius: 5,
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                if (isMobile) {
+                  setIsChatOpen(true);
+                } else {
+                  if (user.role === TYPE_USER.admin) {
+                    navigate("/admin");
+                  } else if (user.role === TYPE_USER.sales) {
+                    navigate("/store-manage");
+                  } else navigate("/");
+                }
+              }}
+            >
+              {isMobile ? "Bắt đầu trò chuyện" : "Trở lại"}
+            </Button>
+            {!isMobile && <hr style={{ width: "90%" }} />}
+            <ConversationListMemo
+              onJoin={handleJoinConversation}
+              selectedConversation={selectedConversation}
+              reload={isReloadConversationList}
+              userId={userId}
+            />
+          </Col>
+        )}
+
+        {(!isMobile || isChatOpen) && (
+          <Col
+            span={isMobile ? 24 : 18}
+            style={{ height: "99.5vh", borderLeft: "1px solid #e5e5e5" }}
           >
-            Trở lại
-          </Button>
-          <hr style={{ width: "90%" }} />
-          <ConversationListMemo
-            onJoin={handleJoinConversation}
-            selectedConversation={selectedConversation}
-            reload={isReloadConversationList}
-            userId={userId}
-          />
-        </Col>
-        <Col
-          span={18}
-          style={{
-            borderLeft: "1px solid #f2f2f2",
-            height: "100vh",
-            backgroundColor: "#f4f4f4",
-            padding: 0,
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="center"
-            style={{
-              padding: 10,
-              background: "#fff",
-              height: 70,
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          >
-            <Card.Meta
-              avatar={
-                <Avatar
-                  src={getSourceImage(participant?.avatar || "")}
-                  alt="Reactjs"
+            <Flex
+              justify="space-between"
+              align="center"
+              style={{
+                padding: 10,
+                background: "#fff",
+                height: 70,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              {isMobile && (
+                <Button
+                  icon={<ArrowLeftOutlined />}
+                  onClick={() => setIsChatOpen(false)}
                 />
-              }
-              title={participant?.name || "Chưa xác định"}
-            />
-          </Flex>
-          <SpaceDiv height={10} />
-          <Flex
-            vertical
-            justify="space-between"
-            style={{
-              height: "calc(100% - 80px)",
-              minWidth: 350,
-            }}
-          >
-            <MessageList
-              className="message-list message-list-custom"
-              lockable={true}
-              toBottomHeight={"100%"}
-              dataSource={renderMessages}
-              referance={refChat}
-            />
-            <Space.Compact style={{ width: "100%", padding: 10 }}>
-              <Input
-                size="large"
-                placeholder="Nhập tin nhắn..."
-                value={inputMessage}
-                onPressEnter={handleSendMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                defaultValue="Combine input and button"
+              )}
+              <Card.Meta
+                avatar={
+                  <Avatar
+                    src={getSourceImage(participant?.avatar || "")}
+                    alt="Avatar"
+                  />
+                }
+                title={participant?.name || "Chưa xác định"}
               />
-              <Button
-                size="large"
-                type="primary"
-                onClick={handleSendMessage}
-                icon={<SendOutlined />}
-              >
-                Gửi
-              </Button>
-            </Space.Compact>
-          </Flex>
-        </Col>
+            </Flex>
+            <SpaceDiv height={10} />
+            <Flex
+              vertical
+              justify="space-between"
+              style={{
+                height: isMobile ? "calc(100vh - 140px)" : "calc(100% - 80px)",
+                minWidth: 350,
+              }}
+            >
+              <MessageList
+                className="message-list message-list-custom"
+                lockable={true}
+                toBottomHeight={"100%"}
+                dataSource={renderMessages}
+                referance={refChat}
+              />
+              <Space.Compact style={{ width: "100%", padding: 10 }}>
+                <Input
+                  size="large"
+                  placeholder="Nhập tin nhắn..."
+                  value={inputMessage}
+                  onPressEnter={handleSendMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                />
+                <Button
+                  size="large"
+                  type="primary"
+                  onClick={handleSendMessage}
+                  icon={<SendOutlined />}
+                >
+                  Gửi
+                </Button>
+              </Space.Compact>
+            </Flex>
+          </Col>
+        )}
       </Row>
     </Card>
   );

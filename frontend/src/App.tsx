@@ -62,9 +62,11 @@ import AwaitPickupDeliveries from "./page/logistic_providers/AwaitPickupDeliveri
 import OnTransitDeliveries from "./page/logistic_providers/OnTransitDeliveries";
 import FailedDeliveries from "./page/logistic_providers/FailedDeliveries";
 import OrderDetailsPage from "./page/users/orders/OrderDetailsPage";
-import { Spin } from "antd";
 import LoadingPage from "./page/users/LoadingPage";
 import UserFinancePage from "./page/users/profile/UserFinancePage";
+import ForgotPasswordPage from "./page/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./page/auth/ResetPasswordPage";
+import PayoutHistoryPage from "./page/stores/finance/PayoutHistoryPage";
 interface PrivateRouteProps {
   element: ReactElement;
   requiredPermission?: string[];
@@ -111,6 +113,7 @@ function App() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const userId = useSelector((state: RootState) => state.auth?.user?._id);
 
@@ -150,22 +153,6 @@ function App() {
 
   return (
     <>
-      {loading && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "white",
-            zIndex: 9999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Spin size="large" tip="Đang tải trang..." />
-        </div>
-      )}
-
       <Routes>
         <Route path="/admin" element={<AdminLayoutPage />}>
           <Route
@@ -267,6 +254,11 @@ function App() {
         {/* Users  */}
         <Route path="/" element={<LayoutPage />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route
+            path="/change-password/:userId"
+            element={<ResetPasswordPage />}
+          />
           <Route path="/regist-store" element={<RegistStore />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -310,7 +302,7 @@ function App() {
             }
           />
           <Route
-            path="dashboard"
+            path=""
             element={
               <PrivateRoute
                 element={<StoreManagement />}
@@ -405,6 +397,15 @@ function App() {
             element={
               <PrivateRoute
                 element={<StoreBankAccountPage />}
+                requiredPermission={[TYPE_USER.sales]}
+              />
+            }
+          />
+          <Route
+            path="payout-history"
+            element={
+              <PrivateRoute
+                element={<PayoutHistoryPage />}
                 requiredPermission={[TYPE_USER.sales]}
               />
             }

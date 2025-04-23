@@ -8,7 +8,7 @@ const ImageCarousel: React.FC = () => {
   return (
     <>
       <Row gutter={[6, 6]}>
-        <Col span={16}>
+        <Col span={24}>
           <Carousel autoplay arrows>
             <div>
               <img
@@ -32,22 +32,6 @@ const ImageCarousel: React.FC = () => {
               />
             </div>
           </Carousel>
-        </Col>
-        <Col span={8}>
-          <div>
-            <img
-              src={carousel2}
-              alt="Giảm giá đặc biệt"
-              style={{ width: "100%", height: "198px", objectFit: "cover" }}
-            />
-          </div>
-          <div>
-            <img
-              src={carousel4}
-              alt="Khuyến mãi mua 1 tặng 1"
-              style={{ width: "100%", height: "198px", objectFit: "cover" }}
-            />
-          </div>
         </Col>
       </Row>
     </>
