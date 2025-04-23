@@ -26,7 +26,7 @@ const {
   getProductLookupStages,
   getUserLookupStages,
   getPaymentLookupStages,
-} = require("../../../../back_end/src/controllers/order/order.pipeline");
+} = require("./order.pipeline");
 
 // ----------------------------------------------------------------
 // Create Order
