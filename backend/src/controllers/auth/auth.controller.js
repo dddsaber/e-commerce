@@ -25,9 +25,9 @@ const nodemailer = require("nodemailer");
 // User registers a new account
 // ----------------------------------------------------------------
 const register = async (req, res) => {
-  const { fullName, phone, password } = req.body;
+  const { name, phone, password } = req.body;
 
-  if ((!fullName, !phone || !password)) {
+  if (!name || !phone || !password) {
     return response(
       res,
       StatusCodes.BAD_REQUEST,
@@ -54,7 +54,7 @@ const register = async (req, res) => {
     const role = await Role.findOne({ name: "user" });
     const user = await User.create({
       username: username,
-      fullName: fullName,
+      name: name,
       phone: phone,
       password: hashedPassword,
       role: "user",

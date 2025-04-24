@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getNotifications,
   subscribeNotifications,
+  readNotification,
 } from "../api/notification.api";
 import { Notification } from "../type/notification.type";
 import { useSelector } from "react-redux";
@@ -14,44 +15,66 @@ export const useNotifications = () => {
   const [totalUnreadNotifications, setTotalUnreadNotifications] =
     useState<number>(0);
 
-  useEffect(() => {
-    console.log(user);
-    if (!user || !user._id) {
-      console.error("❌ user hoặc user._id bị undefined! Dừng gọi API.");
-      return;
+  /*──────── fetch toàn bộ danh sách ───────*/
+  const fetchNotifications = useCallback(async () => {
+    if (!user?._id) return;
+    try {
+      const data = await getNotifications(user._id);
+      setNotifications(data.notifications);
+      setTotalUnreadNotifications(data.totalUnreadNotifications);
+    } catch (err) {
+      console.error("Lỗi khi lấy thông báo:", err);
     }
+  }, [user?._id]);
 
-    const fetchNotifications = async () => {
+  /*──────────────── markAsRead ─────────────*/
+  const markAsRead = useCallback(
+    async (id: string) => {
       try {
-        const data = await getNotifications(user._id);
-        setNotifications(data.notifications);
-        setTotalUnreadNotifications(data.totalUnreadNotifications);
-      } catch (error) {
-        console.error("Lỗi khi lấy thông báo:", error);
+        await readNotification(id);
+        await fetchNotifications(); // refetch lại danh sách đầy đủ
+        console.log(totalUnreadNotifications);
+      } catch (err) {
+        console.error("readNotification error", err);
+        // rollback
+        setNotifications((prev) =>
+          prev.map((n) => (n._id === id ? { ...n, isRead: false } : n))
+        );
+        setTotalUnreadNotifications((prev) => prev + 1);
       }
-    };
+    },
+    [fetchNotifications]
+  );
 
-    const pollNotifications = async () => {
+  /*──────── long‑polling chỉ đẩy noti mới ────────*/
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const poll = async () => {
       try {
-        if (!user._id) {
-          return;
-        }
         const data = await subscribeNotifications(user._id);
-
-        if (data && data.length) {
-          setNotifications((prev) => [...data, ...prev]); // Thêm thông báo mới vào danh sách
-          setTotalUnreadNotifications((prev) => prev + data.length); // Tăng số thông báo chưa đoc
+        if (data?.length) {
+          setNotifications((prev) => {
+            const existing = new Set(prev.map((n) => n._id));
+            const fresh = data.filter((n) => !existing.has(n._id));
+            if (!fresh.length) return prev;
+            setTotalUnreadNotifications((cnt) => cnt + fresh.length);
+            return [...fresh, ...prev];
+          });
         }
-      } catch (error) {
-        console.error("Lỗi kết nối Long Polling:", error);
+      } catch (err) {
+        console.error("Lỗi long‑polling:", err);
       } finally {
-        setTimeout(pollNotifications, 3000); // Gửi request mới sau 3s
+        setTimeout(poll, 3000);
       }
     };
 
-    fetchNotifications();
-    pollNotifications();
-  }, [user]);
+    fetchNotifications(); // lấy lần đầu
+    poll(); // bắt đầu long‑poll
 
-  return { notifications, totalUnreadNotifications };
+    // optional: cleanup nếu cần huỷ timeout (ở spa thì thường không cần)
+    // return () => clearTimeout(timeoutId);
+  }, [user, fetchNotifications]);
+
+  return { notifications, totalUnreadNotifications, markAsRead };
 };

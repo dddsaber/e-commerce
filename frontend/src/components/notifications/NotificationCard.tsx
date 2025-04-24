@@ -1,11 +1,11 @@
 import { Col, Image, Row, Typography } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { Notification } from "../../type/notification.type";
 import { formatDate } from "../../utils/handle_format_func";
 import "./NotificationCard.css";
-import { readNotification } from "../../api/notification.api";
 import { getSourceImage } from "../../utils/handle_image_func";
 import { useNavigate } from "react-router-dom";
+import { useNotifications } from "../../hook/useNotification";
 
 interface NotificationCardProps {
   notification: Notification;
@@ -15,14 +15,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
 }) => {
   const navigate = useNavigate();
-  const [isRead, setIsRead] = useState(notification.isRead);
+  const { markAsRead } = useNotifications();
 
   const handleRead = async () => {
-    if (!isRead) {
-      setIsRead(true); // Cập nhật ngay lập tức trên UI
-      const data = await readNotification(notification._id);
-      if (!data) setIsRead(false); // Nếu API lỗi, rollback lại trạng thái
-    }
+    if (!notification.isRead) markAsRead(notification._id);
+
     navigate(
       `/${
         notification.targetModel === "Order"
@@ -35,7 +32,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   return (
     <Row
       style={{
-        backgroundColor: isRead ? "transparent" : "#fdf1ed",
+        backgroundColor: notification.isRead ? "transparent" : "#fdf1ed",
         cursor: "pointer",
       }}
       className="change-color-hover"

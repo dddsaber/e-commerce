@@ -185,10 +185,10 @@ const DeliveryTable: React.FC<DeliveryProps> = ({
         userId: response.userId!,
         createdBy: user._id,
         title: NOTIFICATION_TYPE.ORDER_UPDATE.label,
-        message: `Đơn hàng ${response._id} đã được ${
+        message: `Đơn hàng ${response._id} đã được cập nhật sang trạng thái ${
           STATUS_MAP[response.status as keyof typeof STATUS_MAP].label
         }`,
-        target: record._id!,
+        target: response._id!,
         targetModel: NOTIFICATION_TARGET_MODEL.ORDER,
         image: response?.orderDetails[0].product?.image,
       });

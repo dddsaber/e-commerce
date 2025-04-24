@@ -36,35 +36,60 @@ const ConversationListMemo: React.FC<ConversationListMemoProps> = ({
   // const [userSearch, setUserSearch] = useState<OptionType | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const user = useSelector((state: RootState) => state.auth.user);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isReloadConversation, setIsReloadConversation] = useState(false);
 
   useEffect(() => {
     const initData = async () => {
       if (!user?._id) return;
-      const data = await getConversationsByUserId(user._id);
-      setConversations(data);
-      if (data.length > 0) {
-        if (userId) {
-          const conversation = conversations.find((conv) =>
-            [userId, user._id].every(
-              (val, index) => val === conv.participants[index]._id
-            )
-          );
-          if (conversation) {
-            onJoin(conversation);
+
+      try {
+        // 1. Lấy danh sách hội thoại hiện tại của user
+        const fetchedConvs = await getConversationsByUserId(user._id);
+        setConversations(fetchedConvs);
+
+        // 2. Trường hợp đã có ít nhất 1 cuộc trò chuyện
+        if (fetchedConvs.length > 0) {
+          if (userId) {
+            // Tìm hội thoại giữa user và userId theo thứ tự bất kỳ
+            const existed = fetchedConvs.find(
+              (conv) =>
+                conv.participants.some((p) => p._id === userId) &&
+                conv.participants.some((p) => p._id === user._id)
+            );
+
+            if (existed) {
+              onJoin(existed);
+              return; // đã có => dừng
+            }
           } else {
-            const conversation = await createConversation({
-              participants: [userId, user._id],
-            });
-            onJoin(conversation, true);
-            setIsReloadConversation((prev) => !prev);
+            // Không có userId => chọn hội thoại đầu tiên
+            onJoin(fetchedConvs[0]);
+            return;
           }
-        } else onJoin(data[0]);
+        }
+
+        /** 3. Đến đây nghĩa là:
+         *    - fetchedConvs rỗng  HOẶC
+         *    - Có fetchedConvs nhưng chưa có cuộc trò chuyện giữa userId và user._id
+         *    => cần tạo mới
+         */
+        if (userId) {
+          const newConv = await createConversation({
+            participants: [userId, user._id],
+          });
+          onJoin(newConv, true);
+          // Dùng callback để đảm bảo setState từ giá trị mới nhất
+          setConversations((prev) => [...prev, newConv]);
+        }
+      } catch (err) {
+        console.error("initData error", err);
       }
     };
 
     initData();
-  }, [user?._id, isReloadConversation, onJoin, reload]);
+    // chỉ chạy lại khi userId | user._id thay đổi
+  }, [userId, user?._id, isReloadConversation, onJoin, reload]);
 
   // const handleSelected = async (selected: string) => {
   //   if (!selected) return;

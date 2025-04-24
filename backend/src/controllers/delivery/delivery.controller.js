@@ -35,11 +35,10 @@ const createDelivery = async (
     });
 
     const warehouseNearUser = await findNearestWarehouse(user_location);
-    if (warehouseNearUser._id !== store.warehouseId)
+    if (warehouseNearUser._id.toString() !== store.warehouseId.toString())
       deliveryLogs.push({
         location: warehouseNearUser._id,
       });
-
     const delivery = await Delivery.create({
       orderId: orderId,
 
@@ -62,6 +61,11 @@ const createDelivery = async (
       status: DELIVERY_STATUS.AWAITING_PICKUP,
     });
 
+    consolt.log("ok");
+    console.log(delivery);
+    if (delivery) {
+      console.log("successMessage");
+    }
     if (!delivery) {
       console.log(`failureMessage`);
       return false;

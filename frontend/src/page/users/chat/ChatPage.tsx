@@ -33,6 +33,7 @@ import { TYPE_USER } from "../../../utils/constant";
 const ChatPage: React.FC = () => {
   const location = useLocation();
   const userId = location.state?.userId || null;
+  console.log(location);
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
 

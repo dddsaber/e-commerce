@@ -22,7 +22,7 @@ import {
   STATUS_MAP,
   TYPE_USER,
 } from "../../utils/constant";
-import { formatDate } from "../../utils/handle_format_func";
+import { formatAddress, formatDate } from "../../utils/handle_format_func";
 import {
   CheckCircleFilled,
   CheckCircleOutlined,
@@ -383,6 +383,41 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
           {selectedOrder?.statusTimestamps?.cancelled
             ? formatDate(selectedOrder.statusTimestamps.cancelled)
             : "Chưa cập nhật"}
+        </Descriptions.Item>
+      </Descriptions>
+      <Descriptions
+        title="Theo dõi vận chuyển"
+        style={{ marginTop: 10 }}
+        column={1}
+        styles={{
+          label: { width: "50%" },
+          content: { width: "50%" },
+        }}
+      >
+        {selectedOrder?.delivery?.deliveryLogs?.map((log) => (
+          <Descriptions.Item
+            key={log._id}
+            label={formatAddress(log.warehouseInfo.address)}
+          >
+            <span style={{ color: log.timestamp ? "green" : "orange" }}>
+              {log.timestamp ? formatDate(log.timestamp) : "Chưa giao tới"}
+            </span>
+          </Descriptions.Item>
+        ))}
+        <Descriptions.Item
+          label={formatAddress(selectedOrder?.delivery?.address)}
+        >
+          <span
+            style={{
+              color: selectedOrder?.delivery?.deliveredDate
+                ? "green"
+                : "orange",
+            }}
+          >
+            {selectedOrder?.delivery?.deliveredDate
+              ? formatDate(selectedOrder?.delivery?.deliveredDate)
+              : "Chưa giao tới"}
+          </span>
         </Descriptions.Item>
       </Descriptions>
       {user.role === TYPE_USER.admin ? (

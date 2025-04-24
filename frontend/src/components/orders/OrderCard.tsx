@@ -106,6 +106,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
       message.error(`Không tìm thấy đơn hàng!`);
       return;
     }
+    console.log(order.store);
     navigate("/chat", {
       state: { userId: order.store?.userId }, // Truyền userId qua state
     });

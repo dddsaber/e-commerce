@@ -17,6 +17,7 @@ const getOrderProjection = () => ({
     "store._id": 1,
     "store.name": 1,
     "store.logo": 1,
+    "store.userId": 1,
     "orderDetails.product.name": 1,
     "orderDetails.product._id": 1,
     "orderDetails.product.image": 1,

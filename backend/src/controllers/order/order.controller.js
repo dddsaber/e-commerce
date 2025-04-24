@@ -581,7 +581,6 @@ const getOrders = async (req, res) => {
 // ----------------------------------------------------------------
 const getOrderById = async (req, res) => {
   const { orderId } = req.params;
-  console.log(orderId);
   try {
     // Kiểm tra định dạng orderId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
@@ -611,8 +610,6 @@ const getOrderById = async (req, res) => {
     // Thực thi pipeline
     const [order] = await Order.aggregate(pipeline);
 
-    console.log(order);
-
     if (!order) {
       return response(res, StatusCodes.NOT_FOUND, false, {}, "Order not found");
     }
@@ -634,7 +631,6 @@ const getOrderById = async (req, res) => {
 // ----------------------------------------------------------------
 const getOrderStatusCounts = async (req, res) => {
   const { storeId } = req.params;
-  console.log(storeId);
   if (!storeId) {
     return response(res, StatusCodes.BAD_REQUEST, false, {}, "Missing storeId");
   }

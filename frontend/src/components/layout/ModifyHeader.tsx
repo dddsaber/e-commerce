@@ -33,6 +33,7 @@ import ModifySearch from "../shared/ModifySearch";
 import "./ModifyHeader.css";
 import icon_img from "../../assets/icon.jpg";
 import { TYPE_USER } from "../../utils/constant";
+import { Notification } from "../../type/notification.type";
 
 const { Header } = Layout;
 
@@ -43,7 +44,11 @@ const ModifyHeader: React.FC = () => {
   const [store, setStore] = useState<Store>();
   const [storeLink, setStoreLink] = useState<string>("/regist-store");
 
-  const { notifications, totalUnreadNotifications } = useNotifications();
+  const { notifications, totalUnreadNotifications, markAsRead } =
+    useNotifications();
+
+  // Dùng state để theo dõi số lượng unread notifications
+  const [unreadCount, setUnreadCount] = useState(totalUnreadNotifications);
 
   useEffect(() => {
     const userId = user?._id;
@@ -67,7 +72,25 @@ const ModifyHeader: React.FC = () => {
       }
     };
     fetchCart();
-  });
+  }, [user]);
+
+  // Cập nhật lại số lượng unread notifications khi có thay đổi
+  useEffect(() => {
+    setUnreadCount(totalUnreadNotifications);
+  }, [totalUnreadNotifications]);
+
+  // Khi người dùng đánh dấu thông báo là đã đọc, cập nhật lại unread count
+  const handleMarkAsRead = (notification: Notification) => {
+    markAsRead(notification._id);
+    setUnreadCount(unreadCount - 1); // Giảm số lượng thông báo chưa đọc
+    navigate(
+      `/${
+        notification.targetModel === "Order"
+          ? "account/" + notification.targetModel.toLocaleLowerCase()
+          : notification.targetModel.toLocaleLowerCase()
+      }/${notification.target}`
+    );
+  };
 
   const userMenuItems: MenuProps["items"] = [
     {
@@ -95,10 +118,15 @@ const ModifyHeader: React.FC = () => {
       onClick: () => navigate("/logout"),
     },
   ];
+
   const notificationMenuBar = useMemo<MenuProps["items"]>(() => {
     const menu = notifications.map((item) => ({
       key: `notification-${item._id}`,
-      label: <NotificationCardM item={item} />,
+      label: (
+        <div onClick={() => handleMarkAsRead(item)}>
+          <NotificationCardM item={item} />
+        </div>
+      ),
     }));
     menu.push({
       key: "view-all-notifications",
@@ -111,7 +139,7 @@ const ModifyHeader: React.FC = () => {
       ),
     });
     return menu;
-  }, [notifications]);
+  }, [notifications, unreadCount]);
 
   const cartMenuBar: MenuProps["items"] = useMemo(() => {
     return (
@@ -224,14 +252,10 @@ const ModifyHeader: React.FC = () => {
                   style={{ color: "black" }}
                 >
                   <Badge
-                    count={
-                      <span style={{ fontSize: 15 }}>
-                        {cart?.items?.reduce(
-                          (total, item) => total + (item.products?.length || 0),
-                          0
-                        )}
-                      </span>
-                    }
+                    count={cart?.items?.reduce(
+                      (total, item) => total + (item.products?.length || 0),
+                      0
+                    )}
                     offset={[0, 5]}
                     style={{
                       color: "white",
@@ -266,11 +290,7 @@ const ModifyHeader: React.FC = () => {
                   onClick={() => navigate("/account/notifications")}
                 >
                   <Badge
-                    count={
-                      <span style={{ fontSize: 15 }}>
-                        {totalUnreadNotifications}
-                      </span>
-                    }
+                    count={unreadCount}
                     offset={[0, 5]}
                     style={{
                       color: "white",
@@ -295,7 +315,6 @@ const ModifyHeader: React.FC = () => {
                 }}
                 style={{ color: "black", border: "none" }}
               >
-                {" "}
                 <Badge
                   offset={[0, 5]}
                   style={{
@@ -344,7 +363,14 @@ const ModifyHeader: React.FC = () => {
             </Flex>
           </Flex>
         ) : (
-          <></>
+          <>
+            <Button
+              style={{ border: "1px solid black" }}
+              onClick={() => navigate("/login")}
+            >
+              Đăng nhập/Đăng ký
+            </Button>
+          </>
         )}
       </Header>
     </>

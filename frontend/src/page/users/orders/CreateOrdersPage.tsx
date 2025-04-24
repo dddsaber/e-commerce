@@ -114,6 +114,13 @@ const CreateOrdersPage = () => {
       navigate("/account/manage-address");
       return;
     }
+    if (!user.name || !user.phone) {
+      alert(
+        "Vui lòng điền đầy đủ thông tin cá nhân (tên/số điện thoại)của bạn!"
+      );
+      navigate("/account/profile");
+      return;
+    }
     const orders = selectedProducts.map(
       (store: { storeId: string; products: OrderDetails[] }) => ({
         storeId: store.storeId,
@@ -472,7 +479,7 @@ const CreateOrdersPage = () => {
                     return Promise.reject("Order actions not available");
 
                   const details = await actions.order.capture();
-                  alert(
+                  message.success(
                     `Thanh toán thành công cho ${details?.payer?.name?.given_name}`
                   );
                   handleSubmit();
